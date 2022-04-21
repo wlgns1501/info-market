@@ -6,8 +6,6 @@ labels: ''
 assignees: ''
 
 ---
-
-친절하시더라구요
 [back],[front]..  대괄호 안에 어떤 파트인지 적어준 후 작성해주세요
 Keep, Problem 항목에 대해서 매주 정기적인 날에 회고를 진행하여 기록하고, 그것을 기반으로 Try (Action Items)  이슈를 생성해주세요.
  
