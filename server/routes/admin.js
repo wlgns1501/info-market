@@ -9,8 +9,8 @@ router.put('/users/:userId', adminUserControllers.editUserInfo);
 router.delete('/users/:userId', adminUserControllers.removeUser);
 
 // 게시물 관리
-router.get('/info', adminInfoControllers.getInfo);
-router.put('/info/:infoId', adminInfoControllers.editInfo);
-router.delete('/info', adminInfoControllers.removeInfo);
+// router.get('/info', adminInfoControllers.getInfo);
+// router.put('/info/:infoId', adminInfoControllers.editInfo);
+// router.delete('/info', adminInfoControllers.removeInfo);
 
 module.exports = router;

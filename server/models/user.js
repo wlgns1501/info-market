@@ -14,7 +14,8 @@ module.exports = class User extends Sequelize.Model {
         },
         grade: {
           type: Sequelize.STRING(50),
-          allowNull: false,
+          allowNull: true,
+          defaultValue: 'Bronze',
         },
         nickname: {
           type: Sequelize.STRING(50),
@@ -26,7 +27,8 @@ module.exports = class User extends Sequelize.Model {
         },
         point: {
           type: Sequelize.INTEGER(255),
-          allowNull: false,
+          allowNull: true,
+          defaultValue: 0,
         },
       },
       {
