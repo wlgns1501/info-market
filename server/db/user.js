@@ -7,7 +7,7 @@ module.exports = {
       offset: (pages - 1) * 10,
     });
   },
-  findUser: async (userId) => {
+  findPkUser: async (userId) => {
     return await User.findByPk({
       where: {
         id: userId,
@@ -35,6 +35,17 @@ module.exports = {
       where: {
         id: userId,
       },
+    });
+  },
+  findUser: async (email) => {
+    return await User.findOne({ where: { email } });
+  },
+  createUser: async (email, hashPw, nickname, phone) => {
+    return await User.create({
+      email,
+      password: hashPw,
+      nickname,
+      phone,
     });
   },
 };

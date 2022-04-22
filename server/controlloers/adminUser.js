@@ -19,7 +19,7 @@ module.exports = {
   editUserInfo: async (req, res) => {
     const { userId } = req.params;
     const { email, nickname, point, grade } = req.body;
-    const user = await userDb.findUser(userId);
+    const user = await userDb.findPkUser(userId);
 
     if (!user) {
       return res.status(406).message({ message: '유저가 존재하지 않습니다.' });
