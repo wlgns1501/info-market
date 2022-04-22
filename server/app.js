@@ -58,6 +58,11 @@ app.use((error, req, res, next) => {
   res.sendStatus(500);
 });
 
+app.get('/', (req, res) => {
+  console.log('get');
+  res.send('Hello!!');
+});
+
 app.listen(8080, () => {
   console.log(`8080번 포트에서 대기중`);
 });
