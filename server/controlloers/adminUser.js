@@ -2,14 +2,14 @@ const userDb = require('../db/user.js');
 
 module.exports = {
   getUsers: async (req, res) => {
-    const { pages, limit } = req.params;
+    const { pages, limit } = req.query;
 
     const users = await userDb.findUsers(pages, limit).catch(() => {
       return res
         .status(400)
         .json({ message: '회원 정보를 불러오는데 실패했습니다.' });
     });
-
+    // console.log(users);
     if (users.count === 0) {
       return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
     }
@@ -18,14 +18,15 @@ module.exports = {
   },
   editUserInfo: async (req, res) => {
     const { userId } = req.params;
+    // console.log(userId);
     const { email, nickname, point, grade } = req.body;
-    const user = await userDb.findPkUser(userId);
-
+    const user = await userDb.findPkUser(Number(userId));
+    // console.log(user);
     if (!user) {
       return res.status(406).message({ message: '유저가 존재하지 않습니다.' });
     }
 
-    const editUser = await userDb
+    await userDb
       .editUserInfo(userId, email, nickname, point, grade)
       .catch(() => {
         return res
@@ -35,12 +36,12 @@ module.exports = {
 
     res
       .status(200)
-      .json({ editUser, message: '해당 유저의 정보를 수정 했습니다.' });
+      .json({ user, message: '해당 유저의 정보를 수정 했습니다.' });
   },
   removeUser: async (req, res) => {
     const { userId } = req.params;
 
-    const user = await userDb.findUser(userId);
+    const user = await userDb.findPkUser(userId);
 
     if (!user) {
       return res.status(406).message({ message: '유저가 존재하지 않습니다.' });

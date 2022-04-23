@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middlewares/auth');
 const infoControllers = require('../controlloers/info');
 const replyControllers = require('../controlloers/reply');
 const orderControllers = require('../controlloers/order');
 
 // 게시물 info.js
-// router.get('/:infoId', infoControllers.getInfo);
+// router.get('/:infoId', auth.me, infoControllers.getInfo);
 // router.post('/', infoControllers.writeInfo);
 // router.delete('/:infoId', infoControllers.removeInfo);
 // router.put('/:infoId', infoControllers.putInfo);

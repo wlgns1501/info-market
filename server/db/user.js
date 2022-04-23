@@ -5,13 +5,35 @@ module.exports = {
     return await User.findAndCountAll({
       limit: Number(limit),
       offset: (pages - 1) * 10,
+      attributes: [
+        'id',
+        'email',
+        'grade',
+        'nickname',
+        'phone',
+        'point',
+        'createdAt',
+        'updatedAt',
+        'deletedAt',
+      ],
     });
   },
   findPkUser: async (userId) => {
-    return await User.findByPk({
+    return await User.findOne({
       where: {
         id: userId,
       },
+      attributes: [
+        'id',
+        'email',
+        'grade',
+        'nickname',
+        'phone',
+        'point',
+        'createdAt',
+        'updatedAt',
+        'deletedAt',
+      ],
     });
   },
   editUserInfo: async (userId, email, nickname, point, grade) => {

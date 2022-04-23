@@ -1,79 +1,107 @@
-const bcrypt = require('bcrypt');
-const config = require('../config');
 const userDb = require('../db/user');
+const bcrypt = require('./functions/bcrypt');
 const {
   generateAccessToken,
-  sendToken,
   generateRefreshToken,
 } = require('./functions/jwtToken');
 
 module.exports = {
   signup: async (req, res) => {
     const { email, password, nickname, phone } = req.body;
-    // 벡엔드에서 위 값들이 비어 있을 시 예외처리를 해주는 코드 추가하기.
-    // 이메일 유효성 검사
-    // const regEmail =
-    //   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    // if (!regEmail.test(email)) {
-    //   return res.status().send('협의할 부분 ~~~~~~~');
-    // }
-    console.log(req.body);
+
     const exUser = await userDb.findUser(email);
+
     if (exUser) {
-      return res.status(409).send('중복된 유저 입니다.');
+      return res.status(409).json({ message: '중복된 유저 입니다.' });
     }
 
-    try {
-      /*
-      // 포스트맨 테스트용
-      {
-        "email": "test@naver.com",
-        "password": "1234",
-        "nickname": "CS18",
-        "phone": "010-1234-5678"
-      }
-      */
-      const hashPw = await bcrypt.hash(password, config.bcrypt.saltRounds);
-      // const grade = 'bronze';
-      // const point = 100;
-      const test = await userDb.createUser(email, hashPw, nickname, phone);
-      console.log(test);
-      return res.status(201).json({
-        id: test.id,
-        message: '회원가입에 성공 했습니다.',
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    const hashPw = await bcrypt.hash(password).catch((err) => {
+      console.log(err);
+    });
+
+    const test = await userDb.createUser(email, hashPw, nickname, phone);
+    // console.log(test);
+    return res.status(201).json({
+      id: test.id,
+      message: '회원가입에 성공 했습니다.',
+    });
   },
 
   login: async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body);
-    try {
-      const userInfo = await userDb.findUser();
-      if (!userInfo) {
-        console.log('해당 유저 X');
-        return res.status(401).send('해당 유저가 없습니다.');
-      }
+    // console.log(req.body);
 
-      // npm문서에서 bcrypt 관련 내용 찾아보기
-      const verification = await bcrypt.compare(password, userInfo.password);
-      if (!verification) {
-        console.log('비밀번호가 일치 X');
-        return res.satus(400).send('비밀번호가 일치하지 않음');
-      }
+    const userInfo = await userDb.findUser(email);
 
-      // const userId = await User.findOne({
-      //   where: { id: userInfo.id },
-      //   // attributes: ['email', 'grade', 'nickname', 'phone', 'point'],
-      // });
-      // 토큰 [id(PK), grade)]생성하고 전달.
-      const userToken = generateAccessToken(userInfo.email);
-      // id, token, point, grade, message
-      return res.status(201).json(userToken);
-    } catch (error) {
-      console.error(error);
+    if (!userInfo) {
+      // console.log('해당 유저 X');
+      return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
+    const { id, point, grade } = userInfo;
+
+    // npm문서에서 bcrypt 관련 내용 찾아보기
+    const verification = await bcrypt
+      .comparePw(password, userInfo.password)
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // console.log(verification);
+    if (!verification) {
+      // console.log('비밀번호가 일치 X');
+      return res.status(400).json({ message: '비밀번호가 일치하지 않음' });
+    }
+    // 토큰 [id(PK), grade)]생성하고 전달.
+    const accToken = generateAccessToken(id, grade);
+    const refreshToken = generateRefreshToken(id, grade);
+    const cookieOptions = {
+      httpOnly: true,
+    };
+    // console.log(refreshToken);
+    // id, token, point, grade, message
+    return res
+      .cookie('refreshToken', refreshToken, cookieOptions)
+      .status(201)
+      .json({
+        id,
+        point,
+        grade,
+        accToken: accToken,
+        message: '로그인에 성공 했습니다.',
+      });
+  },
+  logout: async (req, res) => {
+    res
+      .cookie('refreshToken', '')
+      .status(200)
+      .json({ message: '로그아웃에 성공했습니다.' });
+  },
+  remove: async (req, res) => {
+    const { userId } = req.params;
+
+    if (req.userId != userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다' });
+    }
+
+    const user = await userDb.findPkUser(userId);
+
+    if (!user) {
+      return res.status(401).json({ message: '해당 유저가 없습니다.' });
+    }
+
+    await userDb.removeUser(userId).catch(() => {
+      return res.status(400).json({ message: '회원탈퇴에 실패 하였습니다.' });
+    });
+
+    return res.status(204).json({ message: '회원이 탈퇴 처리 되었습니다.' });
   },
 };
+
+// 벡엔드에서 위 값들이 비어 있을 시 예외처리를 해주는 코드 추가하기.
+// 이메일 유효성 검사
+// const regEmail =
+//   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+// if (!regEmail.test(email)) {
+//   return res.status().send('협의할 부분 ~~~~~~~');
+// }
+// console.log(req.body);
