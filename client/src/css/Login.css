@@ -30,3 +30,10 @@
     align-items: center;
   }
 }
+
+.kakao-login {
+  background-color: #fee500
+}
+.naver-login {
+  background-color: #03c75a
+}
