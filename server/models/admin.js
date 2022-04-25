@@ -15,6 +15,7 @@ module.exports = class Admin extends Sequelize.Model {
         grade: {
           type: Sequelize.STRING(50),
           allowNull: false,
+          defaultValue: 'admin',
         },
       },
       {
