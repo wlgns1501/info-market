@@ -96,12 +96,3 @@ module.exports = {
     return res.status(204).json({ message: '회원이 탈퇴 처리 되었습니다.' });
   },
 };
-
-// 벡엔드에서 위 값들이 비어 있을 시 예외처리를 해주는 코드 추가하기.
-// 이메일 유효성 검사
-// const regEmail =
-//   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-// if (!regEmail.test(email)) {
-//   return res.status().send('협의할 부분 ~~~~~~~');
-// }
-// console.log(req.body);
