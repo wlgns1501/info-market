@@ -15,14 +15,16 @@ module.exports = class Info extends Sequelize.Model {
         targetPoint: {
           type: Sequelize.INTEGER(255),
           allowNull: false,
+          defaultValue: 0,
         },
         type: {
           type: Sequelize.STRING(50),
           allowNull: false,
+          defaultValue: 'Free',
         },
         totalViews: {
           type: Sequelize.INTEGER(255),
-          allowNull: false,
+          allowNull: true,
           defaultValue: '0',
         },
       },

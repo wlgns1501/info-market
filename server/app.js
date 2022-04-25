@@ -43,14 +43,14 @@ app.use(morgan('dev'));
 app.use('/', indexRouter);
 
 // http://15.164.104.171/
-// app.get('/api', (req, res) => {
-//   res.send('debugNote API');
-// });
+app.get('/api', (req, res) => {
+  res.send('infomarket API');
+});
 
 // // 지원하지 않는 api
-// app.use((req, res, next) => {
-//   res.sendStatus(404);
-// });
+app.use((req, res, next) => {
+  res.sendStatus(404);
+});
 
 // 서버 에러
 app.use((error, req, res, next) => {

@@ -72,6 +72,7 @@ module.exports = {
   getUsers: async (req, res) => {
     const { pages, limit } = req.query;
     const { grade } = req;
+    // console.log(grade);
 
     if (grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
