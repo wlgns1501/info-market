@@ -111,10 +111,11 @@ function Writing() {
       {/* </div> */}
 
       <div className="filebox">
-        <input className="disable-input" value="파일선택" disabled="disabled" />
+        {/* <input className="disable-input" value="파일선택" disabled="disabled" />
 
         <label for="hidden-input">업로드</label>
-        <input type="file" id="hidden-input" />
+        <input type="file" id="hidden-input" /> */}
+        <input type="file" />
       </div>
 
       <div className="submit">
