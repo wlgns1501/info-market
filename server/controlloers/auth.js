@@ -59,16 +59,18 @@ module.exports = {
     };
     // console.log(refreshToken);
     // id, token, point, grade, message
-    return res
-      .cookie('refreshToken', refreshToken, cookieOptions)
-      .status(201)
-      .json({
-        id,
-        point,
-        grade,
-        accToken: accToken,
-        message: '로그인에 성공 했습니다.',
-      });
+    return (
+      res
+        // .cookie('refreshToken', refreshToken, cookieOptions)
+        .status(201)
+        .json({
+          id,
+          point,
+          grade,
+          accToken: accToken,
+          message: '로그인에 성공 했습니다.',
+        })
+    );
   },
   logout: async (req, res) => {
     res
