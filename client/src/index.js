@@ -8,15 +8,15 @@ import { createStore } from 'redux';
 const test = '100';
 
 function reducer(state = test, action) {
-  return state
+  return state;
 }
 
-let store = createStore(reducer)
+let store = createStore(reducer);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
