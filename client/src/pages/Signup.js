@@ -31,7 +31,7 @@ function Signup() {
       setErrMessage('모두 입력해 주세요')
     } else {
       axios.post(
-        `https://localhost:3000/auth/signup`,
+        `http://localhost:3000/auth/signup`,
         {
           email: userInfo.email,
           password: userInfo.password,

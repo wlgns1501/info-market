@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 
-function Login() {
+function Login({ handleResponseSuccess }) {
 
   const navigate = useNavigate()
   const handleRegister = () => {
@@ -30,13 +30,13 @@ function Login() {
       setErrorMessage("이메일과 비밀번호를 입력하세요");
     } else {
       axios
-        .post(`https://localhost:3000/auth/login`, {
+        .post(`http://localhost:3000/auth/login`, {
           email: loginInfo.email,
           password: loginInfo.password,
         })
         .then((res) => {
           if (res.status === 200) {
-            // handleResponseSuccess();
+            handleResponseSuccess();
             navigate("/main");
           }
         })

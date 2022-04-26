@@ -18,24 +18,31 @@ function App() {
   // const T = [];
 
   /* 로그인상태 변경, 메인페이지 불러옴 */
+  const isAuthenticated = () => {
+    axios.get(`http://localhost:3000/auth/login`).then((res) => {
+      setUserInfo(res.data.userInfo);
+    })
+      .catch((err) => err);
+  }
 
-  // /* 로그인 요청 성공 */
-  // const handleResponseSuccess = () => {
-  //   setIsLogin(true);
-  // };
+  /* 로그인 요청 성공 */
+  const handleResponseSuccess = () => {
+    isAuthenticated();
+    setIsLogin(true);
+  };
 
-  // /* 로그아웃 */
-  // const handleLogout = () => {
-  //   axios.post(`https://localhost:3000/auth/logout`).then((res) => {
-  //     setUserInfo(null);
-  //     console.log(userInfo);
-  //     setIsLogin(false);
-  //   });
-  // };
+  /* 로그아웃. 로그인 이후 메인페이지에서 체크 예정*/
+  const handleLogout = () => {
+    axios.post(`http://localhost:3000/auth/logout`).then((res) => {
+      setUserInfo(null);
+      console.log(userInfo);
+      setIsLogin(false);
+    });
+  };
 
   useEffect(() => {
     console.log("before", userInfo);
-    // isAuthenticated();
+    isAuthenticated();
     console.log("after", userInfo);
   }, []);
 
@@ -44,7 +51,7 @@ function App() {
     <BrowserRouter>
       <div className='App'>
         <Routes >
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<Login />} handleResponseSuccess={handleResponseSuccess} />
         </Routes>
         <Routes >
           <Route path='/tos' element={<Tos />} />
