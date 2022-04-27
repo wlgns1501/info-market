@@ -2,10 +2,10 @@ import logo from '../images/logo.png';
 import '../css/Header.css';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import UserMenu from './UserMenu';
 
 function Header() {
   // const test = useSelector((state) => state);
@@ -39,16 +39,18 @@ function Header() {
           <li>유료 정보 게시판</li>
         </ul>
         <ul className="header-info">
-          <li>
+          {/* <li>
             <FontAwesomeIcon
-              icon={faCircleInfo}
-              className="faCircleInfo"
+              icon={faCircleUser}
+              className="faCircleUser"
               size="2x"
+              // onClick={}
             >
               <li>로그아웃</li>
               <li>마이페이지</li>
             </FontAwesomeIcon>
-          </li>
+          </li> */}
+          <UserMenu />
         </ul>
       </nav>
       <hr />

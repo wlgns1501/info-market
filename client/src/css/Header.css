@@ -1,9 +1,8 @@
 .body {
   margin: 0;
-
 }
 
-.header-navbar{
+.header-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,13 +15,13 @@
   height: auto;
 }
 
-.header-menu{
+.header-menu {
   display: flex;
   list-style: none;
   padding-left: 0;
 }
 
-.header-info{
+.header-info {
   list-style: none;
   display: flex;
   padding-left: 0;
@@ -37,7 +36,6 @@
   border-radius: 4px;
 }
 
-
 .header-links {
   display: flex;
   list-style: none;
@@ -45,7 +43,7 @@
 }
 
 .header-links li {
-  padding : 8px 12px;
+  padding: 8px 12px;
 }
 
 .header-faBars {

@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import Header from '../component/Header';
-import Footer from '../component/Footer';
 import '../css/Login.css';
 import logo from '../images/logo.png';
 import { NavLink } from 'react-router-dom';
