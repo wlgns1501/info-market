@@ -8,15 +8,33 @@ const initialState = {
   nickname: '',
   accToken: '',
   point: 0,
+  chargedPoint: 0,
+  earnings: 0,
   grade: '',
   profileImg: '',
   phone: '',
   accout: '',
 };
+
+const mockData = {
+  isLogin: true,
+  userId: 1,
+  email: 'choji95@naver.com',
+  password: 'pass1010!',
+  nickname: '김코딩',
+  accToken: '1111111111',
+  point: 0,
+  chargedPoint: 0,
+  earnings: 0,
+  grade: '브론즈',
+  profileImg: '',
+  phone: '01012341377',
+  accout: '',
+};
 const stateKeys = Object.keys(initialState);
 export const userInfoSlice = createSlice({
   name: 'userInfo',
-  initialState,
+  initialState: mockData,
   reducers: {
     // increment: (state) => {
     //   state.value += 1;
@@ -29,7 +47,7 @@ export const userInfoSlice = createSlice({
     // },
     updateState: (state, action) => {
       for (let key in action.payload) {
-        if (key in stateKeys) state.key = action.payload.key;
+        if (stateKeys.includes(key)) state[key] = action.payload[key];
       }
     },
     clearState: (state) => {
