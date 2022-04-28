@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isLogin: false,
-  id: '',
+  userId: '',
   email: '',
   password: '',
   nickname: '',
@@ -10,10 +10,10 @@ const initialState = {
   point: 0,
   grade: '',
   profileImg: '',
-  phoneNumber: '',
+  phone: '',
   accout: '',
 };
-
+const stateKeys = Object.keys(initialState);
 export const userInfoSlice = createSlice({
   name: 'userInfo',
   initialState,
@@ -27,19 +27,22 @@ export const userInfoSlice = createSlice({
     // incrementByAmount: (state, action) => {
     //   state.value += action.payload;
     // },
-    // login: (state, action) => {
-    //   const stateKeys = Object.keys(state);
-    //   for (let key in action.payload) {
-    //     if (key in stateKeys) state.key = action.payload.key;
-    //   }
-    // },
-    logout: (state) => {
+    updateState: (state, action) => {
+      for (let key in action.payload) {
+        if (key in stateKeys) state.key = action.payload.key;
+      }
+    },
+    clearState: (state) => {
       state = { ...initialState };
     },
+    // signup: (state, action) => {
+    //   const { key, value } = action.payload;
+    //   state[key] = value;
+    // },
   },
 });
 
-export const { logout } = userInfoSlice.actions;
+export const { updateState, clearState } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
 export const selectUserInfo = (state) => state.userInfo;
 

@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import Header from '../component/Header';
-import Footer from '../component/Footer';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+// import { useDispatch, useSelector } from 'react-redux';
+// import {
+//   signup,
+//   clearState,
+//   selectUserInfo,
+// } from '../store/slices/userInfo.js';
 
 function Signup() {
+  // const dispatch = useDispatch();
+  // const { email, password, nickname, phone } = useSelector(selectUserInfo);
+
   const navigate = useNavigate();
   // const handleCreateId = () => {
   //   navigate(`/login`)
@@ -21,30 +28,40 @@ function Signup() {
   const [errMessage, setErrMessage] = useState('');
   const handleInputValue = (key) => (e) => {
     setUserInfo({ ...userInfo, [key]: e.target.value });
+    // dispatch(
+    //   signup({
+    //     key,
+    //     value: e.target.value,
+    //   }),
+    // );
   };
 
   const handleSignup = () => {
-    setIsSignup(true);
-    if (
-      !userInfo.email ||
-      !userInfo.password ||
-      !userInfo.phone ||
-      !userInfo.nickname
-    ) {
+    // setIsSignup(true);
+    const { email, password, phone, nickname } = userInfo;
+    if (!email || !password || !phone || !phone) {
       setErrMessage('모두 입력해 주세요');
     } else {
-      axios.post(
-        `http://localhost:3000/auth/signup`,
-        {
-          email: userInfo.email,
-          password: userInfo.password,
-          phone: userInfo.phone,
-          nickname: userInfo.nickname,
-        },
-      )
-      navigate(`/login`)
+      axios
+        .post(
+          `http://localhost:3000/auth/signup`,
+          { email, password, phone, nickname },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          },
+        )
+        .then((res) => {
+          const { userId } = res.data;
+          // dispatch(signup({ userId }));
+          navigate(`/login`);
+        })
+        .catch((err) => {
+          console.log(err);
+          // dispatch(clearState());
+        });
     }
-    console.log(userInfo);
+
     // 추가적으로 닉네임 중복체크
   };
   return (
