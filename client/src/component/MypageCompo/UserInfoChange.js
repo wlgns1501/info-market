@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateState, selectUserInfo } from '../../store/slices/userInfo';
+import axios from 'axios';
 
 const EntireContainer = styled.div`
   border: 5px solid red;
@@ -69,6 +72,17 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfoChange() {
+  const {
+    nickname,
+    profileImg,
+    point,
+    accToken,
+    grade,
+    chargedPoint,
+    earnings,
+  } = useSelector(selectUserInfo);
+  const dispatch = useDispatch();
+
   return (
     <EntireContainer>
       <div className="first">

@@ -5,16 +5,11 @@ import { Outlet } from 'react-router-dom';
 import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  updateState,
-  clearState,
-  selectUserInfo,
-} from '../../store/slices/userInfo';
+import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
   border: 5px solid yellow;
   height: 100%;
-
   > ul#user-Info-container {
     margin-top: 0;
     border: 5px solid orange;
@@ -36,8 +31,13 @@ const EntireContainer = styled.div`
         > p {
           border: 1px solid purple;
           margin: 0 5px 0 5px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
           > figure {
             margin: 0;
+            margin-bottom: 8px;
             border: 1px solid black;
             width: 80px;
             height: 80px;
@@ -121,7 +121,15 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfo() {
-  const { profileImg } = useSelector(selectUserInfo);
+  const {
+    nickname,
+    profileImg,
+    point,
+    accToken,
+    grade,
+    chargedPoint,
+    earnings,
+  } = useSelector(selectUserInfo);
   const dispatch = useDispatch();
 
   const [image, setImage] = useState('');
@@ -148,7 +156,19 @@ function UserInfo() {
     //loading indicator: true
     const formData = new FormData();
     formData.append('file', file);
-    const response = await axios.post('http://localhost:8080', formData);
+
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        Authorization: `Bearer ${accToken}`,
+      },
+      withCredentials: true,
+    };
+    const response = await axios.post(
+      'http://localhost:8080',
+      formData,
+      config,
+    );
     // dispatch(updateState({
     //   profileImg: response.data//어쩌구..
     // }))
@@ -193,20 +213,20 @@ function UserInfo() {
             <figure img={profileImg} onClick={profileBtnClick} />
             {profileImg && (
               <button
-                onClick={() =>
+                onClick={() => {
                   dispatch(
                     updateState({
                       profileImg: '',
                     }),
-                  )
-                }
+                  );
+                }}
               >
                 기본 이미지로 변경
               </button>
             )}
           </p>
-          <p style={{ whiteSpace: 'nowrap' }}>김코딩</p>
-          <p style={{ whiteSpace: 'nowrap' }}>브론즈</p>
+          <p style={{ whiteSpace: 'nowrap' }}>{nickname}</p>
+          <p style={{ whiteSpace: 'nowrap' }}>{grade}</p>
         </li>
         <li className="my-points">
           <div className="point-container">
@@ -214,14 +234,14 @@ function UserInfo() {
               보유 포인트
             </p>
             <div className="detail">
-              <p>2300 P</p>
+              <p>{point} P</p>
               <div id="charged">
                 <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
-                <p>2300 P</p>
+                <p>{chargedPoint} P</p>
               </div>
               <div id="earnings">
                 <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
-                <p>0 P</p>
+                <p>{earnings} P</p>
               </div>
             </div>
           </div>
