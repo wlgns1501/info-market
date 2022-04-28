@@ -4,43 +4,65 @@ import '../css/Login.css';
 import logo from '../images/logo.png';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updateState,
+  clearState,
+  selectUserInfo,
+} from '../store/slices/userInfo.js';
 
 function Login() {
+  const dispatch = useDispatch();
+  const { email, password } = useSelector(selectUserInfo);
+
   const navigate = useNavigate();
   const handleRegister = () => {
     navigate(`/tos`);
   };
 
-  const [loginInfo, setLoginInfo] = useState({
-    email: '',
-    password: '',
-  });
+  // const [loginInfo, setLoginInfo] = useState({
+  //   email: '',
+  //   password: '',
+  // });
 
   const [errorMessage, setErrorMessage] = useState('');
+
   const handleInputValue = (key) => (e) => {
-    setLoginInfo({ ...loginInfo, [key]: e.target.value });
+    // setLoginInfo({ ...loginInfo, [key]: e.target.value });
+    dispatch(updateState({ key: e.target.value }));
   };
 
   const handleLogin = () => {
-    if (!loginInfo.email || !loginInfo.password) {
+    if (!email || !password) {
       setErrorMessage('이메일과 비밀번호를 입력하세요');
     } else {
       axios
-        .post(`http://localhost:3000/auth/login`, {
-          email: loginInfo.email,
-          password: loginInfo.password,
-        })
+        .post(
+          `http://localhost:3000/auth/login`,
+          { email, password },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          },
+        )
         .then((res) => {
-          if (res.status === 200) {
-
-            // handleResponseSuccess();
+          if (res.data) {
+            dispatch(
+              updateState({
+                ...res.data,
+                isLogin: true,
+              }),
+            );
             navigate('/main');
           }
+          return;
         })
-        .catch((err) => err);
+        .catch((err) => {
+          dispatch(clearState());
+          const { message } = err.response.data;
+          message ? alert(message) : console.log(err);
+        });
     }
-    console.log(loginInfo);
   };
 
   const kakaoOauth = useRef();
@@ -60,8 +82,6 @@ function Login() {
   };
 
   return (
-    // <div>
-    //   <Header />
     //   <NavLink to='/'>
     //     <img src={logo} alt='logo ' className='login-logo' />
     //   </NavLink>
@@ -83,7 +103,7 @@ function Login() {
           <button className="button" type="submit" onClick={handleLogin}>
             로그인
           </button>
-          {!loginInfo.email && !loginInfo.password ? (
+          {!email || !password ? (
             <div className="alert-box">{errorMessage}</div>
           ) : null}
         </div>
@@ -114,8 +134,6 @@ function Login() {
         </div>
       </div>
     </div>
-    //   <Footer />
-    // </div>
   );
 }
 

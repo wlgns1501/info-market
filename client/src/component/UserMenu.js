@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout, selectUserInfo } from '../store/slices/userInfo';
+import { clearState, selectUserInfo } from '../store/slices/userInfo';
 import axios from 'axios';
 
 const EntireContainer = styled.li`
@@ -68,7 +68,7 @@ function UserMenu() {
     //   )
     //   .then((res) => dispatch(logout()))
     //   .catch((err) => console.log(err));
-    dispatch(logout());
+    dispatch(clearState());
   };
 
   return (

@@ -21,6 +21,7 @@ const WritingContainer = styled.div`
       &#title {
         margin-top: 2%;
         margin-bottom: 2%;
+        height: 2rem;
       }
       &#content {
         flex-grow: 1;
@@ -91,7 +92,7 @@ function Writing() {
         name="title"
         id="title"
         rows="1"
-        // cols="55"
+        cols="55"
         placeholder="제목"
         maxlength="100"
         required

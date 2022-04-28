@@ -97,7 +97,9 @@ function UserInfoChange() {
             <input id="new-pwd" type="password" placeholder="새 비밀번호" />
             <input type="password" placeholder="비밀번호 확인" />
           </div>
-          <button className="modifying-btn">계좌 인증 하기</button>
+          <button style={{ whiteSpace: 'nowrap' }} className="modifying-btn">
+            계좌 인증 하기
+          </button>
         </div>
         <div className="confirm">
           <button>회원 탈퇴</button>

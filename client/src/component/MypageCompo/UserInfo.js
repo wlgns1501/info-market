@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { Outlet } from 'react-router-dom';
+import user from '../../images/user.png';
+import Modal from '../../modals/Modal-1.js';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updateState,
+  clearState,
+  selectUserInfo,
+} from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
   border: 5px solid yellow;
@@ -13,6 +22,7 @@ const EntireContainer = styled.div`
     display: flex;
     list-style: none;
     padding-left: 0;
+    align-items: center;
     > li {
       border: 1px dotted black;
 
@@ -32,6 +42,10 @@ const EntireContainer = styled.div`
             width: 80px;
             height: 80px;
             border-radius: 50%;
+            background-image: url(${(props) => props.img || user});
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
           }
         }
       }
@@ -40,10 +54,9 @@ const EntireContainer = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-
+        border: 1px solid green;
         > div.point-container {
-          width: 100%;
-          height: 100%;
+          width: 90%;
           border: 1px solid red;
           display: flex;
           flex-direction: column;
@@ -108,12 +121,89 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfo() {
+  const { profileImg } = useSelector(selectUserInfo);
+  const dispatch = useDispatch();
+
+  const [image, setImage] = useState('');
+  const [file, setFile] = useState('');
+  const fileInput = useRef(null);
+
+  const profileBtnClick = (e) => {
+    e.preventDefault();
+    fileInput.current.click();
+  };
+
+  const encodeFileToBase64 = (fileBlob) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(fileBlob);
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        setImage(reader.result);
+        resolve();
+      };
+    });
+  };
+
+  const saveImg = async () => {
+    //loading indicator: true
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await axios.post('http://localhost:8080', formData);
+    // dispatch(updateState({
+    //   profileImg: response.data//어쩌구..
+    // }))
+    //loading indicator: false
+    setImage('');
+  };
+
   return (
     <EntireContainer>
+      {image && (
+        <Modal
+          content={
+            <div>
+              <img
+                src={image}
+                style={{
+                  height: '15vh',
+                }}
+                alt="preview-img"
+              />
+              <button onClick={saveImg}>업로드</button>
+              <button onClick={() => setImage('')}>취소</button>
+            </div>
+          }
+          handleBtnClick={() => setImage('')}
+        />
+      )}
       <ul id="user-Info-container">
         <li className="profile">
+          <input
+            type="file"
+            style={{ display: 'none' }}
+            accept="image/*"
+            name="profile-img"
+            onChange={(e) => {
+              setFile(e.target.files[0]);
+              encodeFileToBase64(e.target.files[0]);
+            }}
+            ref={fileInput}
+          />
           <p className="user-photo">
-            <figure></figure>
+            <figure img={profileImg} onClick={profileBtnClick} />
+            {profileImg && (
+              <button
+                onClick={() =>
+                  dispatch(
+                    updateState({
+                      profileImg: '',
+                    }),
+                  )
+                }
+              >
+                기본 이미지로 변경
+              </button>
+            )}
           </p>
           <p style={{ whiteSpace: 'nowrap' }}>김코딩</p>
           <p style={{ whiteSpace: 'nowrap' }}>브론즈</p>
