@@ -5,35 +5,13 @@ module.exports = {
     return await User.findAndCountAll({
       limit: Number(limit),
       offset: (pages - 1) * 10,
-      attributes: [
-        'id',
-        'email',
-        'grade',
-        'nickname',
-        'phone',
-        'point',
-        'createdAt',
-        'updatedAt',
-        'deletedAt',
-      ],
     });
   },
-  findPkUser: async (userId) => {
-    return await User.findOne({
+  findUser: async (userId) => {
+    return await User.findByPk({
       where: {
         id: userId,
       },
-      attributes: [
-        'id',
-        'email',
-        'grade',
-        'nickname',
-        'phone',
-        'point',
-        'createdAt',
-        'updatedAt',
-        'deletedAt',
-      ],
     });
   },
   editUserInfo: async (userId, email, nickname, point, grade) => {
@@ -57,17 +35,6 @@ module.exports = {
       where: {
         id: userId,
       },
-    });
-  },
-  findUser: async (email) => {
-    return await User.findOne({ where: { email } });
-  },
-  createUser: async (email, hashPw, nickname, phone) => {
-    return await User.create({
-      email,
-      password: hashPw,
-      nickname,
-      phone,
     });
   },
 };

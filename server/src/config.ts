@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
 
 module.exports = {
@@ -7,6 +7,6 @@ module.exports = {
     expiresIn: process.env.JWT_EXPIRES_IN,
   },
   bcrypt: {
-    saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS),
+    saltRounds: process.env.BCRYPT_SALT_ROUNDS,
   },
 };

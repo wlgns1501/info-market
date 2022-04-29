@@ -22,7 +22,7 @@ module.exports = {
       if (error) {
         return res.status(400).json({ message: '인증에 실패했습니다.' });
       }
-
+      // id, grade
       if (decoded.grade === 'admin') {
         const admin = await adminDb.findPkUser(decoded.id);
         if (!admin) {
