@@ -5,7 +5,7 @@ const replyControllers = require('../controlloers/reply');
 const orderControllers = require('../controlloers/order');
 
 // 게시물 info.js
-// router.get('/:infoId', infoControllers.getInfo);
+// router.get('/:infoId', 인증 ,infoControllers.getInfo);
 // router.post('/', infoControllers.writeInfo);
 // router.delete('/:infoId', infoControllers.removeInfo);
 // router.put('/:infoId', infoControllers.putInfo);
