@@ -1,7 +1,6 @@
 import { Model } from 'sequelize';
 
 interface AdminAttributes {
-  id: number;
   email: string;
   password: string;
   grade: string;
@@ -20,11 +19,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
 
   Admin.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-      },
       email: {
         type: DataTypes.STRING(50),
         allowNull: false,

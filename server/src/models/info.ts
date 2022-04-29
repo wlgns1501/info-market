@@ -3,7 +3,6 @@
 import { Model } from 'sequelize';
 
 interface InfoAttribute {
-  id: number;
   title: string;
   content: string;
   targetPoint: number;
@@ -43,11 +42,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }
   Info.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-      },
       title: {
         type: DataTypes.STRING(100),
         allowNull: false,
