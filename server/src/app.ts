@@ -5,10 +5,10 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 // import indexRouter from '../routes/index.js';
-// import { sequelize } from '../models/index.js';
-// const db = require('./models');
 import db from './models';
 dotenv.config();
+
+const User = require('./models/user');
 
 const app = express();
 // 데이터베이스 연결
@@ -45,7 +45,14 @@ app.use(morgan('dev'));
 // app.use('/', indexRouter);
 
 // http://15.164.104.171/
-app.get('/api', (req: Request, res: Response) => {
+app.get('/api', async (req: Request, res: Response) => {
+  const user = await db.User.findOne({
+    where: {
+      id: 3,
+    },
+  });
+  console.log(user);
+
   res.send('infomarket API');
 });
 

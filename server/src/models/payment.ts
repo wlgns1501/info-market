@@ -1,7 +1,6 @@
 import { Model } from 'sequelize';
 
 interface PaymentAttribute {
-  id: number;
   state: string;
 }
 
@@ -21,11 +20,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }
   Payment.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-      },
       state: {
         type: DataTypes.STRING(50),
         allowNull: false,

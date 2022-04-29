@@ -1,7 +1,6 @@
 import { Model } from 'sequelize';
 
 interface ReplyAttribute {
-  id: number;
   content: string;
 }
 
@@ -21,11 +20,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }
   Reply.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-      },
       content: {
         type: DataTypes.STRING(255),
         allowNull: false,
