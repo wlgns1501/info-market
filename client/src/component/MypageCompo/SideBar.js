@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Outlet } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
   border: 5px solid red;
@@ -54,17 +56,21 @@ const EntireContainer = styled.div`
   }
 `;
 
-const links = [
-  ['회원 정보 수정', '/mypage/info/change', 'faGear'],
-  ['내 글 보기', '/mypage/info/myposts'],
-  ['구매 내역', '/mypage/info/paidPosts'],
-  ['포인트 충전 내역', '/mypage/info/chargedPointList'],
-  ['환불 내역', '/mypage/info/refundList'],
-  ['무료글 작성', '/mypage/freeWriting'],
-  ['유료글 작성', '/mypage/salesWriting'],
-];
-
 const SideBar = () => {
+  const { grade } = useSelector(selectUserInfo);
+
+  const links = [
+    ['회원 정보 수정', '/mypage/info/change', 'faGear'],
+    ['내 글 보기', '/mypage/info/myposts', ''],
+    ['구매 내역', '/mypage/info/paidPosts', ''],
+    ['포인트 충전 내역', '/mypage/info/chargedPointList', ''],
+    ['환불 내역', '/mypage/info/refundList', ''],
+    ['무료글 작성', '/mypage/freeWriting', ''],
+  ];
+
+  if (['실버', '골드'].includes(grade))
+    links.push(['유료글 작성', '/mypage/salesWriting', '']);
+
   return (
     <EntireContainer>
       <div>
