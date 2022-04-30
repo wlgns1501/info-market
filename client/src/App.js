@@ -28,11 +28,13 @@ function App() {
 
   /* 로그인상태 변경, 메인페이지 불러옴 */
   const isAuthenticated = () => {
-    axios.get(`http://localhost:3000/auth/login`).then((res) => {
-      setUserInfo(res.data.userInfo);
-    })
+    axios
+      .get(`http://localhost:3000/auth/login`)
+      .then((res) => {
+        setUserInfo(res.data.userInfo);
+      })
       .catch((err) => err);
-  }
+  };
 
   /* 로그인 요청 성공 */
   const handleResponseSuccess = () => {
@@ -66,13 +68,9 @@ function App() {
           <Route path="tos" element={<Tos />} />
           <Route path="signup" element={<Signup />} />
           <Route path="main" element={<Mainpage />}>
-            {/* <Route path="freePostList">
-              <Route index element={<FreePostList />} />
-              <Route path=":postId" element={<FreePost />} />
-            </Route>
-            <Route path="salesPostList">
-              <Route index element={<SalesPostList />} />
-              <Route path=":postId" element={<SalesPost />} />
+            {/* <Route path="PostList">
+              <Route index element={<PostList />} />
+              <Route path=":postId" element={<Post />} />
             </Route> */}
           </Route>
           <Route path="mypage" element={<SideBar />}>
@@ -93,7 +91,7 @@ function App() {
       </Routes>
       <Footer />
       {/* </div> */}
-</BrowserRouter>
+    </BrowserRouter>
   );
 }
 

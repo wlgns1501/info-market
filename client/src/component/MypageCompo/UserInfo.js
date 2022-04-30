@@ -69,14 +69,12 @@ const EntireContainer = styled.div`
             justify-content: center;
             align-items: center;
           }
-
           > div.detail {
             border: 1px solid black;
             flex: 6;
-            /* padding: 2%; */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-evenly;
             align-items: center;
             > p {
               border: 1px solid blue;
