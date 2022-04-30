@@ -1,21 +1,23 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser');
-const indexRouter = require('./routes/index');
-const { sequelize } = require('./models');
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+// import indexRouter from '../routes/index.js';
+import db from './models';
 dotenv.config();
-const app = express();
 
+const User = require('./models/user');
+
+const app = express();
 // 데이터베이스 연결
-sequelize
-  .sync({ force: false })
+db.sequelize
+  .sync()
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
-  .catch((err) => {
+  .catch((err: Error) => {
     console.error(err);
   });
 
@@ -40,22 +42,34 @@ app.use(helmet());
 
 app.use(morgan('dev'));
 
-app.use('/', indexRouter);
+// app.use('/', indexRouter);
 
 // http://15.164.104.171/
-// app.get('/api', (req, res) => {
-//   res.send('debugNote API');
-// });
+app.get('/api', async (req: Request, res: Response) => {
+  const user = await db.User.findOne({
+    where: {
+      id: 3,
+    },
+  });
+  console.log(user);
+
+  res.send('infomarket API');
+});
 
 // // 지원하지 않는 api
-// app.use((req, res, next) => {
-//   res.sendStatus(404);
-// });
+app.use((req, res, next) => {
+  res.sendStatus(404);
+});
 
 // 서버 에러
-app.use((error, req, res, next) => {
-  console.error(error);
-  res.sendStatus(500);
+// app.use((error, req, res, next) => {
+//   console.error(error);
+//   res.sendStatus(500);
+// });
+
+app.get('/', (req, res) => {
+  console.log('get');
+  res.send('Hello!!');
 });
 
 app.listen(8080, () => {
