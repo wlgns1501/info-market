@@ -101,14 +101,14 @@ module.exports = {
 
     const { email, nickname, point, grade } = req.body;
 
-    const user = await userDb.findPkUser(userId);
+    const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
       return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
     }
 
     await userDb
-      .AdminEditUserInfo(userId, email, nickname, point, grade)
+      .AdminEditUserInfo(Number(userId), email, nickname, point, grade)
       .catch(() => {
         return res
           .status(400)
@@ -126,13 +126,13 @@ module.exports = {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
-    const user = await userDb.findPkUser(userId);
+    const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
       return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
     }
 
-    await userDb.removeUser(userId).catch(() => {
+    await userDb.removeUser(Number(userId)).catch(() => {
       return res
         .status(400)
         .json({ message: '회원을 삭제 하는데 실패했습니다.' });

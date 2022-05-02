@@ -5,12 +5,12 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 const indexRouter = require('./routes/index');
-import db from './models';
+import { sequelize } from './models';
 dotenv.config();
 
 const app = express();
 // 데이터베이스 연결
-db.sequelize
+sequelize
   .sync()
   .then(() => {
     console.log('데이터베이스 연결 성공');

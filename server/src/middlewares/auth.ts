@@ -52,6 +52,7 @@ module.exports = {
               .status(400)
               .json({ message: '유저가 존재하지 않습니다.' });
           }
+          // console.log(user);
 
           req.userId = user.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
           req.token = token;
