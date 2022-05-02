@@ -68,7 +68,7 @@ function App() {
           <Route path="tos" element={<Tos />} />
           <Route path="signup" element={<Signup />} />
           <Route path="main" element={<Mainpage />}>
-            {/* <Route path="PostList">
+            {/* <Route path="postList">
               <Route index element={<PostList />} />
               <Route path=":postId" element={<Post />} />
             </Route> */}

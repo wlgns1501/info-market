@@ -26,9 +26,9 @@ const mockData = {
   point: 0,
   chargedPoint: 0,
   earnings: 0,
-  grade: '브론즈',
+  grade: '실버',
   profileImg: '',
-  phone: '01012341377',
+  phone: '010-1234-1377',
   accout: '',
 };
 const stateKeys = Object.keys(initialState);
