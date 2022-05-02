@@ -1,13 +1,52 @@
+import { Sequelize, Op } from 'sequelize';
+
 import Info from '../models/info';
 import User from '../models/user';
 
 export async function getInfo(infoId: string) {
   return await Info.findOne({
     where: { id: infoId },
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+      'totalViews',
+    ],
     include: [
       {
         model: User,
-        attributes: ['nickname'],
+        attributes: [],
+      },
+    ],
+  });
+}
+
+export async function getInfos(pages: number, limit: number) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    offset: (pages - 1) * 10,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
       },
     ],
   });

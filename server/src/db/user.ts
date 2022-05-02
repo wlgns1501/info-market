@@ -16,6 +16,7 @@ export async function createUser(
 
 export async function findUsers(pages: number, limit: number) {
   return await User.findAndCountAll({
+    order: [['createdAt', 'desc']],
     limit,
     offset: (pages - 1) * 10,
   });

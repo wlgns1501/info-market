@@ -85,6 +85,7 @@ module.exports = {
           .status(400)
           .json({ message: '회원 정보를 불러오는데 실패했습니다.' });
       });
+    console.log(users);
 
     if (users.count === 0) {
       return res.status(406).json({ message: '유저가 존재하지 않습니다.' });

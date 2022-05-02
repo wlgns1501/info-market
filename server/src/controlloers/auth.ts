@@ -82,9 +82,6 @@ module.exports = {
   remove: async (req: Request, res: Response) => {
     const { userId } = req.params;
 
-    console.log(userId);
-    console.log(req.userId);
-
     if (req.userId !== Number(userId)) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다' });
     }
