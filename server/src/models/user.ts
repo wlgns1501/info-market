@@ -1,9 +1,6 @@
 'use strict';
-const { Model } = require('sequelize');
-// import { sequelize } from './index';
-// import { Info } from './info';
-// import { Payment } from './payment';
-// import { Reply } from './reply';
+
+const { Model, Sequelize, DataTypes } = require('sequelize');
 
 interface UserAttribute {
   email: string;
@@ -16,7 +13,7 @@ interface UserAttribute {
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class User extends Model<UserAttribute> implements UserAttribute {
-    public readonly id!: number;
+    public readonly id!: string;
     public email!: string;
     public password!: string;
     public nickname!: string;
