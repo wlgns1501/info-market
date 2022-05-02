@@ -8,12 +8,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
-  border: 5px solid yellow;
+  border: 5px solid blue;
   height: 100%;
+  @media screen and (max-width: 800px) {
+    font-size: 0.9rem;
+  }
+  @media screen and (max-width: 590px) {
+    font-size: 0.7rem;
+  }
   > ul#user-Info-container {
     margin-top: 0;
     border: 5px solid orange;
-    height: 25%;
+    min-height: 25%;
     display: flex;
     list-style: none;
     padding-left: 0;
@@ -39,8 +45,8 @@ const EntireContainer = styled.div`
             margin: 0;
             margin-bottom: 8px;
             border: 1px solid black;
-            width: 80px;
-            height: 80px;
+            min-width: 80px;
+            min-height: 80px;
             border-radius: 50%;
             background-image: url(${(props) => props.img || user});
             background-repeat: no-repeat;
@@ -56,10 +62,16 @@ const EntireContainer = styled.div`
         align-items: center;
         border: 1px solid green;
         > div.point-container {
-          width: 90%;
+          min-width: 90%;
           border: 1px solid red;
           display: flex;
           flex-direction: column;
+          /* @media screen and (max-width: 800px) {
+            font-size: 0.9rem;
+          }
+          @media screen and (max-width: 590px) {
+            font-size: 0.7rem;
+          } */
           > p.title {
             margin: 0;
             padding: 2%;
@@ -112,6 +124,12 @@ const EntireContainer = styled.div`
           margin: 10px 0;
           padding: 2%;
           font-size: 1rem;
+          @media screen and (max-width: 800px) {
+            font-size: 0.9rem;
+          }
+          @media screen and (max-width: 590px) {
+            font-size: 0.7rem;
+          }
         }
       }
     }

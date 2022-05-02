@@ -7,6 +7,7 @@ import {
   selectCount,
 } from '../../store/slices/counter.js';
 import Modal from '../../modals/Modal-1';
+import Payment from '../../component/Payment.js';
 
 function Home() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,6 +50,7 @@ function Home() {
           5 increment
         </button>
       </div>
+      <Payment />
     </div>
   );
 }

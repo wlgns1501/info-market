@@ -33,7 +33,11 @@ const WritingContainer = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      > input#hidden-input {
+      > input#selectFile {
+        border: 1px dotted red;
+        margin-left: 10%;
+      }
+      /* > input#hidden-input {
         position: absolute;
         width: 1px;
         height: 1px;
@@ -46,8 +50,8 @@ const WritingContainer = styled.div`
       > label {
         display: inline-block;
         padding: 0.4em 0.75em;
-        /* line-height: normal;
-        vertical-align: middle; */
+        line-height: normal;
+        vertical-align: middle;
         background-color: #337ab7;
         cursor: pointer;
         border-radius: 0.25em;
@@ -64,7 +68,7 @@ const WritingContainer = styled.div`
         -moz-appearance: none;
         appearance: none;
         width: 50%;
-      }
+      } */
     }
     > div.submit {
       margin-left: auto;
@@ -75,6 +79,7 @@ const WritingContainer = styled.div`
         appearance: none;
         background-color: #f5f5f5;
         border: 1px solid gray;
+        margin-bottom: 20%;
       }
     }
   }
@@ -116,7 +121,7 @@ function Writing() {
 
         <label for="hidden-input">업로드</label>
         <input type="file" id="hidden-input" /> */}
-        <input type="file" />
+        <input id="selectFile" type="file" />
       </div>
 
       <div className="submit">

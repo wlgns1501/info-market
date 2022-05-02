@@ -29,9 +29,9 @@ export const InputContainer = styled.div`
       font-size: 1rem;
       flex: 1;
     }
-    > select:nth-child(1) {
+    /* > select:nth-child(1) {
       display: ${(props) => (props.single ? 'none' : '')};
-    }
+    } */
     > span {
       border: 1px solid purple;
       display: flex;
@@ -84,9 +84,13 @@ export const InputContainer = styled.div`
   } */
 `;
 
-function SelectBox({ items }) {
+function SelectBox({ items, value, handleSelect }) {
   return (
-    <select name="filter">
+    <select
+      name="filter"
+      value={value}
+      onChange={(e) => handleSelect(e.target.value)}
+    >
       {items.map((item, i) => (
         <option key={i} value={item}>
           {item}
@@ -96,29 +100,32 @@ function SelectBox({ items }) {
   );
 }
 
-export default function Search({ single }) {
+export default function Search({
+  single,
+  searchOptions,
+  handleSelect,
+  handleInputChange,
+  searchClick,
+}) {
   return single ? (
-    <InputContainer single>
+    <InputContainer>
       <form>
         <SelectBox
-          className="selet-box first"
-          items={['제목', '내용', '작성자']}
-        />
-        <SelectBox
+          value={searchOptions.selectValue}
           className="selet-box second"
           items={['전체', '무료', '유료']}
+          handleSelect={handleSelect}
         />
         <span>
           <input
             type="search"
             placeholder="검색어를 입력하세요."
-            // onChange={handleInputChange}
-            // value={inputValue}
+            onChange={(e) => handleInputChange(e.target.value)}
+            value={searchOptions.inputValue}
           />
-          {/* <div className="delete-button">&times;</div> */}
           <FontAwesomeIcon id="delete-button" icon={faCircleXmark} />
         </span>
-        <button id="search-icon" type="submit">
+        <button id="search-icon" type="submit" onClick={(e) => searchClick(e)}>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
       </form>
@@ -135,13 +142,7 @@ export default function Search({ single }) {
           items={['전체', '무료', '유료']}
         />
         <span>
-          <input
-            type="search"
-            placeholder="검색어를 입력하세요."
-            // onChange={handleInputChange}
-            // value={inputValue}
-          />
-          {/* <div className="delete-button">&times;</div> */}
+          <input type="search" placeholder="검색어를 입력하세요." />
           <FontAwesomeIcon id="delete-button" icon={faCircleXmark} />
         </span>
         <button id="search-icon" type="submit">

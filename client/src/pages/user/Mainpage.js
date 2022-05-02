@@ -4,14 +4,14 @@ import styled from 'styled-components';
 
 const EntireContainer = styled.div`
   border: 3px solid red;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   > section {
     border: 3px solid blue;
-    width: 70%;
-    height: 100%;
+    min-width: 70%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     > #search {
@@ -20,7 +20,7 @@ const EntireContainer = styled.div`
 
     > div#posts-container {
       border: 5px solid yellow;
-      height: 80%;
+      min-height: 80%;
       display: flex;
       flex-direction: column;
 
@@ -91,6 +91,12 @@ function Mainpage() {
     <EntireContainer>
       <section>
         <Search id="search" />
+        {/* <Search
+          id="search"
+          searchOptions={searchOptions}
+          dispatch={dispatch}
+          updateSearch={updateSearch}
+        /> */}
         <div id="posts-container">
           <div id="sales-top-10">
             <p>유료 정보글 TOP 10</p>

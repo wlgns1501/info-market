@@ -100,14 +100,6 @@ function UserInfoChange() {
   } = useSelector(selectUserInfo);
   const dispatch = useDispatch();
 
-  const config = {
-    headers: {
-      'content-type': 'application/json',
-      Authorization: `Bearer ${accToken}`,
-    },
-    withCredentials: true,
-  };
-
   const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
   const [inputVal, setInputVal] = useState({
@@ -119,6 +111,7 @@ function UserInfoChange() {
     account: '',
     phoneAuthentication: false,
     emailAuthentication: false,
+    nickNameAuthentication: false,
   });
   const [errorMsg, setErrorMsg] = useState({
     email: '',
@@ -128,127 +121,237 @@ function UserInfoChange() {
     rePwd: '',
   });
 
+  //회원정보수정 접근 권한 얻기
   const checkPwd = () => {
     if (pwdCheckInput === password) setLocked(false);
     setPwdCheckInput('');
   };
 
+  //회원정보수정 인풋값 반영
   const handleChange = (e) => {
-    setInputVal({ ...inputVal, [e.target.name]: e.target.value });
+    if (e.target.name === 'email') emailCheck(e.target.value);
+    if (e.target.name === 'nickname') nickNameCheck(e.target.value);
+    if (e.target.name === 'phone') phoneCheck(e.target.value);
+    if (e.target.name === 'password') pwdCheck(e.target.value);
+    if (e.target.name === 'rePwd') rePwdCheck(e.target.value);
   };
 
-  const phoneAuthentication = (e) => {
-    e.preventDefault();
-    if (e.target.value === phone)
-      return setErrorMsg({
-        ...errorMsg,
-        [e.target.name]: '이미 인증된 번호입니다.',
-      });
-  };
+  useEffect(() => {
+    console.log('inputVal: ', inputVal);
+  }, [inputVal]);
 
-  const emailAuthentication = (e) => {
-    e.preventDefault();
-  };
-
-  const handleInput = (e) => {
-    handleChange(e);
-    console.log('4: ', inputVal);
-    const { name, value, placeholder } = e.target;
-
-    if (
-      (name === 'password' && value === password) ||
-      (name !== 'password' && value === placeholder)
-    ) {
-      return setErrorMsg({ ...errorMsg, [name]: '변화가 없습니다.' });
-    }
+  //이메일 값에 따른 에러메세지 상태 변화
+  const emailCheck = (inputEmail) => {
+    setInputVal({ ...inputVal, email: inputEmail, emailAuthentication: false });
 
     const emailRegex =
       /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
-    const pwdRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-
-    if (!value) return setErrorMsg({ ...errorMsg, [name]: '' });
-    if (name === 'email' && !emailRegex.test(value)) {
+    if (!inputEmail) return setErrorMsg({ ...errorMsg, email: '' });
+    if (inputEmail === email)
+      return setErrorMsg({ ...errorMsg, email: '변화가 없습니다.' });
+    if (!emailRegex.test(inputEmail))
       return setErrorMsg({ ...errorMsg, email: '이메일 형식으로 적어주세요.' });
-    } else if (
-      name === 'email' &&
-      emailRegex.test(value) &&
-      !inputVal.emailAuthentication
-    ) {
+    if (!inputVal.emailAuthentication)
+      return setErrorMsg({ ...errorMsg, email: '인증해주세요.' });
+    setErrorMsg({ ...errorMsg, email: '' });
+  };
+
+  //닉네임 값에 따른 에러메세지 상태 변화
+  const nickNameCheck = (inputNickName) => {
+    setInputVal({
+      ...inputVal,
+      nickname: inputNickName,
+      nickNameAuthentication: false,
+    });
+    if (!inputNickName) return setErrorMsg({ ...errorMsg, nickname: '' });
+    if (inputNickName === nickname)
+      return setErrorMsg({ ...errorMsg, nickname: '변화가 없습니다.' });
+    if (!inputVal.nickNameAuthentication)
       return setErrorMsg({
         ...errorMsg,
-        email: '인증해주세요.',
+        nickname: '중복검사를 해주세요.',
       });
-    } else if (name === 'nickname') {
+
+    setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
+  };
+
+  //핸드폰 번호 값에 따른 에러메세지 상태 변화
+  const phoneCheck = (inputPhone) => {
+    setInputVal({ ...inputVal, phone: inputPhone, phoneAuthentication: false });
+
+    const phoneRegex = /^01([0|1|6|7|8|9])[-]+[0-9]{4}[-]+[0-9]{4}$/;
+
+    if (!inputPhone) return setErrorMsg({ ...errorMsg, phone: '' });
+    if (inputPhone === phone)
+      return setErrorMsg({ ...errorMsg, phone: '변화가 없습니다.' });
+    if (!phoneRegex.test(inputPhone))
+      return setErrorMsg({
+        ...errorMsg,
+        phone: '휴대폰 번호 형식으로 적어주세요.',
+      });
+    if (!inputVal.phoneAuthentication)
+      return setErrorMsg({
+        ...errorMsg,
+        phone: '인증해주세요.',
+      });
+
+    setErrorMsg({ ...errorMsg, phone: '' }); //서버테스트후 삭제여부 결정
+  };
+
+  //비밀번호 값에 따른 에러메세지 상태 변화
+  const pwdCheck = (inputPwd) => {
+    setInputVal({
+      ...inputVal,
+      password: inputPwd,
+    });
+
+    const pwdRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!inputPwd) return setErrorMsg({ ...errorMsg, password: '' });
+    if (inputPwd === password)
+      return setErrorMsg({ ...errorMsg, password: '변화가 없습니다.' });
+
+    if (!pwdRegex.test(inputPwd))
+      return setErrorMsg({
+        ...errorMsg,
+        password: '최소 8자, 하나 이상의 문자, 하나의 숫자와 특수 문자 포함',
+      });
+
+    setErrorMsg({ ...errorMsg, password: '' });
+  };
+
+  //비밀번호 일치여부에 따른 에러메세지 상태 변화
+  const rePwdCheck = (inputRePwd) => {
+    setInputVal({
+      ...inputVal,
+      rePwd: inputRePwd,
+    });
+
+    const { password } = inputVal;
+    if (inputRePwd && inputRePwd !== password)
+      return setErrorMsg({
+        ...errorMsg,
+        rePwd: '일치하지 않습니다.',
+      });
+
+    setErrorMsg({ ...errorMsg, rePwd: '' });
+  };
+
+  //수정 버튼 활성화 조건: 에러 메세지가 안 뜨면서, 수정될 값이 있을 때만 활성화.
+  const activateUpdateBtn = () => {
+    const { email, nickname, phone, password, rePwd } = inputVal;
+    return (
+      !locked &&
+      (password ? password === rePwd : !rePwd) &&
+      Object.values(errorMsg).every((msg) => msg === '') &&
+      [email, nickname, phone, password].some((val) => val !== '')
+    );
+  };
+
+  //닉네임 중복검사 버튼 클릭 이벤트
+  const isValidNickName = (e) => {
+    e.preventDefault();
+    if (inputVal.nickname === nickname) {
+      setErrorMsg({
+        ...errorMsg,
+        nickname: '사용 중인 닉네임입니다.',
+      });
+    } else {
       axios
-        .get(`http://localhost:8080/check/${value}`)
+        .get(`http://localhost:8080/check/${inputVal.nickname}`, {
+          Authorization: `Bearer ${accToken}`,
+        })
         .then((res) => {
           const { message } = res.data;
-          if (message && message !== 'ok')
-            return setErrorMsg({
+          if (message && message === 'ok') {
+            setInputVal({ ...inputVal, nickNameAuthentication: true });
+            setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
+          } else {
+            setErrorMsg({
               ...errorMsg,
               nickname: '중복된 닉네임이 있습니다.',
             });
+          }
         })
         .catch((err) => {
           alert('서버 에러 발생! 다시 시도해주세요.');
           setInputVal({ ...inputVal, nickname: '' });
         });
-    } else if (name === 'phone' && !phoneRegex.test(value)) {
-      return setErrorMsg({
-        ...errorMsg,
-        phone: '휴대폰 번호 형식으로 적어주세요.',
-      });
-    } else if (
-      name === 'phone' &&
-      phoneRegex.test(value) &&
-      !inputVal.phoneAuthentication
-    ) {
-      return setErrorMsg({
-        ...errorMsg,
-        phone: '인증해주세요.',
-      });
-    } else if (name === 'password' && !pwdRegex.test(value)) {
-      console.log('1: ', inputVal.password);
-      return setErrorMsg({
-        ...errorMsg,
-        password: '최소 8자, 하나 이상의 문자, 하나의 숫자와 특수 문자 포함',
-      });
-    } else if (name === 'rePwd' && inputVal.password !== inputVal.rePwd) {
-      return setErrorMsg({
-        ...errorMsg,
-        rePwd: '일치하지 않습니다.',
-      });
     }
-    setErrorMsg({ ...errorMsg, [name]: '' });
   };
 
-  //에러 메세지가 안 뜨면서, 수정된 값이 있을 때만 수정 버튼 활성화
-  const activateUpdateBtn = () => {
-    const { email, nickname, phone, password } = inputVal;
-    return (
-      !locked &&
-      inputVal.password === inputVal.rePwd &&
-      Object.values(errorMsg).every((val) => val === '') &&
-      [email, nickname, phone, password].some((val) => val !== '')
-    );
+  //핸드폰 인증 버튼 클릭 이벤트
+  const phoneAuthentication = (e) => {
+    e.preventDefault();
+    if (inputVal.phone === phone) {
+      setErrorMsg({
+        ...errorMsg,
+        phone: '사용 중인 번호입니다.',
+      });
+    } else {
+      //인증완료후
+      setInputVal({ ...inputVal, phoneAuthentication: true });
+      setErrorMsg({ ...errorMsg, phone: '' }); //서버테스트후 삭제여부 결정
+    }
   };
 
+  //이메일 인증 버튼 클릭 이벤트
+  const emailAuthentication = (e) => {
+    e.preventDefault();
+    if (inputVal.email === email) {
+      setErrorMsg({
+        ...errorMsg,
+        email: '이미 인증된 이메일입니다.',
+      });
+    } else {
+      //인증완료후
+      setInputVal({ ...inputVal, emailAuthentication: true });
+      setErrorMsg({ ...errorMsg, email: '' }); //서버테스트후 삭제여부 결정
+    }
+  };
+
+  //회원정보수정 제출
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const {email, nickname, phone, password} = inputVal;
-    // const list = [email, nickname, phone, password].filter(el => el !== '');
+    const userInfoObj = { email, nickname, phone, password };
+    const { email, nickname, phone, password } = inputVal;
+    let tempObj = { email, nickname, phone, password };
+    let resultObj = {};
+    //1. '값'이 있는 속성만 추출해서 보내기
+    for (let key in tempObj) {
+      if (tempObj[key]) resultObj = { ...resultObj, [key]: tempObj[key] };
+    }
+    //2. '값'이 없는 속성은 기본값으로 세팅해서 보내기
+    // for (let key in tempObj) {
+    //   if (!tempObj[key]) tempObj[key] = userInfoObj[key]
+    // }
+    // resultObj = {...tempObj}
 
-    // axios.post(`http://localhost:8080/users/${userId}`, {
-
-    // }, config)
+    console.log('resultObj: ', resultObj);
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        Authorization: `Bearer ${accToken}`,
+      },
+      withCredentials: true,
+    };
+    axios
+      .post(`http://localhost:8080/users/${userId}`, resultObj, config)
+      .then((res) => {
+        dispatch(updateState(resultObj));
+        setLocked(true);
+        alert('회원정보가 수정되었습니다.');
+      })
+      .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };
 
+  //회원탈퇴
   const handleWithdrawal = (e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8080/auth/${userId}`, config)
+      .delete(`http://localhost:8080/auth/${userId}`, {
+        Authorization: `Bearer ${accToken}`,
+      })
       .then((res) => dispatch(clearState()))
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };
@@ -281,7 +384,7 @@ function UserInfoChange() {
               type="email"
               placeholder={email}
               disabled={locked}
-              onChange={handleInput}
+              onChange={handleChange}
             />
             <button disabled={locked} onClick={emailAuthentication}>
               인증
@@ -292,14 +395,15 @@ function UserInfoChange() {
           <div className="input-box">
             <input
               name="nickname"
-              value={inputVal.nickname}
               className="content"
               type="text"
               placeholder={nickname}
               disabled={locked}
               onChange={handleChange}
-              onBlur={handleInput}
             />
+            <button disabled={locked} onClick={isValidNickName}>
+              중복검사
+            </button>
             <p className="error-message">{errorMsg.nickname}</p>
           </div>
 
@@ -310,7 +414,7 @@ function UserInfoChange() {
               type="tel"
               placeholder={phone}
               disabled={locked}
-              onChange={handleInput}
+              onChange={handleChange}
             />
             <button disabled={locked} onClick={phoneAuthentication}>
               인증
@@ -326,7 +430,7 @@ function UserInfoChange() {
               value={inputVal.password}
               placeholder="새 비밀번호"
               disabled={locked}
-              onChange={handleInput}
+              onChange={handleChange}
             />
             <p className="error-message">{errorMsg.password}</p>
             <input
@@ -337,7 +441,6 @@ function UserInfoChange() {
               placeholder="비밀번호 확인"
               disabled={locked}
               onChange={handleChange}
-              onBlur={handleInput}
             />
             <p className="error-message">{errorMsg.rePwd}</p>
           </div>

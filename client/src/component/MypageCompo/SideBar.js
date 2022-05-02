@@ -16,6 +16,12 @@ const EntireContainer = styled.div`
   > div {
     display: flex;
     width: 70%;
+    @media screen and (max-width: 1100px) {
+      min-width: 90%;
+    }
+    @media screen and (max-width: 900px) {
+      min-width: 100%;
+    }
     height: 100%;
     border: 3px solid black;
     > section {
@@ -47,8 +53,8 @@ const EntireContainer = styled.div`
 
     > div.userInfo {
       border: 4px solid pink;
-      width: 100%;
-      padding: 2%;
+      min-width: 80%;
+      /* padding: 2%; */
       flex: 1 1 80%;
       display: flex;
       flex-direction: column;
