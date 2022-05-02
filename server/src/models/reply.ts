@@ -6,7 +6,7 @@ interface ReplyAttribute {
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Reply extends Model<ReplyAttribute> implements ReplyAttribute {
-    public readonly id!: number;
+    public readonly id!: string;
     public content!: string;
 
     public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.

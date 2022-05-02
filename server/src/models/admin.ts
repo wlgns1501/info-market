@@ -8,7 +8,7 @@ interface AdminAttributes {
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Admin extends Model<AdminAttributes> implements AdminAttributes {
-    public readonly id!: number;
+    public readonly id!: string;
     public email!: string;
     public password!: string;
     public grade!: string;

@@ -12,7 +12,7 @@ interface InfoAttribute {
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Info extends Model<InfoAttribute> implements InfoAttribute {
-    public readonly id!: number;
+    public readonly id!: string;
     public title!: string;
     public content!: string;
     public targetPoint!: number;
