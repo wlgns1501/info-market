@@ -33,13 +33,13 @@ export async function modifyReply(
   );
 }
 
-export async function deleteReply(replyId: number) {
-  return await Info.destroy({
+export async function deleteReply(replyId: string) {
+  return await Reply.destroy({
     where: { id: replyId },
   });
 }
 
-export async function getReply(replyId: number) {
+export async function getReply(replyId: string) {
   return await Reply.findOne({
     where: { id: replyId },
   });

@@ -30,9 +30,6 @@ module.exports = {
 
     const exUser = await userDb.findPkUser(userId);
     const exReply = await replyDb.getReply(replyId);
-    console.log(exReply?.userId);
-    console.log(userId);
-    console.log(exUser?.nickname);
 
     if (!content) {
       return res.status(400).json({ message: '댓글을 입력해 주세요' });
@@ -62,24 +59,20 @@ module.exports = {
     const { infoId, replyId } = req.params;
     const { userId } = req;
 
-    const exUser = await userDb.findPkUser(userId);
     const exReply = await replyDb.getReply(replyId);
-    console.log(exReply?.userId);
-    console.log(userId);
-    console.log(exUser?.nickname);
 
     if (userId !== exReply?.userId) {
-      return res
-        .status(403)
-        .json({ message: '해당 댓글을 작성한 유저가 아닙니다.' });
+      if (exReply?.userId === undefined) {
+        return res.status(400).json({ message: '이미 삭제된 댓글입니다.' });
+      } else {
+        return res
+          .status(403)
+          .json({ message: '해당 댓글을 작성한 유저가 아닙니다.' });
+      }
     }
 
-    const replyData = await replyDb.deleteReply(replyId);
+    await replyDb.deleteReply(replyId);
 
-    return res.status(203).json({
-      reply: replyData,
-      nuckname: exUser?.nickname,
-      numessage: '댓글을 삭제했습니다.',
-    });
+    return res.status(203).json({ numessage: '댓글을 삭제했습니다.' });
   },
 };
