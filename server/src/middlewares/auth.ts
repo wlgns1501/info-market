@@ -45,7 +45,6 @@ module.exports = {
           next();
         } else {
           const user = await userDb.findPkUser(decoded.id);
-          // console.log(user);
 
           if (!user) {
             return res

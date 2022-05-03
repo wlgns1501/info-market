@@ -33,14 +33,16 @@ export async function findUser(email: string) {
 export async function editUserInfo(
   userId: number,
   email: string,
-  password: string,
+  hashPw: string,
   nickname: string,
+  phone: string,
 ) {
   return await User.update(
     {
       email,
-      password,
+      password: hashPw,
       nickname,
+      phone,
     },
     {
       where: {

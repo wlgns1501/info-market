@@ -52,6 +52,34 @@ export async function getInfos(pages: number, limit: number) {
   });
 }
 
+export async function getMyInfos(pages: number, limit: number, userId: number) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    offset: (pages - 1) * 10,
+    where: {
+      userId,
+    },
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+  });
+}
+
 export async function createInfo(
   title: string,
   content: string,
