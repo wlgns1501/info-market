@@ -9,7 +9,7 @@ router.get('/:infoId', auth.me, infoControllers.getInfo);
 router.post('/', auth.me, infoControllers.writeInfo);
 router.delete('/:infoId', auth.me, infoControllers.removeInfo);
 router.put('/:infoId', auth.me, infoControllers.putInfo);
-
+router.get('/', infoControllers.getInfoes);
 // 댓글 reply.js
 // router.post('/:infoId/reply', replyControllers.writeReply);
 // router.put('/:infoId/reply/:replyId', replyControllers.putReply);

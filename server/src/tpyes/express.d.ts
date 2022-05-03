@@ -1,11 +1,11 @@
-import db from '../models/index';
-
+import User from '../models/user';
+import Admin from '../models/admin';
 declare global {
   namespace Express {
     interface Request {
-      userId?: db.User.id<string>;
+      userId?: User.id;
       token?: string;
-      grade?: db.User.grade | db.Admin.grade;
+      grade?: User.grade | Admin.grade;
     }
   }
 }

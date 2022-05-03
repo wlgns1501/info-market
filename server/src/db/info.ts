@@ -1,24 +1,82 @@
-import db from '../models/index';
+import { Sequelize, Op } from 'sequelize';
 
-type Info = {
-  infoId: string;
-  title: string;
-  content: string;
-  targetPoint: number;
-  type: string;
-  totalViews: number;
-  userId: number;
-};
+import Info from '../models/info';
+import User from '../models/user';
 
-export async function getInfo(infoId: string): Promise<Info | null> {
-  return await db.Info.findOne({
+export async function getInfo(infoId: string) {
+  return await Info.findOne({
     where: { id: infoId },
-    // include: [
-    //   {
-    //     model: db.User,
-    //     attribute: ['nickname'],
-    //   },
-    // ],
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+      'totalViews',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+  });
+}
+
+export async function getInfos(pages: number, limit: number) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    offset: (pages - 1) * 10,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+  });
+}
+
+export async function getMyInfos(pages: number, limit: number, userId: number) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    offset: (pages - 1) * 10,
+    where: {
+      userId,
+    },
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updateTimestamp',
+      'targetPoint',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
   });
 }
 
@@ -27,18 +85,20 @@ export async function createInfo(
   content: string,
   targetPoint: number,
   type: string,
-): Promise<Info> {
-  return await db.Info.create({
+  userId: number,
+) {
+  return await Info.create({
     title,
     content,
     targetPoint,
     type,
+    userId,
   });
 }
 
-export async function removeInfo(infoId: string): Promise<void> {
-  return await db.Info.destroy({
-    where: infoId,
+export async function removeInfo(infoId: string) {
+  return await Info.destroy({
+    where: { id: infoId },
   });
 }
 
@@ -46,8 +106,8 @@ export async function BronzeEditInfo(
   infoId: string,
   title: string,
   content: string,
-): Promise<void> {
-  return await db.Info.update(
+) {
+  return await Info.update(
     {
       title,
       content,
@@ -62,8 +122,8 @@ export async function SGEditInfo(
   content: string,
   targetPoint: number,
   type: string,
-): Promise<void> {
-  return await db.Info.update(
+) {
+  return await Info.update(
     {
       title,
       content,

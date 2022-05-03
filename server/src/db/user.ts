@@ -1,22 +1,12 @@
-import db from '../models/index';
-
-type User = {
-  id: string;
-  email: string;
-  password: string;
-  nickname: string;
-  phone: string;
-  point: number;
-  grade: string;
-};
+import User from '../models/user';
 
 export async function createUser(
   email: string,
   hashPw: string,
   nickname: string,
   phone: string,
-): Promise<User> {
-  return await db.User.create({
+) {
+  return await User.create({
     email,
     password: hashPw,
     nickname,
@@ -25,14 +15,15 @@ export async function createUser(
 }
 
 export async function findUsers(pages: number, limit: number) {
-  return await db.User.findAndCountAll({
+  return await User.findAndCountAll({
+    order: [['createdAt', 'desc']],
     limit,
     offset: (pages - 1) * 10,
   });
 }
 
-export async function findUser(email: string): Promise<User | null> {
-  return await db.User.findOne({
+export async function findUser(email: string) {
+  return await User.findOne({
     where: {
       email,
     },
@@ -40,16 +31,18 @@ export async function findUser(email: string): Promise<User | null> {
 }
 
 export async function editUserInfo(
-  userId: string,
+  userId: number,
   email: string,
-  password: string,
+  hashPw: string,
   nickname: string,
-): Promise<void> {
-  return await db.User.update(
+  phone: string,
+) {
+  return await User.update(
     {
       email,
-      password,
+      password: hashPw,
       nickname,
+      phone,
     },
     {
       where: {
@@ -60,13 +53,13 @@ export async function editUserInfo(
 }
 
 export async function AdminEditUserInfo(
-  userId: string,
+  userId: number,
   email: string,
   nickname: string,
   point: number,
   grade: string,
-): Promise<string | null> {
-  return await db.User.update(
+) {
+  return await User.update(
     {
       email,
       nickname,
@@ -81,16 +74,16 @@ export async function AdminEditUserInfo(
   );
 }
 
-export async function removeUser(userId: string): Promise<void> {
-  return await db.User.destroy({
+export async function removeUser(userId: number) {
+  return await User.destroy({
     where: {
       id: userId,
     },
   });
 }
 
-export async function findPkUser(userId: string): Promise<User | undefined> {
-  return await db.User.findOne({
-    id: userId,
+export async function findPkUser(userId: number) {
+  return await User.findOne({
+    where: { id: userId },
   });
 }

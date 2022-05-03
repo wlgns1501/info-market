@@ -81,21 +81,18 @@ module.exports = {
   },
   remove: async (req: Request, res: Response) => {
     const { userId } = req.params;
-    console.log(userId);
 
-    console.log(req.userId);
-
-    if (req.userId !== userId) {
+    if (req.userId !== Number(userId)) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다' });
     }
 
-    const user = await userDb.findPkUser(userId);
+    const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
       return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
 
-    await userDb.removeUser(userId).catch(() => {
+    await userDb.removeUser(Number(userId)).catch(() => {
       return res.status(400).json({ message: '회원탈퇴에 실패 하였습니다.' });
     });
 
