@@ -26,6 +26,15 @@ const EntireContainer = styled.div`
     table-layout: fixed;
     text-align: center;
   }
+  > div#paging {
+    border: 1px dotted red;
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 5px 5px 0;
+    > button {
+      cursor: pointer;
+    }
+  }
 `;
 
 const PostContainer = styled.tr`
@@ -216,12 +225,12 @@ function MyPosts() {
       />
       <table>
         <colgroup>
-          <col id="id" width="3%" />
-          <col id="type" width="5%" />
-          <col id="active" width="7%" />
-          <col id="title" width="25%" />
-          <col id="like" width="7%" />
-          <col id="point" width="7%" />
+          <col id="id" width="5%" />
+          <col id="type" min-width="5%" />
+          <col id="active" min-width="7%" />
+          <col id="title" width="30%" />
+          <col id="like" min-width="7%" />
+          <col id="point" min-width="7%" />
           <col id="createdAt" width="13%" />
           <col id="updatedAt" width="13%" />
         </colgroup>
@@ -246,18 +255,20 @@ function MyPosts() {
           ))} */}
         </tbody>
       </table>
-      <p id="paging">
-        {currentPage}/{totalPage}
-      </p>
-      <button disabled={Number(currentPage) === 1} onClick={prevBtnClick}>
-        이전
-      </button>
-      <button
-        onClick={nextBtnClick}
-        disabled={Number(currentPage) === Number(totalPage)}
-      >
-        다음
-      </button>
+      <div id="paging">
+        <button disabled={Number(currentPage) === 1} onClick={prevBtnClick}>
+          이전
+        </button>
+        <span>
+          {currentPage} / {totalPage}
+        </span>
+        <button
+          onClick={nextBtnClick}
+          disabled={Number(currentPage) === Number(totalPage)}
+        >
+          다음
+        </button>
+      </div>
     </EntireContainer>
   );
 }

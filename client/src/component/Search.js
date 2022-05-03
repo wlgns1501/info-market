@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faCircleXmark } from '@fortawesome/free-regular-svg-icons';
@@ -29,9 +29,6 @@ export const InputContainer = styled.div`
       font-size: 1rem;
       flex: 1;
     }
-    /* > select:nth-child(1) {
-      display: ${(props) => (props.single ? 'none' : '')};
-    } */
     > span {
       border: 1px solid purple;
       display: flex;
@@ -107,6 +104,12 @@ export default function Search({
   handleInputChange,
   searchClick,
 }) {
+  const buttonEl = useRef(null);
+  const handleKeyPress = (e) => {
+    e.preventDefault();
+    if (e.key === 'Enter') buttonEl.current.click();
+  };
+
   return single ? (
     <InputContainer>
       <form>
@@ -122,10 +125,16 @@ export default function Search({
             placeholder="검색어를 입력하세요."
             onChange={(e) => handleInputChange(e.target.value)}
             value={searchOptions.inputValue}
+            onKeyPress={handleKeyPress}
           />
-          <FontAwesomeIcon id="delete-button" icon={faCircleXmark} />
+          {/* <FontAwesomeIcon id="delete-button" icon={faCircleXmark} /> */}
         </span>
-        <button id="search-icon" type="submit" onClick={(e) => searchClick(e)}>
+        <button
+          id="search-icon"
+          type="submit"
+          ref={buttonEl}
+          onClick={(e) => searchClick(e)}
+        >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
       </form>

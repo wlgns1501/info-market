@@ -1,5 +1,10 @@
+import { freeze } from '@reduxjs/toolkit';
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { selectUserInfo } from '../../store/slices/userInfo';
+
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
@@ -27,72 +32,83 @@ const WritingContainer = styled.div`
         flex-grow: 1;
       }
     }
-    > div.filebox {
-      margin: 1% auto 1% 0;
-      /* margin: 0; */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      > input#selectFile {
-        border: 1px dotted red;
-        margin-left: 10%;
-      }
-      /* > input#hidden-input {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
-      > label {
-        display: inline-block;
-        padding: 0.4em 0.75em;
-        line-height: normal;
-        vertical-align: middle;
-        background-color: #337ab7;
-        cursor: pointer;
-        border-radius: 0.25em;
-        color: #fff;
-      }
-      > input.disable-input {
-        display: inline-block;
-        padding: 0.5em 0.75em;
-        font-size: 1rem;
-        background-color: #f5f5f5;
-        border: 1px solid lightgray;
-        border-radius: 0.25em;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        width: 50%;
-      } */
-    }
     > div.submit {
-      margin-left: auto;
-      margin-right: 2%;
-      > button {
+      /* margin: 2% 2% 1% auto; */
+      display: flex;
+      width: 95%;
+      justify-content: flex-end;
+      align-items: center;
+      border: 1px solid green;
+      > span.msg {
+        display: none;
+        &.alert {
+          display: inline-block;
+          color: red;
+          font-size: 0.8rem;
+        }
+      }
+      > button#submit {
+        margin-left: 2%;
         font-size: 1rem;
-        padding: 0.5em 0.75em;
-        appearance: none;
+        padding: 0.5em;
         background-color: #f5f5f5;
         border: 1px solid gray;
-        margin-bottom: 20%;
+        cursor: pointer;
+        @media screen and (max-width: 1024px) {
+          font-size: 0.9rem;
+        }
+        @media screen and (max-width: 600px) {
+          font-size: 0.8rem;
+        }
       }
     }
   }
 `;
 
 function Writing() {
+  const { accToken } = useSelector(selectUserInfo);
+  const config = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+  const [textValues, setTextValues] = useState({
+    title: null,
+    content: null,
+  });
+
+  //확인용... 나중에 삭제하기
+  useEffect(() => {
+    console.log(textValues);
+  }, [textValues]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        'http://localhost:8080/info',
+        {
+          type: 'free',
+          ...textValues,
+        },
+        config,
+      )
+      .then((res) => {
+        if (res.data.infoId) alert('글이 등록되었습니다.');
+        setTextValues({
+          title: null,
+          content: null,
+        });
+      })
+      .catch((err) => {
+        alert('서버 에러 발생! 다시 시도해주세요.');
+      });
+  };
+
   return (
-    <form
-      enctype="multipart/form-data"
-      // action="write_ok.php?board_id=<?echo $board_id;?>"
-      method="post"
-    >
-      {/* <div id="in_title"> */}
+    <form>
       <textarea
         name="title"
         id="title"
@@ -100,32 +116,37 @@ function Writing() {
         cols="55"
         placeholder="제목"
         maxlength="100"
-        required
+        value={textValues.title}
+        onChange={(e) =>
+          setTextValues({ ...textValues, title: e.target.value })
+        }
       ></textarea>
-      {/* </div> */}
-
-      {/* <div class="wi_line"></div> */}
-      {/* <div id="in_content"> */}
       <textarea
         name="content"
         id="content"
         // rows="10"
         // cols="55"
         placeholder="내용"
-        required
+        value={textValues.content}
+        onChange={(e) =>
+          setTextValues({ ...textValues, content: e.target.value })
+        }
       ></textarea>
-      {/* </div> */}
-
-      <div className="filebox">
-        {/* <input className="disable-input" value="파일선택" disabled="disabled" />
-
-        <label for="hidden-input">업로드</label>
-        <input type="file" id="hidden-input" /> */}
-        <input id="selectFile" type="file" />
-      </div>
-
       <div className="submit">
-        <button type="submit">글 작성</button>
+        <span
+          className={
+            textValues.title && textValues.content ? 'msg' : 'msg alert'
+          }
+        >
+          제목과 내용 모두 작성해주세요.
+        </span>
+        <button
+          id="submit"
+          disabled={!textValues.title || !textValues.content}
+          onClick={handleSubmit}
+        >
+          작성 완료
+        </button>
       </div>
     </form>
   );
