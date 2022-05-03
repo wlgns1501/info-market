@@ -4,7 +4,7 @@ import * as infoDb from '../db/info';
 module.exports = {
   getInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    // console.log(infoId);
+    console.log(infoId);
 
     if (!infoId) {
       return res.status(401).json({ message: '게시물을 선택하지 않았습니다.' });
