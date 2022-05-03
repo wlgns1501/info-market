@@ -4,14 +4,14 @@ import * as infoDb from '../db/info';
 module.exports = {
   getInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    // console.log(infoId);
+    console.log(infoId);
 
     if (!infoId) {
       return res.status(401).json({ message: '게시물을 선택하지 않았습니다.' });
     }
 
     const info = await infoDb.getInfo(infoId);
-    // console.log(info);
+    console.log(info);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
