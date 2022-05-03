@@ -43,17 +43,6 @@ function Header() {
           </NavLink>
         </ul>
         <ul className="header-info">
-          {/* <li>
-            <FontAwesomeIcon
-              icon={faCircleUser}
-              className="faCircleUser"
-              size="2x"
-              // onClick={}
-            >
-              <li>로그아웃</li>
-              <li>마이페이지</li>
-            </FontAwesomeIcon>
-          </li> */}
           <UserMenu />
         </ul>
       </nav>

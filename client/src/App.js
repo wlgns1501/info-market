@@ -27,45 +27,42 @@ import WriteContentPaid from './pages/content/write/WriteContentPaid';
 import ContentPaid from './pages/content/ContentPaid';
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
-  const [userInfo, setUserInfo] = useState({});
+  // const [isLogin, setIsLogin] = useState(false);
+  // const [userInfo, setUserInfo] = useState({});
 
-  // const T = [];
+  // /* 로그인상태 변경, 메인페이지 불러옴 */
+  // const isAuthenticated = () => {
+  //   axios
+  //     .get(`http://localhost:3000/auth/login`)
+  //     .then((res) => {
+  //       setUserInfo(res.data.userInfo);
+  //     })
+  //     .catch((err) => err);
+  // };
 
-  /* 로그인상태 변경, 메인페이지 불러옴 */
-  const isAuthenticated = () => {
-    axios
-      .get(`http://localhost:3000/auth/login`)
-      .then((res) => {
-        setUserInfo(res.data.userInfo);
-      })
-      .catch((err) => err);
-  };
+  // /* 로그인 요청 성공 */
+  // const handleResponseSuccess = () => {
+  //   isAuthenticated();
+  //   setIsLogin(true);
+  // };
 
-  /* 로그인 요청 성공 */
-  const handleResponseSuccess = () => {
-    isAuthenticated();
-    setIsLogin(true);
-  };
+  // /* 로그아웃. 로그인 이후 메인페이지에서 체크 예정*/
+  // const handleLogout = () => {
+  //   axios.post(`http://localhost:3000/auth/logout`).then((res) => {
+  //     setUserInfo(null);
+  //     console.log(userInfo);
+  //     setIsLogin(false);
+  //   });
+  // };
 
-  /* 로그아웃. 로그인 이후 메인페이지에서 체크 예정*/
-  const handleLogout = () => {
-    axios.post(`http://localhost:3000/auth/logout`).then((res) => {
-      setUserInfo(null);
-      console.log(userInfo);
-      setIsLogin(false);
-    });
-  };
-
-  useEffect(() => {
-    console.log('before', userInfo);
-    // isAuthenticated();
-    console.log('after', userInfo);
-  }, []);
+  // useEffect(() => {
+  //   console.log('before', userInfo);
+  //   // isAuthenticated();
+  //   console.log('after', userInfo);
+  // }, []);
 
   return (
     <BrowserRouter>
-      {/* <div className="App"> */}
       <Header />
       <Routes>
         <Route path="/">
@@ -74,20 +71,18 @@ function App() {
           <Route path="tos" element={<Tos />} />
           <Route path="signup" element={<Signup />} />
           <Route path="main" element={<Mainpage />}>
-            {/* <Route path="postList">
+            {/* <Route path="searchResult">
               <Route index element={<PostList />} />
               <Route path=":postId" element={<Post />} />
             </Route> */}
           </Route>
-
           {/* 유료컨텐츠, 무료컨텐츠 */}
-          <Route path="freeboard" element={<FreeBoard />} />
-          <Route path="writefree" element={<WriteContentFree />} />
-          <Route path="contentfree" element={<ContentFree />} />
-          <Route path="paidboard" element={<PaidBoard />} />
-          <Route path="writepaid" element={<WriteContentPaid />} />
-          <Route path="contentpaid" element={<ContentPaid />} />
-
+          <Route path="freeboard" element={<FreeBoard />}>
+            <Route path=":postId" element={<ContentFree />} />
+          </Route>
+          <Route path="paidboard" element={<PaidBoard />}>
+            <Route path=":postId" element={<ContentPaid />} />
+          </Route>
           <Route path="mypage" element={<SideBar />}>
             <Route index element={<Mypage />} />
             <Route path="info" element={<UserInfo />}>
@@ -105,7 +100,6 @@ function App() {
         </Route>
       </Routes>
       <Footer />
-      {/* </div> */}
     </BrowserRouter>
   );
 }
