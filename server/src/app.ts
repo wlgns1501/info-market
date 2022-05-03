@@ -4,15 +4,13 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-// import indexRouter from '../routes/index.js';
-import db from './models';
+const indexRouter = require('./routes/index');
+import { sequelize } from './models';
 dotenv.config();
-
-const User = require('./models/user');
 
 const app = express();
 // 데이터베이스 연결
-db.sequelize
+sequelize
   .sync()
   .then(() => {
     console.log('데이터베이스 연결 성공');
@@ -42,19 +40,10 @@ app.use(helmet());
 
 app.use(morgan('dev'));
 
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
 
 // http://15.164.104.171/
-app.get('/api', async (req: Request, res: Response) => {
-  const user = await db.User.findOne({
-    where: {
-      id: 3,
-    },
-  });
-  console.log(user);
-
-  res.send('infomarket API');
-});
+app.get('/api', async (req: Request, res: Response) => {});
 
 // // 지원하지 않는 api
 app.use((req, res, next) => {
