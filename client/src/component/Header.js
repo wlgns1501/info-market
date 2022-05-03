@@ -35,8 +35,12 @@ function Header() {
           <NavLink to="/main">
             <li>메인페이지</li>
           </NavLink>
-          <li>무료 정보 게시판</li>
-          <li>유료 정보 게시판</li>
+          <NavLink to="/freeboard">
+            <li>무료 정보 게시판</li>
+          </NavLink>
+          <NavLink to="/paidboard">
+            <li>유료 정보 게시판</li>
+          </NavLink>
         </ul>
         <ul className="header-info">
           {/* <li>

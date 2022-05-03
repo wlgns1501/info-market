@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 const authControllers = require('../controlloers/auth');
-//const { signup, login } = require('../controlloers/auth');
+// const { signup, login } = require('../controlloers/auth');
 const authMe = require('../middlewares/auth');
 // 로그인
 router.post('/login', authControllers.login);

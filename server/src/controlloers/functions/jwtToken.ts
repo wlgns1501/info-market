@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
-const config = require('../../config');
+import { config } from '../../config';
 
 module.exports = {
   // token으로 sign
-  generateAccessToken: (id, grade) => {
+  generateAccessToken: (id: number, grade: string): Promise<void> => {
     return jwt.sign({ id, grade }, config.jwt.secret_key, {
       expiresIn: config.jwt.expiresIn,
     });
   },
-  generateRefreshToken: (id, grade) => {
+  generateRefreshToken: (id: number, grade: string): Promise<void> => {
     return jwt.sign({ id, grade }, config.jwt.secret_key, {
       expiresIn: config.jwt.expiresIn,
     });

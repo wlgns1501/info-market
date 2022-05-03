@@ -1,5 +1,6 @@
-const userDb = require('../db/user.js');
-const adminDb = require('../db/admin');
+import { NextFunction, Request, Response } from 'express';
+import * as userDb from '../db/user';
+import * as adminDb from '../db/admin';
 const bcrypt = require('../controlloers/functions/bcrypt');
 const {
   generateAccessToken,
@@ -7,38 +8,39 @@ const {
 } = require('./functions/jwtToken');
 
 module.exports = {
-  adminSignUp: async (req, res, next) => {
+  adminSignUp: async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const exAdmin = await adminDb.findUser(email);
+    const exAdmin = await adminDb.findAdmin(email);
 
     if (exAdmin) {
       return res.status(409).json({ message: '중복된 유저 입니다.' });
     }
 
-    const hashPw = await bcrypt.hash(password).catch((err) => {
+    const hashPw = await bcrypt.hash(password).catch((err: Error) => {
       console.log(err);
     });
 
-    const test = await adminDb.createUser(email, hashPw);
+    const test = await adminDb.createAdmin(email, hashPw);
 
     return res.status(201).json({
       id: test.id,
       message: '회원가입에 성공 했습니다.',
     });
   },
-  adminLogin: async (req, res) => {
+
+  adminLogin: async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const admin = await adminDb.findUser(email);
+    const admin = await adminDb.findAdmin(email);
     // console.log(admin);
     if (!admin) {
       return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
-    const { id, point, grade } = admin;
+    const { id, grade } = admin;
 
-    const verification = await bcrypt
+    const verification: boolean = await bcrypt
       .comparePw(password, admin.password)
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log(err);
       });
 
@@ -46,8 +48,8 @@ module.exports = {
       return res.status(400).json({ message: '비밀번호가 일치하지 않음' });
     }
 
-    const accToken = generateAccessToken(id, grade);
-    const refreshToken = generateRefreshToken(id, grade);
+    const accToken: string = generateAccessToken(id, grade);
+    const refreshToken: string = generateRefreshToken(id, grade);
     const cookieOptions = {
       httpOnly: true,
     };
@@ -57,19 +59,20 @@ module.exports = {
       .status(201)
       .json({
         id,
-        point,
         grade,
         accToken: accToken,
         message: '로그인에 성공 했습니다.',
       });
   },
-  adminLogOut: (req, res) => {
+
+  adminLogOut: (req: Request, res: Response) => {
     res
       .cookie('refreshToken', '')
       .status(200)
       .json({ message: '로그아웃에 성공했습니다.' });
   },
-  getUsers: async (req, res) => {
+
+  getUsers: async (req: Request, res: Response) => {
     const { pages, limit } = req.query;
     const { grade } = req;
     // console.log(grade);
@@ -78,11 +81,13 @@ module.exports = {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
-    const users = await userDb.findUsers(pages, limit).catch(() => {
-      return res
-        .status(400)
-        .json({ message: '회원 정보를 불러오는데 실패했습니다.' });
-    });
+    const users = await userDb.findUsers(Number(pages), Number(limit));
+    //   .catch(() => {
+    //     return res
+    //       .status(400)
+    //       .json({ message: '회원 정보를 불러오는데 실패했습니다.' });
+    //   });
+    // console.log(users);
 
     if (users.count === 0) {
       return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
@@ -90,7 +95,8 @@ module.exports = {
 
     res.status(200).json({ users, message: '가입한 유저들을 불러왔습니다.' });
   },
-  editUserInfo: async (req, res) => {
+
+  editUserInfo: async (req: Request, res: Response) => {
     const { userId } = req.params;
 
     if (req.grade !== 'admin') {
@@ -102,38 +108,36 @@ module.exports = {
     const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
-      return res.status(406).message({ message: '유저가 존재하지 않습니다.' });
+      return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
     }
 
-    const updatedId = await userDb
-      .editUserInfo(userId, email, nickname, point, grade)
+    await userDb
+      .AdminEditUserInfo(Number(userId), email, nickname, point, grade)
       .catch(() => {
         return res
           .status(400)
           .json({ message: '회원 정보를 수정하는데 실패했습니다.' });
       });
 
-    const updatedUser = await userDb.findPkUser(Number(updatedId));
-
     res.status(200).json({
-      user: updatedUser,
       message: '해당 유저의 정보를 수정 했습니다.',
     });
   },
-  removeUser: async (req, res) => {
+
+  removeUser: async (req: Request, res: Response) => {
     const { userId } = req.params;
 
     if (req.grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
-    const user = await userDb.findPkUser(userId);
+    const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
-      return res.status(406).message({ message: '유저가 존재하지 않습니다.' });
+      return res.status(406).json({ message: '유저가 존재하지 않습니다.' });
     }
 
-    await userDb.removeUser(userId).catch(() => {
+    await userDb.removeUser(Number(userId)).catch(() => {
       return res
         .status(400)
         .json({ message: '회원을 삭제 하는데 실패했습니다.' });

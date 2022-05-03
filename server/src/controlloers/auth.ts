@@ -1,4 +1,5 @@
-const userDb = require('../db/user');
+import { Request, Response } from 'express';
+import * as userDb from '../db/user';
 const bcrypt = require('./functions/bcrypt');
 const {
   generateAccessToken,
@@ -6,7 +7,7 @@ const {
 } = require('./functions/jwtToken');
 
 module.exports = {
-  signup: async (req, res) => {
+  signup: async (req: Request, res: Response) => {
     const { email, password, nickname, phone } = req.body;
 
     const exUser = await userDb.findUser(email);
@@ -15,9 +16,11 @@ module.exports = {
       return res.status(409).json({ message: '중복된 유저 입니다.' });
     }
 
-    const hashPw = await bcrypt.hash(password).catch((err) => {
+    const hashPw: string = await bcrypt.hash(password).catch((err: Error) => {
       console.log(err);
     });
+
+    // console.log(hashPw);
 
     const test = await userDb.createUser(email, hashPw, nickname, phone);
     // console.log(test);
@@ -27,7 +30,7 @@ module.exports = {
     });
   },
 
-  login: async (req, res) => {
+  login: async (req: Request, res: Response) => {
     const { email, password } = req.body;
     // console.log(req.body);
 
@@ -40,9 +43,9 @@ module.exports = {
     const { id, point, grade } = userInfo;
 
     // npm문서에서 bcrypt 관련 내용 찾아보기
-    const verification = await bcrypt
+    const verification: string = await bcrypt
       .comparePw(password, userInfo.password)
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log(err);
       });
 
@@ -52,49 +55,50 @@ module.exports = {
       return res.status(400).json({ message: '비밀번호가 일치하지 않음' });
     }
     // 토큰 [id(PK), grade)]생성하고 전달.
-    const accToken = generateAccessToken(id, grade);
-    const refreshToken = generateRefreshToken(id, grade);
+    const accToken: string = generateAccessToken(id, grade);
+    const refreshToken: string = generateRefreshToken(id, grade);
     const cookieOptions = {
       httpOnly: true,
     };
     // console.log(refreshToken);
     // id, token, point, grade, message
-    return (
-      res
-        // .cookie('refreshToken', refreshToken, cookieOptions)
-        .status(201)
-        .json({
-          id,
-          point,
-          grade,
-          accToken: accToken,
-          message: '로그인에 성공 했습니다.',
-        })
-    );
+    return res
+      .cookie('refreshToken', refreshToken, cookieOptions)
+      .status(201)
+      .json({
+        id,
+        point,
+        grade,
+        accToken: accToken,
+        message: '로그인에 성공 했습니다.',
+      });
   },
-  logout: async (req, res) => {
+  logout: async (req: Request, res: Response) => {
     res
       .cookie('refreshToken', '')
       .status(200)
       .json({ message: '로그아웃에 성공했습니다.' });
   },
-  remove: async (req, res) => {
+  remove: async (req: Request, res: Response) => {
     const { userId } = req.params;
 
-    if (req.userId != userId) {
+    if (req.userId !== Number(userId)) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다' });
     }
 
-    const user = await userDb.findPkUser(userId);
+    const user = await userDb.findPkUser(Number(userId));
 
     if (!user) {
       return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
 
-    await userDb.removeUser(userId).catch(() => {
+    await userDb.removeUser(Number(userId)).catch(() => {
       return res.status(400).json({ message: '회원탈퇴에 실패 하였습니다.' });
     });
 
-    return res.status(204).json({ message: '회원이 탈퇴 처리 되었습니다.' });
+    return res
+      .cookie('refreshToken', '')
+      .status(204)
+      .json({ message: '회원이 탈퇴 처리 되었습니다.' });
   },
 };

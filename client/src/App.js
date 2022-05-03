@@ -19,6 +19,12 @@ import UserInfoChange from './component/MypageCompo/UserInfoChange';
 import UserInfo from './component/MypageCompo/UserInfo';
 import Mypage from './pages/user/Mypage';
 import Mainpage from './pages/user/Mainpage';
+import FreeBoard from './pages/content/contentBoard/FreeBoard';
+import PaidBoard from './pages/content/contentBoard/PaidBoard';
+import WriteContentFree from './pages/content/write/WriteContentFree';
+import ContentFree from './pages/content/ContentFree';
+import WriteContentPaid from './pages/content/write/WriteContentPaid';
+import ContentPaid from './pages/content/ContentPaid';
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -73,6 +79,15 @@ function App() {
               <Route path=":postId" element={<Post />} />
             </Route> */}
           </Route>
+
+          {/* 유료컨텐츠, 무료컨텐츠 */}
+          <Route path="freeboard" element={<FreeBoard />} />
+          <Route path="writefree" element={<WriteContentFree />} />
+          <Route path="contentfree" element={<ContentFree />} />
+          <Route path="paidboard" element={<PaidBoard />} />
+          <Route path="writepaid" element={<WriteContentPaid />} />
+          <Route path="contentpaid" element={<ContentPaid />} />
+
           <Route path="mypage" element={<SideBar />}>
             <Route index element={<Mypage />} />
             <Route path="info" element={<UserInfo />}>
