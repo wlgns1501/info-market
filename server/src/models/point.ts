@@ -1,32 +1,27 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 import User from './user';
-import Info from './info';
 
-class Payment extends Model {
+class Point extends Model {
   public dataValues!: {
     id: number;
     userId: number;
-    infoId: number;
-    state: string;
+    point: number;
+    status: string;
+    tci: string;
   };
 
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
-  public infoId!: BelongsToManyGetAssociationsMixin<Info>;
+  public point!: number;
   public state!: string;
+  public readonly tci!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-Payment.init(
+Point.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -46,21 +41,22 @@ Payment.init(
         key: 'id',
       },
     },
-    infoId: {
+    point: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'Info',
-        key: 'id',
-      },
+      defaultValue: 0,
+    },
+    tci: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
   },
   {
     sequelize,
     timestamps: true,
     underscored: false,
-    modelName: 'Payment',
-    tableName: 'Payment',
+    modelName: 'Point',
+    tableName: 'Point',
     paranoid: true,
     // mb4 -> 이모티콘도 사용 가능
     charset: 'utf8',
@@ -69,18 +65,12 @@ Payment.init(
 );
 
 export const associate = (db: dbType) => {
-  db.Payment.belongsTo(db.User, {
+  db.Point.belongsTo(db.User, {
     foreignKey: 'userId',
-    targetKey: 'id',
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  });
-  db.Payment.belongsTo(db.Info, {
-    foreignKey: 'infoId',
     targetKey: 'id',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });
 };
 
-export default Payment;
+export default Point;

@@ -80,6 +80,7 @@ module.exports = {
           .json({ info: findInfoBy, message: '해당 게시물을 불러왔습니다.' });
       }
     } else if (search_type === 'nickname') {
+      // 닉네임 검색 수정 필요. 몇개 있는지는 검색이 되지만 내용이 검색 안됨
       const { nickname } = req.query;
       if (!nickname) {
         return res.status(400).json({ message: '내용을 입력해 주세요.' });
