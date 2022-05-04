@@ -9,14 +9,16 @@ class Point extends Model {
     userId: number;
     point: number;
     status: string;
-    tci: string;
+    tid: string;
+    partner_order_id: number;
   };
 
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
   public point!: number;
   public state!: string;
-  public readonly tci!: string;
+  public partner_order_id!: number;
+  public readonly tid!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -46,8 +48,12 @@ Point.init(
       allowNull: false,
       defaultValue: 0,
     },
-    tci: {
+    tid: {
       type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    partner_order_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },
