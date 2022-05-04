@@ -13,9 +13,10 @@ module.exports = {
       'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
     };
     const state: string = 'ready';
-    const approval_url: string = 'http://localhost:8080/point/approve';
-    const fail_url: string = 'http://localhost:8080/point/approve';
-    const cancel_url: string = 'http://localhost:8080/point/approve';
+    const approval_url: string = 'http://localhost:3000';
+    const fail_url: string = 'http://localhost:3000';
+    const cancel_url: string = 'http://localhost:3000';
+    const _userId = 1;
 
     const {
       partner_order_id,
@@ -25,6 +26,8 @@ module.exports = {
       total_amount,
       tax_free_amount,
     } = req.query;
+
+    console.log(req.query);
 
     const response: any = await axios({
       url: _url,
@@ -36,7 +39,7 @@ module.exports = {
       params: {
         cid: _cid,
         partner_order_id,
-        partner_user_id,
+        partner_user_id: _userId,
         item_name,
         quantity: Number(quantity),
         total_amount: Number(total_amount),
@@ -45,18 +48,20 @@ module.exports = {
         fail_url,
         cancel_url,
       },
-    }).catch((err: Error) =>
-      res.status(400).json({ message: '결제에 실패하였습니다.' }),
-    );
+    }).catch((err: Error) => {
+      console.log(err);
+      res.status(400).json({ message: '결제에 실패하였습니다.' });
+    });
 
-    await pointDb.createPoint(
-      response.data.tid,
-      state,
-      req.userId,
-      Number(req.query.total_amount),
-    );
+    // await pointDb.createPoint(
+    //   response.data.tid,
+    //   state,
+    //   _userId,
+    //   Number(req.query.total_amount),
+    //   Number(req.query.partner_order_id),
+    // );
 
-    // console.log(response['data']);
+    console.log(response['data']);
     const redirectUrl = response['data']['next_redirect_pc_url'];
     return res
       .status(200)
@@ -69,9 +74,11 @@ module.exports = {
     const _cid: string = 'TC0ONETIME';
     const state = 'approve';
     const _url: string = 'https://kapi.kakao.com/v1/payment/approve';
+    const _userId: number = 1;
+    console.log(pg_token);
 
     const pointCharge = await pointDb.findUserChargePoint(
-      Number(req.userId),
+      Number(_userId),
       'ready',
     );
 
@@ -83,15 +90,21 @@ module.exports = {
         'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
       params: {
-        cid: _cid,
-        partner_order_id,
-        partner_user_id: pointCharge!.userId,
         pg_token,
+        cid: _cid,
+        partner_order_id: String(pointCharge!.partner_order_id),
+        partner_user_id: String(_userId),
         total_amount: pointCharge!.point,
+        tid: pointCharge!.tid,
       },
-    }).catch((err: Error) =>
-      res.status(400).json({ message: '결제에 실패하였습니다.' }),
-    );
+    }).catch((err: Error) => {
+      console.log(err);
+      return res.status(400).json({ message: '결제에 실패하였습니다.' });
+    });
+
+    // console.log(response.data);
+
+    // return res.status(200).json({ message: '결제가 완료되었습니다.' });
   },
   cancel: async (req: Request, res: Response) => {},
   order: async (req: Request, res: Response) => {},

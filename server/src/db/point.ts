@@ -5,12 +5,14 @@ export async function createPoint(
   state: string,
   userId: number,
   point: number,
+  partner_order_id: number,
 ) {
   return await Point.create({
     tid,
     state,
     userId,
     point,
+    partner_order_id,
   });
 }
 
