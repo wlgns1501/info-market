@@ -11,11 +11,12 @@ module.exports = {
     }
 
     const info = await infoDb.getInfo(infoId);
-    console.log(info);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
     }
+
+    await infoDb.viewsAdd(info.id, Number(info.totalViews));
 
     return res.status(200).json({
       info,

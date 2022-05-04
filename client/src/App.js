@@ -29,6 +29,7 @@ import ContentPaid from './pages/content/ContentPaid';
 function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userInfo, setUserInfo] = useState({});
+  axios.defaults.withCredentials = true;
 
   // const T = [];
 
@@ -50,11 +51,15 @@ function App() {
 
   /* 로그아웃. 로그인 이후 메인페이지에서 체크 예정*/
   const handleLogout = () => {
-    axios.post(`http://localhost:3000/auth/logout`).then((res) => {
-      setUserInfo(null);
-      console.log(userInfo);
-      setIsLogin(false);
-    });
+    axios
+      .post(
+        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/logout`,
+      )
+      .then((res) => {
+        setUserInfo(null);
+        console.log(userInfo);
+        setIsLogin(false);
+      });
   };
 
   useEffect(() => {
