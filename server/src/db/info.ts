@@ -1,4 +1,4 @@
-import { Sequelize, Op } from 'sequelize';
+import { Sequelize, Op, where } from 'sequelize';
 
 import Info from '../models/info';
 import User from '../models/user';
@@ -131,5 +131,18 @@ export async function SGEditInfo(
       type,
     },
     { where: { id: infoId } },
+  );
+}
+
+export async function viewsAdd(infoId: number, views: number) {
+  return await Info.update(
+    {
+      totalViews: views + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
   );
 }
