@@ -15,10 +15,12 @@ const EntireContainer = styled.div`
     text-align: center;
     border: 1px dotted gray;
     font-size: 1rem;
-
+    > button {
+      cursor: pointer;
+    }
     > span {
       display: block;
-      /* margin: 0 6px; */
+      margin: 10px 0;
     }
   }
 `;
@@ -99,7 +101,7 @@ function ChargedPointList() {
           이전
         </button>
         <span>
-          {current}/{totalPage}
+          {current} / {totalPage}
         </span>
         <button
           id="next"

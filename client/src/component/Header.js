@@ -28,7 +28,12 @@ function Header() {
             onClick={() => handleBar()}
           />
           <NavLink to="/">
-            <img src={logo} alt="logo " className="header-logo" />
+            <img
+              src={logo}
+              alt="logo "
+              className="header-logo"
+              style={{ minWidth: '150px' }}
+            />
           </NavLink>
         </div>
         <ul className="header-menu">
@@ -43,17 +48,6 @@ function Header() {
           </NavLink>
         </ul>
         <ul className="header-info">
-          {/* <li>
-            <FontAwesomeIcon
-              icon={faCircleUser}
-              className="faCircleUser"
-              size="2x"
-              // onClick={}
-            >
-              <li>로그아웃</li>
-              <li>마이페이지</li>
-            </FontAwesomeIcon>
-          </li> */}
           <UserMenu />
         </ul>
       </nav>
