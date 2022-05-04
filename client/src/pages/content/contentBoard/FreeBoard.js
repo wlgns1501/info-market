@@ -1,292 +1,199 @@
-import React from 'react'
-import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-/* 폰트어썸, 더보기, 글작성 디자인 */
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux';
-import { selectPurchaseDetails } from '../../../store/slices/purchaseDetails';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
+import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
+import freeBoardData from '../../../mockdata/freeBoardData';
+const { posts, total } = freeBoardData;
 
 const EntireContainer = styled.div`
-  border: 3px solid black;
-  height: 60%;
-  > ul.posts {
-    border: 3px solid pink;
-    margin: 0;
+  display: flex;
+  background-color: #faf9f5;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  min-height: 75vh;
+  /* border: 5px solid blue; */
+  overflow-y: scroll;
+  > div#order {
+    /* border: 1px solid red; */
+    width: 50%;
+    margin-top: 10px;
+    /* border: 1px solid black; */
+    > ul#paging {
+      list-style: none;
+      display: flex;
+      /* width: 30px; */
+      justify-content: center;
+      align-items: center;
+      /* border: 1px solid black; */
+      padding: 0;
+      margin: 0;
+      > li {
+        width: 1.5rem;
+        height: 1.5rem;
+        text-align: center;
+        line-height: 1.5rem;
+        border: 1px solid gray;
+        border-radius: 5px;
+        box-shadow: 2px;
+      }
+    }
+  }
+  > ul.postList {
+    /* border: 3px solid red; */
     list-style: none;
-    padding-left: 0;
-    height: 100%;
-    overflow: auto;
+    padding: 0;
+    max-width: 50%;
+    height: 600px;
     padding: 1%;
     > li.post {
-      border: 3px solid greenyellow;
-      padding: 1%;
-      margin-bottom: 4%;
-      display: flex;
-      flex-direction: column;
-      /* flex-wrap: auto; */
-      > span.purchased-at {
-        /* flex: 1; */
-        margin-bottom: 1%;
+      border: 1px solid black;
+      background-color: white;
+      &:not(:last-child) {
+        margin-bottom: 15px;
       }
-      > p {
-        border: 1px solid red;
-        margin: 0;
-        width: 100%;
-        padding: 1%;
-        text-overflow: ellipsis;
-        &.title {
-          /* flex: 1; */
-          &:hover {
-            text-decoration: underline;
-            cursor: pointer;
+      > div.writer_createdAt {
+        border: 1px dotted black;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        > span {
+          border: 2px dotted purple;
+          &.writer {
+            > span.icon {
+              margin-right: 10px;
+            }
+          }
+          &.createdAt {
           }
         }
+      }
+      > p {
+        border: 1px dotted black;
+        margin: 0;
+        overflow: hidden;
+        padding: 5px;
+        &.title {
+          margin-top: 3px;
+          margin-bottom: 2px;
+        }
         &.content {
-          /* flex: 4; */
-          /* height: 5vh; */
-          word-break: normal;
-          /* white-space: normal; */
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
-          overflow: hidden;
+          margin-bottom: 3px;
         }
       }
-      > div.btn-price {
-        /* flex: 1; */
+      > div.total_Likes_Views {
+        border: 1px dotted black;
+        padding: 5px;
         display: flex;
         justify-content: space-between;
-        margin-top: 1%;
         > span {
-          &.btn {
-          }
-          &.price {
-            margin-right: 3%;
+          border: 1px dotted orange;
+          &.totalLikes {
           }
         }
       }
     }
   }
 `;
-function FreeBoard() {
 
-  const [isFreeList, setIsFreeList] = useState({
-    id: "",
-    title: "",
-    content: "",
-    targetPoint: "",
-    created_at: "",
-    nickname: "",
-    totalViews: "",
-    totalLike: "",
-  });
+function Post({ post }) {
+  const {
+    id,
+    title,
+    writer,
+    content,
+    totalLikes,
+    reviews,
+    totalViews,
+    createdAt,
+    updatedAt,
+  } = post;
 
-  const { paidPostList } = useSelector(selectPurchaseDetails);
-
-  /* 임시용 */
-  function Post({ post }) {
-    const { id, title, content, fileURL, point, like, writer, createdAt } = post;
-    const day = createdAt.split(' ')[0];
-
-    const handleClick = (e) => {
-      e.preventDefault();
-      //게시글 이동 창.
-      window.open(`/main/postList/${id}`, '_blank');
-    };
-
-    return (
-      <li className="post">
-        <span className="purchased-at">{day}</span>
-        <p className="title" onClick={handleClick}>
-          {title}
-        </p>
-        <p className="content">{content}</p>
-        <div className="btn-price">
-          <span className="writer">{writer}</span>
-          <span className="price">{point} P</span>
-        </div>
-      </li>
-    );
-  }
-
+  const day = createdAt.split(' ')[0];
   return (
-    // <div>
-    //   <div>
-    //     {/* {
-    //       isFreeList ? isFreeList.map((content) => {
-    //         return (
-    //           <div className='content-list' id={content.id} key={content.id}>
-    //             <div className='content-title'>{content.title}</div>
-    //             <div className='content-body'>{content.content}</div>
-    //             <div className=''>{content.targetPoint}</div>
-    //             <div className=''>{content.created_at}</div>
-    //             <div className=''>{content.nickname}</div>
-    //             <div className=''>{content.totalViews}</div>
-    //             <div className=''>{content.totalViews}</div>
-    //           </div>
-    //           )
-    //         }) : null
-    //       } */}
-    //     <div className='content-list'>
-    //       <ul className='content-title'>
-    //         <li>제목</li>
-    //         <li className=''>조회수</li>
-    //         <li className=''>추천수</li>
-    //       </ul>
-    //       <ul className='content-body'>
-    //         <li>내용</li>
-    //       </ul>
-    //       <ul>
-    //         <li className=''>작성자</li>
-    //         <li className=''>포인트금액</li>
-    //         <li className=''>작성일자</li>
-    //       </ul>
-    //     </div>
-    //   </div>
-    // </div>
-    <EntireContainer>
-      <ul className="posts">
-        {paidPostList.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </ul>
-    </EntireContainer>
-  )
+    <li className="post">
+      <div className="writer_createdAt">
+        <span className="writer">
+          <span className="icon">
+            <FontAwesomeIcon icon={faUser} />
+          </span>
+          {writer}
+        </span>
+        <span className="createdAt">{day}</span>
+      </div>
+      <p className="title">{title}</p>
+      <p className="content">{content}</p>
+      <div className="total_Likes_Views">
+        <span className="totalLikes">
+          <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
+        </span>
+        <span className="totalViews">
+          <FontAwesomeIcon icon={faEye} /> {totalViews}
+        </span>
+      </div>
+    </li>
+  );
 }
 
-export default FreeBoard
+function FreeBoard() {
+  const range = (total) => Array.from({ length: total }, (_, i) => i + 1);
+  // const [list, setList] = useState([]);
+  const [list, setList] = useState([...posts.slice(0, 8)]);
+  const [page, setPage] = useState(1);
+  const LIMIT = 6;
+  const [totalPage, setTotalPage] = useState(null);
 
-// const EntireContainer = styled.div`
-//   border: 3px solid black;
-//   height: 60%;
-//   > ul.posts {
-//     border: 3px solid pink;
-//     margin: 0;
-//     list-style: none;
-//     padding-left: 0;
-//     height: 100%;
-//     overflow: auto;
-//     padding: 1%;
-//     > li.post {
-//       border: 3px solid greenyellow;
-//       padding: 1%;
-//       margin-bottom: 4%;
-//       display: flex;
-//       flex-direction: column;
-//       /* flex-wrap: auto; */
-//       > span.purchased-at {
-//         /* flex: 1; */
-//         margin-bottom: 1%;
-//       }
-//       > p {
-//         border: 1px solid red;
-//         margin: 0;
-//         width: 100%;
-//         padding: 1%;
-//         text-overflow: ellipsis;
-//         &.title {
-//           /* flex: 1; */
-//           &:hover {
-//             text-decoration: underline;
-//             cursor: pointer;
-//           }
-//         }
-//         &.content {
-//           /* flex: 4; */
-//           /* height: 5vh; */
-//           word-break: normal;
-//           /* white-space: normal; */
-//           display: -webkit-box;
-//           -webkit-line-clamp: 2;
-//           -webkit-box-orient: vertical;
-//           overflow: hidden;
-//         }
-//       }
-//       > div.btn-price {
-//         /* flex: 1; */
-//         display: flex;
-//         justify-content: space-between;
-//         margin-top: 1%;
-//         > span {
-//           &.btn {
-//           }
-//           &.price {
-//             margin-right: 3%;
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       `${process.env.REACT_APP_SERVER_URL}/test/freeBoard?pages=${page}&limit=${LIMIT}`,
+  //     )
+  //     .then((res) => {
+  //       const { rows, total } = res.data;
+  //       if (!rows) return;
+  //       setTotalPage(Math.ceil(Number(total) / LIMIT));
+  //       setList([...rows]);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, [page]);
 
-// function Post({ post }) {
-//   const { id, title, type, content, fileURL, point, like, writer, createdAt } = post;
-//   const day = createdAt.split(' ')[0];
-//   // const [ischeck, setCheck] = useState([]);
+  // const pagingArr = range(totalPage);
+  const pagingArr = range(10);
+  return (
+    <EntireContainer>
+      <div id="order">
+        <input type="radio" name="info_order" value="최신순" checked />
+        최신순
+        <input
+          type="radio"
+          name="info_order"
+          value="인기순"
+          style={{ marginLeft: '10px' }}
+        />
+        인기순
+        {/* <ul id="paging">
+          {pagingArr.map((el) => (
+            <li key={el} name={el}>
+              {el}
+            </li>
+          ))}
+        </ul> */}
+      </div>
+      <ul className="postList">
+        {list.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
+        {/* <>{isLoading && <Loading/>}</> */}
+      </ul>
+    </EntireContainer>
+  );
+}
 
-//   const handleClick = (e) => {
-//     e.preventDefault();
-//     //게시글 이동 창.
-//     window.open(`/main/postList/${id}`, '_blank');
-//   };
-
-//   // const checkFree = () => {
-//   //   if(ischeck === 'free'){
-
-//   //   }
-//   // }
-
-//   return (
-//     <li className="post">
-//       <span className="purchased-at">{day}</span>
-//       <p className="title" onClick={handleClick}>
-//         {title}
-//       </p>
-//       <p className="content">{content}</p>
-//       <div className="btn-price">
-//         <span className="writer">{writer}</span>
-//         <span className="price">{point} P</span>
-//       </div>
-//     </li>
-//   );
-// }
-
-// function FreeBoard() {
-
-//   const [isPaidList, setPaidList] = useState();
-//   const [info, setInfo] = useState([]);
-
-//   const getFreeContent = (data) => {
-//     if (data.id) {
-//       setInfo(
-//         info.map()
-//       )
-//     }
-//   }
-
-//   /* 목록 더보기 이벤트 */
-//   const handleClick = () => {
-
-//   }
-//   const { paidPostList } = useSelector(selectPurchaseDetails);
-
-//   return (
-//     <EntireContainer>
-//       <ul className="posts">
-//         {paidPostList.map((post) => (
-//           <Post key={post.id} post={post} />
-//         ))}
-//       </ul>
-//     </EntireContainer>
-//     // <div>
-//     //   <ul>
-//     //     <li>
-//     //       <div>제목</div>
-//     //       <Link to="/freeboard/writefree">
-//     //         <li>글작성</li>
-//     //       </Link>
-//     //     </li>
-//     //   </ul>
-//     // </div>
-//   )
+export default FreeBoard;
