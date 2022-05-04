@@ -1,10 +1,4 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 import User from './user';
@@ -15,14 +9,14 @@ class Point extends Model {
     userId: number;
     point: number;
     status: string;
-    // tci: string;
+    tci: string;
   };
 
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
   public point!: number;
   public state!: string;
-  // public readonly tci!: string;
+  public readonly tci!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -52,10 +46,10 @@ Point.init(
       allowNull: false,
       defaultValue: 0,
     },
-    // tci: {
-    //   type: DataTypes.STRING(50),
-    //   allowNull: false,
-    // },
+    tci: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
   },
   {
     sequelize,

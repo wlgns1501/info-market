@@ -24,7 +24,6 @@ router.use('/search', searchRouter);
 router.use('/users', usersRouter);
 
 // 포인트 충전 및 환불
-
-router.use('./point', pointRouter);
+router.use('/point', pointRouter);
 
 module.exports = router;
