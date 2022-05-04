@@ -111,7 +111,7 @@ export default function Search({
   };
 
   return single ? (
-    <InputContainer>
+    <InputContainer className="bar">
       <form>
         <SelectBox
           value={searchOptions.selectValue}
@@ -140,7 +140,7 @@ export default function Search({
       </form>
     </InputContainer>
   ) : (
-    <InputContainer>
+    <InputContainer className="bar">
       <form>
         <SelectBox
           className="selet-box first"
@@ -152,7 +152,7 @@ export default function Search({
         />
         <span>
           <input type="search" placeholder="검색어를 입력하세요." />
-          <FontAwesomeIcon id="delete-button" icon={faCircleXmark} />
+          {/* <FontAwesomeIcon id="delete-button" icon={faCircleXmark} /> */}
         </span>
         <button id="search-icon" type="submit">
           <FontAwesomeIcon icon={faMagnifyingGlass} />

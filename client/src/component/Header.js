@@ -28,7 +28,12 @@ function Header() {
             onClick={() => handleBar()}
           />
           <NavLink to="/">
-            <img src={logo} alt="logo " className="header-logo" />
+            <img
+              src={logo}
+              alt="logo "
+              className="header-logo"
+              style={{ minWidth: '150px' }}
+            />
           </NavLink>
         </div>
         <ul className="header-menu">

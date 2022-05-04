@@ -1,9 +1,9 @@
-import React from 'react'
-import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 /* 폰트어썸, 더보기, 글작성 디자인 */
-import axios from 'axios'
+import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPurchaseDetails } from '../../../store/slices/purchaseDetails';
 
@@ -70,23 +70,23 @@ const EntireContainer = styled.div`
   }
 `;
 function FreeBoard() {
-
   const [isFreeList, setIsFreeList] = useState({
-    id: "",
-    title: "",
-    content: "",
-    targetPoint: "",
-    created_at: "",
-    nickname: "",
-    totalViews: "",
-    totalLike: "",
+    id: '',
+    title: '',
+    content: '',
+    targetPoint: '',
+    created_at: '',
+    nickname: '',
+    totalViews: '',
+    totalLike: '',
   });
 
   const { paidPostList } = useSelector(selectPurchaseDetails);
 
   /* 임시용 */
   function Post({ post }) {
-    const { id, title, content, fileURL, point, like, writer, createdAt } = post;
+    const { id, title, content, fileURL, point, like, writer, createdAt } =
+      post;
     const day = createdAt.split(' ')[0];
 
     const handleClick = (e) => {
@@ -152,10 +152,10 @@ function FreeBoard() {
         ))}
       </ul>
     </EntireContainer>
-  )
+  );
 }
 
-export default FreeBoard
+export default FreeBoard;
 
 // const EntireContainer = styled.div`
 //   border: 3px solid black;
