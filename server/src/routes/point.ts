@@ -3,7 +3,7 @@ const router = express.Router();
 const pointControllers = require('../controlloers/point');
 const auth = require('../middlewares/auth');
 
-router.post('/ready', pointControllers.ready);
+router.get('/getToken', pointControllers.getToken);
 
 router.post('/approve', pointControllers.approve);
 

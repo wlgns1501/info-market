@@ -3,7 +3,7 @@ import { Sequelize, Op, where } from 'sequelize';
 import Info from '../models/info';
 import User from '../models/user';
 
-export async function getInfo(infoId: string) {
+export async function getInfo(infoId: number) {
   return await Info.findOne({
     where: { id: infoId },
     attributes: [
