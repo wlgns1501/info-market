@@ -16,7 +16,7 @@ module.exports = {
 
     await likeDb.likeClick(Number(userId), Number(infoId));
 
-    const info = await infoDb.getInfo(infoId);
+    const info = await infoDb.getInfo(Number(infoId));
     await infoDb.LikesAdd(info!.id, Number(info!.totalLikes));
 
     return res.status(200).json({ message: '해당 게시물을 추천했습니다.' });
@@ -36,7 +36,7 @@ module.exports = {
 
     await likeDb.likeClickCancel(Number(infoId));
 
-    const info = await infoDb.getInfo(infoId);
+    const info = await infoDb.getInfo(Number(infoId));
     await infoDb.LikesSub(info!.id, Number(info!.totalLikes));
 
     return res
