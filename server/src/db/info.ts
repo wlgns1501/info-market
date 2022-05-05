@@ -13,7 +13,6 @@ export async function getInfo(infoId: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
       'targetPoint',
       'type',
       'totalViews',

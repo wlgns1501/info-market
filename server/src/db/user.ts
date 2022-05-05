@@ -87,3 +87,14 @@ export async function findPkUser(userId: number) {
     where: { id: userId },
   });
 }
+
+export async function editUserPoint(userId: number, point: number) {
+  return await User.update(
+    { point },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
