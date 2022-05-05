@@ -3,7 +3,7 @@ import { Sequelize, Op, where } from 'sequelize';
 import Info from '../models/info';
 import User from '../models/user';
 
-export async function getInfo(infoId: string) {
+export async function getInfo(infoId: number) {
   return await Info.findOne({
     where: { id: infoId },
     attributes: [
@@ -13,8 +13,6 @@ export async function getInfo(infoId: string) {
       'content',
       'userId',
       'createdAt',
-      //'updateTimestamp',
-      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
@@ -41,7 +39,6 @@ export async function getInfos(pages: number, limit: number) {
       'content',
       'userId',
       'createdAt',
-      //'updateTimestamp',
       'updatedAt',
       'targetPoint',
       'type',
@@ -70,7 +67,6 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'content',
       'userId',
       'createdAt',
-      //'updateTimestamp',
       'updatedAt',
       'targetPoint',
       'type',

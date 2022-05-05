@@ -4,95 +4,99 @@ import axios from 'axios';
 import { config } from '../config';
 
 module.exports = {
-  ready: async (req: Request, res: Response) => {
-    const _url: string = 'https://kapi.kakao.com/v1/payment/ready';
-    const _admin_key: string = String(config.kakao.admin_key);
-    const _cid: string = 'TC0ONETIME';
-    const headers = {
-      Authorization: `KakaoAk ${_admin_key}`,
-      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-    };
-    const state: string = 'ready';
-    const approval_url: string = 'http://localhost:8080/point/approve';
-    const fail_url: string = 'http://localhost:8080/point/approve';
-    const cancel_url: string = 'http://localhost:8080/point/approve';
-
-    const {
-      partner_order_id,
-      partner_user_id,
-      item_name,
-      quantity,
-      total_amount,
-      tax_free_amount,
-    } = req.query;
-
-    const response: any = await axios({
-      url: _url,
-      method: 'POST',
-      headers: {
-        Authorization: `KakaoAK ${_admin_key}`,
-        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      },
-      params: {
-        cid: _cid,
-        partner_order_id,
-        partner_user_id,
-        item_name,
-        quantity: Number(quantity),
-        total_amount: Number(total_amount),
-        tax_free_amount: Number(tax_free_amount),
-        approval_url,
-        fail_url,
-        cancel_url,
-      },
-    }).catch((err: Error) =>
-      res.status(400).json({ message: '결제에 실패하였습니다.' }),
-    );
-
-    await pointDb.createPoint(
-      response.data.tid,
-      state,
-      req.userId,
-      Number(req.query.total_amount),
-    );
-
-    // console.log(response['data']);
-    const redirectUrl = response['data']['next_redirect_pc_url'];
-    return res
-      .status(200)
-      .json({ redirectUrl, message: 'redirect url 입니다.' });
+  getToken: async (req: Request, res: Response) => {
+    return res.status(200).json({
+      imp_cid: config.imp.imp_cid,
+      imp_code: config.imp.imp_code,
+      message: 'cid와 secret code 입니다.',
+    });
   },
-
   approve: async (req: Request, res: Response) => {
-    const { pg_token } = req.query;
-    const _admin_key: string = String(config.kakao.admin_key);
-    const _cid: string = 'TC0ONETIME';
-    const state = 'approve';
-    const _url: string = 'https://kapi.kakao.com/v1/payment/approve';
+    const imp_key = config.imp.imp_key;
+    const imp_secret = config.imp.imp_secret;
+    const url: string = 'https://api.iamport.kr/users/getToken';
+    // const { userId } = req.query;
+    const userId: number = 1;
+    // console.log(req.body.payment_method);
 
-    const pointCharge = await pointDb.findUserChargePoint(
-      Number(req.userId),
-      'ready',
+    if (!req.body.imp_uid) {
+      return res.status(400).json({ message: '결제 번호를 받지 못했습니다.' });
+    }
+
+    if (!req.body.merchant_uid) {
+      return res.status(400).json({ message: '주문 번호를 받지 못했습니다.' });
+    }
+
+    const pointCharge = await pointDb.createPoint(
+      req.body.imp_uid,
+      req.body.status,
+      userId,
+      req.body.amount,
+      req.body.merchant_uid,
+      req.body.pay_method,
     );
 
-    const response: any = await axios({
-      url: _url,
-      method: 'POST',
-      headers: {
-        Authorization: `KakaoAK ${_admin_key}`,
-        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-      },
-      params: {
-        cid: _cid,
-        //partner_order_id,
-        partner_user_id: pointCharge!.userId,
-        pg_token,
-        total_amount: pointCharge!.point,
-      },
-    }).catch((err: Error) =>
-      res.status(400).json({ message: '결제에 실패하였습니다.' }),
+    const response: any = await axios
+      .post(
+        url,
+        {
+          imp_key,
+          imp_secret,
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .catch((err) => {
+        return res
+          .status(400)
+          .json({ message: 'iamport 토큰을 받아오는데 실패하였습니다.' });
+      });
+
+    const imp_token = response.data.response.access_token;
+
+    const complete_url: string = `https://api.iamport.kr/payments/${req.body.imp_uid}`;
+
+    const getPaymentData = await axios
+      .get(complete_url, {
+        headers: {
+          Authorization: imp_token,
+        },
+      })
+      .catch((err: Error) => {
+        return res
+          .status(400)
+          .json({ message: '결제 정보를 조회하는데 실패하였습니다.' });
+      });
+
+    const paymentData = getPaymentData.data.response;
+
+    const order = await pointDb.findUserChargePoint(
+      userId,
+      paymentData.merchant_uid,
     );
+
+    const amountToBePaid = order?.point;
+
+    const { amount, status } = paymentData;
+    console.log(paymentData);
+
+    if (amount === amountToBePaid) {
+      // await pointDb.findAndUpdate(merchant_uid,  )
+      switch (status) {
+        case 'ready':
+          break;
+        case 'paid':
+          return res
+            .status(200)
+            .json({ status: 'success', message: '결제에 성공하였습니다.' });
+      }
+    } else {
+      return res.status(400).json({ message: '위조된 결제시도가 있습니다.' });
+    }
   },
   cancel: async (req: Request, res: Response) => {},
-  order: async (req: Request, res: Response) => {},
 };
