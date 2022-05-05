@@ -13,10 +13,12 @@ export async function getInfo(infoId: string) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      //'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -39,7 +41,8 @@ export async function getInfos(pages: number, limit: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      //'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
     ],
@@ -67,7 +70,8 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      //'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
     ],
@@ -138,6 +142,32 @@ export async function viewsAdd(infoId: number, views: number) {
   return await Info.update(
     {
       totalViews: views + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function LikesAdd(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function LikesSub(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes - 1,
     },
     {
       where: {

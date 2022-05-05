@@ -3,6 +3,7 @@ const router = express.Router();
 const infoControllers = require('../controlloers/info');
 const replyControllers = require('../controlloers/reply');
 const orderControllers = require('../controlloers/order');
+const likeControllers = require('../controlloers/like');
 const auth = require('../middlewares/auth');
 
 // 게시물 info.js
@@ -11,6 +12,10 @@ router.post('/', auth.me, infoControllers.writeInfo);
 router.delete('/:infoId', auth.me, infoControllers.removeInfo);
 router.put('/:infoId', auth.me, infoControllers.putInfo);
 router.get('/', infoControllers.getInfoes);
+
+// 추천 like.js
+router.put('/:infoId/like', auth.me, likeControllers.like);
+router.delete('/:infoId/like', auth.me, likeControllers.likeCancel);
 
 // 댓글 reply.js
 router.post('/:infoId/reply', auth.me, replyControllers.writeReply);

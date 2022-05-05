@@ -84,7 +84,7 @@ module.exports = {
       },
       params: {
         cid: _cid,
-        partner_order_id,
+        //partner_order_id,
         partner_user_id: pointCharge!.userId,
         pg_token,
         total_amount: pointCharge!.point,

@@ -17,6 +17,7 @@ class Info extends Model {
     type: string;
     totalViews: number;
     userId: number;
+    totalLikes: number;
   };
   public readonly id!: number;
   public title!: string;
@@ -25,6 +26,7 @@ class Info extends Model {
   public type!: string;
   public totalViews?: number;
   public userId!: number;
+  public totalLikes!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -67,6 +69,11 @@ Info.init(
         model: 'User',
         key: 'id',
       },
+    },
+    totalLikes: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: '0',
     },
   },
   {
