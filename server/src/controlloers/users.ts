@@ -2,6 +2,7 @@ import * as userDb from '../db/user';
 import { Request, Response } from 'express';
 const bcrypt = require('./functions/bcrypt');
 import * as infoDb from '../db/info';
+import * as paymentDb from '../db/payment';
 
 module.exports = {
   getUsersInfo: async (req: Request, res: Response) => {
@@ -43,6 +44,12 @@ module.exports = {
 
     if (editInfo) {
       return res.status(400).json({ message: '중복된 email 입니다.' });
+    }
+
+    const findNickname = await userDb.checkNickname(nickname);
+
+    if (findNickname) {
+      return res.status(400).json({ message: '중복된 닉네임 입니다.' });
     }
 
     const hashPw = await bcrypt.hash(password).catch((err: Error) => {
@@ -89,6 +96,42 @@ module.exports = {
       .json({ info, message: '내가 쓴 게시물을 불러왔습니다.' });
   },
 
-  usersOrderInfo: async (req: Request, res: Response) => {},
-  usersRefundInfo: async (req: Request, res: Response) => {},
+  usersOrderInfo: async (req: Request, res: Response) => {
+    const { pages, limit } = req.query;
+    const state: string = 'paid';
+    const findOrders = await paymentDb.getPayments(
+      Number(req.userId),
+      Number(pages),
+      Number(limit),
+      state,
+    );
+
+    if (findOrders.count === 0) {
+      return res.status(400).json({ message: '구매한 게시물이 없습니다.' });
+    }
+
+    return res.status(200).json({
+      info: findOrders,
+      message: '내가 구매한 게시물을 불러왔습니다.',
+    });
+  },
+  usersRefundInfo: async (req: Request, res: Response) => {
+    const { pages, limit } = req.query;
+    const state: string = 'refund';
+    const findOrders = await paymentDb.getPayments(
+      Number(req.userId),
+      Number(pages),
+      Number(limit),
+      state,
+    );
+
+    if (findOrders.count === 0) {
+      return res.status(400).json({ message: '환불한 게시물이 없습니다.' });
+    }
+
+    return res.status(200).json({
+      info: findOrders,
+      message: '내가 환불한 게시물을 불러왔습니다.',
+    });
+  },
 };

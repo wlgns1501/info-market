@@ -16,12 +16,14 @@ class Payment extends Model {
     userId: number;
     infoId: number;
     state: string;
+    tid: number;
   };
 
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
   public infoId!: BelongsToManyGetAssociationsMixin<Info>;
   public state!: string;
+  public readonly tid!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -53,6 +55,10 @@ Payment.init(
         model: 'Info',
         key: 'id',
       },
+    },
+    tid: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {

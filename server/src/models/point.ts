@@ -9,16 +9,18 @@ class Point extends Model {
     userId: number;
     point: number;
     status: string;
-    tid: string;
-    partner_order_id: number;
+    imp_uid: string;
+    merchant_uid: string;
+    payment_method_type: string;
   };
 
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
   public point!: number;
   public state!: string;
-  public partner_order_id!: number;
-  public readonly tid!: string;
+  public readonly imp_uid!: string;
+  public readonly merchant_uid!: string;
+  public payment_method_type!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -48,12 +50,16 @@ Point.init(
       allowNull: false,
       defaultValue: 0,
     },
-    tid: {
+    merchant_uid: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    partner_order_id: {
-      type: DataTypes.INTEGER,
+    imp_uid: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    payment_method_type: {
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
   },

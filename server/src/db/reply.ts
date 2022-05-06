@@ -1,9 +1,4 @@
-import { Sequelize, Op } from 'sequelize';
-
-import Info from '../models/info';
-import User from '../models/user';
 import Reply from '../models/reply';
-import { stringify } from 'querystring';
 
 export async function writeReply(
   content: string,
