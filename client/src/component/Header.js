@@ -14,7 +14,6 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleBar = () => {
-    console.log('bar눌림');
     setIsOpen(!isOpen);
   };
 
@@ -25,7 +24,7 @@ function Header() {
           <FontAwesomeIcon
             icon={faBars}
             className="header-faBars"
-            onClick={() => handleBar()}
+            onClick={handleBar}
           />
           <NavLink to="/">
             <img
@@ -36,17 +35,19 @@ function Header() {
             />
           </NavLink>
         </div>
-        <ul className="header-menu">
-          <NavLink to="/main">
-            <li>메인페이지</li>
-          </NavLink>
-          <NavLink to="/freeboard">
-            <li>무료 정보 게시판</li>
-          </NavLink>
-          <NavLink to="/paidboard">
-            <li>유료 정보 게시판</li>
-          </NavLink>
-        </ul>
+        {isOpen ? (
+          <ul className="header-menu">
+            <NavLink to="/main">
+              <li>메인페이지</li>
+            </NavLink>
+            <NavLink to="/freeboard">
+              <li>무료 정보 게시판</li>
+            </NavLink>
+            <NavLink to="/paidboard">
+              <li>유료 정보 게시판</li>
+            </NavLink>
+          </ul>
+        ) : null}
         <ul className="header-info">
           <UserMenu />
         </ul>

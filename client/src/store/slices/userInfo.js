@@ -34,7 +34,7 @@ const mockData = {
 const stateKeys = Object.keys(initialState);
 export const userInfoSlice = createSlice({
   name: 'userInfo',
-  initialState: mockData,
+  initialState,
   reducers: {
     // increment: (state) => {
     //   state.value += 1;

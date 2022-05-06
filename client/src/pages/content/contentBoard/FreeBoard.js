@@ -15,31 +15,24 @@ const EntireContainer = styled.div`
   flex-direction: column;
   /* justify-content: center; */
   align-items: center;
-  min-height: 75vh;
-  /* border: 5px solid blue; */
+  min-height: 78vh;
+  /* border: 3px solid blue; */
   overflow-y: scroll;
   > div#order {
-    /* border: 1px solid red; */
+    position: fixed;
+    background-color: #e68feb;
+    opacity: 0.9;
     width: 50%;
-    margin-top: 10px;
-    /* border: 1px solid black; */
-    > ul#paging {
-      list-style: none;
-      display: flex;
-      /* width: 30px; */
-      justify-content: center;
-      align-items: center;
-      /* border: 1px solid black; */
-      padding: 0;
-      margin: 0;
-      > li {
-        width: 1.5rem;
-        height: 1.5rem;
-        text-align: center;
-        line-height: 1.5rem;
-        border: 1px solid gray;
-        border-radius: 5px;
-        box-shadow: 2px;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* border: 1px solid #afb3b0; */
+    border-radius: 8px;
+    box-shadow: 3px 3px 3px #e3e6e4;
+    > span {
+      &.count {
+        margin-right: 5px;
       }
     }
   }
@@ -47,12 +40,13 @@ const EntireContainer = styled.div`
     /* border: 3px solid red; */
     list-style: none;
     padding: 0;
-    max-width: 50%;
+    width: 52%;
     height: 600px;
     padding: 1%;
     > li.post {
       border: 1px solid black;
       background-color: white;
+      width: 100%;
       &:not(:last-child) {
         margin-bottom: 15px;
       }
@@ -72,21 +66,17 @@ const EntireContainer = styled.div`
           }
         }
       }
-      > p {
+      > p.title {
         border: 1px dotted black;
         margin: 0;
-        overflow: hidden;
         padding: 5px;
-        &.title {
-          margin-top: 3px;
-          margin-bottom: 2px;
-        }
-        &.content {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          margin-bottom: 3px;
-        }
+        margin-top: 3px;
+        margin-bottom: 2px;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 100%;
       }
       > div.total_Likes_Views {
         border: 1px dotted black;
@@ -129,7 +119,7 @@ function Post({ post }) {
         <span className="createdAt">{day}</span>
       </div>
       <p className="title">{title}</p>
-      <p className="content">{content}</p>
+      {/* <p className="content">{content}</p> */}
       <div className="total_Likes_Views">
         <span className="totalLikes">
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
@@ -143,48 +133,48 @@ function Post({ post }) {
 }
 
 function FreeBoard() {
-  const range = (total) => Array.from({ length: total }, (_, i) => i + 1);
-  // const [list, setList] = useState([]);
-  const [list, setList] = useState([...posts.slice(0, 8)]);
+  const [list, setList] = useState([]);
+  // const [list, setList] = useState([...posts.slice(0, 8)]);
   const [page, setPage] = useState(1);
+  const [totalCnt, setTotalCnt] = useState(null);
   const LIMIT = 6;
-  const [totalPage, setTotalPage] = useState(null);
+  const elm = useRef(null);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       `${process.env.REACT_APP_SERVER_URL}/test/freeBoard?pages=${page}&limit=${LIMIT}`,
-  //     )
-  //     .then((res) => {
-  //       const { rows, total } = res.data;
-  //       if (!rows) return;
-  //       setTotalPage(Math.ceil(Number(total) / LIMIT));
-  //       setList([...rows]);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [page]);
+  useEffect(() => {
+    console.log('@', process.env.REACT_APP_SERVER_DEV_URL);
+    axios
+      .get(`http://localhost:80/test/freeBoard?pages=${page}&limit=${LIMIT}`)
+      .then((res) => {
+        const { rows, total } = res.data;
+        if (!rows || !rows.length) {
+          // alert('마지막 페이지입니다.');
+          return;
+        }
+        setList([...list, ...rows]);
+        setTotalCnt(total);
+      })
+      .catch((err) => console.log(err));
+  }, [page]);
 
-  // const pagingArr = range(totalPage);
-  const pagingArr = range(10);
+  const handleScroll = (e) => {
+    if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
+      setPage((prevState) => prevState + 1);
+  };
   return (
-    <EntireContainer>
+    <EntireContainer id="box" ref={elm} onScroll={handleScroll}>
       <div id="order">
-        <input type="radio" name="info_order" value="최신순" checked />
-        최신순
-        <input
-          type="radio"
-          name="info_order"
-          value="인기순"
-          style={{ marginLeft: '10px' }}
-        />
-        인기순
-        {/* <ul id="paging">
-          {pagingArr.map((el) => (
-            <li key={el} name={el}>
-              {el}
-            </li>
-          ))}
-        </ul> */}
+        <span className="latest_popularity">
+          <input type="radio" name="info_order" value="최신순" defaultChecked />
+          최신순
+          <input
+            type="radio"
+            name="info_order"
+            value="인기순"
+            style={{ marginLeft: '10px' }}
+          />
+          인기순
+        </span>
+        <span className="count">총 게시물 수 : {totalCnt}</span>
       </div>
       <ul className="postList">
         {list.map((post) => (

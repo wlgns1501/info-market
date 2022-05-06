@@ -9,7 +9,7 @@ const footer = () => {
   };
 
   return (
-    <div className="footer">
+    <div className="footer" style={{ height: '85px' }}>
       <p>
         Copyright &copy; <span>{thisYear()}</span>
       </p>
