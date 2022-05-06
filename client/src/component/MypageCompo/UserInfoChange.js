@@ -9,6 +9,7 @@ import {
   selectUserInfo,
 } from '../../store/slices/userInfo';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EntireContainer = styled.div`
   border: 5px solid red;
@@ -86,7 +87,8 @@ const EntireContainer = styled.div`
 
 function UserInfoChange() {
   const {
-    userId,
+    isLogin,
+    id,
     email,
     password,
     nickname,
@@ -99,6 +101,7 @@ function UserInfoChange() {
     phone,
   } = useSelector(selectUserInfo);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
@@ -135,6 +138,10 @@ function UserInfoChange() {
     if (e.target.name === 'password') pwdCheck(e.target.value);
     if (e.target.name === 'rePwd') rePwdCheck(e.target.value);
   };
+
+  useEffect(() => {
+    if (!isLogin) navigate('/main');
+  }, [isLogin]);
 
   useEffect(() => {
     console.log('inputVal: ', inputVal);
@@ -257,26 +264,33 @@ function UserInfoChange() {
         nickname: '사용 중인 닉네임입니다.',
       });
     } else {
-      axios
-        .get(`http://localhost:8080/check/${inputVal.nickname}`, {
-          Authorization: `Bearer ${accToken}`,
-        })
-        .then((res) => {
-          const { message } = res.data;
-          if (message && message === 'ok') {
-            setInputVal({ ...inputVal, nickNameAuthentication: true });
-            setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
-          } else {
-            setErrorMsg({
-              ...errorMsg,
-              nickname: '중복된 닉네임이 있습니다.',
-            });
-          }
-        })
-        .catch((err) => {
-          alert('서버 에러 발생! 다시 시도해주세요.');
-          setInputVal({ ...inputVal, nickname: '' });
-        });
+      //api 완성되면 이 부분은 지움.
+      setInputVal({ ...inputVal, nickNameAuthentication: true });
+      setErrorMsg({ ...errorMsg, nickname: '' });
+      //api 완성되면 아래 코드 적용
+      // axios
+      //   .get(
+      //     `${process.env.REACT_APP_SERVER_DEV_URL}/check/${inputVal.nickname}`,
+      //     {
+      //       Authorization: `Bearer ${accToken}`,
+      //     },
+      //   )
+      //   .then((res) => {
+      //     const { message } = res.data;
+      //     if (message && message === 'ok') {
+      //       setInputVal({ ...inputVal, nickNameAuthentication: true });
+      //       setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
+      //     } else {
+      //       setErrorMsg({
+      //         ...errorMsg,
+      //         nickname: '중복된 닉네임이 있습니다.',
+      //       });
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     alert('서버 에러 발생! 다시 시도해주세요.');
+      //     setInputVal({ ...inputVal, nickname: '' });
+      //   });
     }
   };
 
@@ -298,7 +312,7 @@ function UserInfoChange() {
   //이메일 인증 버튼 클릭 이벤트
   const emailAuthentication = (e) => {
     e.preventDefault();
-    if (inputVal.email === email) {
+    if (inputVal.email === email || inputVal.emailAuthentication) {
       setErrorMsg({
         ...errorMsg,
         email: '이미 인증된 이메일입니다.',
@@ -313,10 +327,11 @@ function UserInfoChange() {
   //회원정보수정 제출
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userInfoObj = { email, nickname, phone, password };
+    // const userInfoObj = { email, nickname, phone, password };
     const { email, nickname, phone, password } = inputVal;
     let tempObj = { email, nickname, phone, password };
     let resultObj = {};
+
     //1. '값'이 있는 속성만 추출해서 보내기
     for (let key in tempObj) {
       if (tempObj[key]) resultObj = { ...resultObj, [key]: tempObj[key] };
@@ -330,13 +345,17 @@ function UserInfoChange() {
     console.log('resultObj: ', resultObj);
     const config = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json',
         Authorization: `Bearer ${accToken}`,
       },
       withCredentials: true,
     };
     axios
-      .post(`http://localhost:8080/users/${userId}`, resultObj, config)
+      .put(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
+        resultObj,
+        config,
+      )
       .then((res) => {
         dispatch(updateState(resultObj));
         setLocked(true);
@@ -349,7 +368,7 @@ function UserInfoChange() {
   const handleWithdrawal = (e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8080/auth/${userId}`, {
+      .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, {
         Authorization: `Bearer ${accToken}`,
       })
       .then((res) => dispatch(clearState()))

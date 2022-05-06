@@ -105,7 +105,7 @@ function UserMenu() {
           </li>
           <li className="mypage-btn">
             <Link
-              to="/mypage/info/change"
+              to="/mypage"
               style={{ textDecoration: 'none', color: 'black' }}
             >
               마이페이지

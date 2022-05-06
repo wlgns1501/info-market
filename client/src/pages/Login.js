@@ -12,10 +12,10 @@ import {
 } from '../store/slices/userInfo.js';
 
 function Login() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { email, password } = useSelector(selectUserInfo);
 
-  const navigate = useNavigate();
   const handleRegister = () => {
     navigate(`/tos`);
   };
@@ -29,16 +29,17 @@ function Login() {
 
   const handleInputValue = (key) => (e) => {
     // setLoginInfo({ ...loginInfo, [key]: e.target.value });
-    dispatch(updateState({ key: e.target.value }));
+    dispatch(updateState({ [key]: e.target.value }));
+    console.log(email, password);
   };
 
   const handleLogin = () => {
     if (!email || !password) {
-      setErrorMessage('이메일과 비밀번호를 입력하세요');
+      return setErrorMessage('이메일과 비밀번호를 입력하세요');
     } else {
       axios
         .post(
-          `http://localhost:3000/auth/login`,
+          `${process.env.REACT_APP_SERVER_DEV_URL}/auth/login`,
           { email, password },
           {
             headers: { 'Content-Type': 'application/json' },

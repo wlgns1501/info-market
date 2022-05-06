@@ -38,9 +38,12 @@ function Signup() {
     result: null,
   });
   const handleInputValue = (key) => (e) => {
+    if (key === 'phone') {
+      setUserInfo({ ...userInfo, [key]: `${e.target.value}` });
+      setChecked({ ...checked, phoneCk: false });
+    }
     setUserInfo({ ...userInfo, [key]: e.target.value });
     if (key === 'email') setChecked({ ...checked, emailCk: false });
-    if (key === 'phone') setChecked({ ...checked, phoneCk: false });
     if (key === 'nickname') setChecked({ ...checked, nicknameCk: false });
   };
 
@@ -94,7 +97,7 @@ function Signup() {
       });
     }
     setMessage({ ...message, rePasswordMsg: '' });
-    checked({ ...checked, passwordCk: true });
+    setChecked({ ...checked, passwordCk: true });
   };
 
   //핸드폰 인증 버튼 클릭
@@ -108,6 +111,7 @@ function Signup() {
       });
     }
     //인증번호 받아서 인증하는 api...
+    setMessage({ ...message, phoneMsg: '' });
     setChecked({ ...checked, phoneCk: true });
   };
 
@@ -127,6 +131,7 @@ function Signup() {
     //     }
     //     alert('서버 에러: 닉네임 중복 검사 요청 실패');
     //   });
+    setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
   };
 
   const handleSignup = (e) => {
@@ -141,6 +146,7 @@ function Signup() {
       return setMessage({ ...message, result: '모두 인증해주세요.' });
     }
 
+    setMessage({ ...message, result: '' });
     axios
       .post(
         `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`,
@@ -151,15 +157,15 @@ function Signup() {
         },
       )
       .then((res) => {
-        const { userId } = res.data;
-        if (userId) {
-          dispatch(updateState({ userId }));
+        const { id } = res.data;
+        if (id) {
+          dispatch(updateState({ id }));
           navigate(`/login`);
-        } else {
-          alert('서버 에러: 다시 시도해주세요.');
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        alert(err.response.message);
+      });
   };
   return (
     <div className="signup">
@@ -198,7 +204,7 @@ function Signup() {
           <input
             type="tel"
             className="signup-phone"
-            placeholder="핸드폰 번호"
+            placeholder="010-0000-0000"
             onChange={handleInputValue('phone')}
           />
           <button onClick={handlePhoneCheck}>인증번호받기</button>
@@ -216,7 +222,9 @@ function Signup() {
             onChange={handleInputValue('nickname')}
           />
           <button onClick={handleNicknameCheck}>중복검사</button>
-          <Msg>{message.nicknameMsg}</Msg>
+          <Msg className={checked.emailCk ? 'checked' : ''}>
+            {message.nicknameMsg}
+          </Msg>
         </div>
         <div className="signup-button">
           <button type="submit" onClick={handleSignup}>

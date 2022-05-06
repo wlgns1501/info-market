@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import freeBoardData from '../../mockdata/freeBoardData';
 import Footer from '../../component/Footer';
 import search from '../../images/search.jpg';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
   margin: auto auto;
@@ -79,6 +81,7 @@ function List({ posts, className }) {
 
 function Mainpage() {
   const { posts } = freeBoardData;
+
   return (
     <>
       <EntireContainer>

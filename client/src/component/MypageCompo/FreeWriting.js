@@ -88,9 +88,10 @@ function Writing() {
     e.preventDefault();
     axios
       .post(
-        'http://localhost:8080/info',
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
         {
-          type: 'free',
+          type: 'Free',
+          targetPoint: 0,
           ...textValues,
         },
         config,

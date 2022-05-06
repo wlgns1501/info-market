@@ -15,7 +15,6 @@ function Header() {
 
   const handleBar = () => {
     setIsOpen(!isOpen);
-    console.log('클릭');
   };
 
   return (
