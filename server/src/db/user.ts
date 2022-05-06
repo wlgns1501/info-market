@@ -98,3 +98,11 @@ export async function editUserPoint(userId: number, point: number) {
     },
   );
 }
+
+export async function checkNickname(nickname: string) {
+  return await User.findOne({
+    where: {
+      nickname,
+    },
+  });
+}

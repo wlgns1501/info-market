@@ -49,6 +49,7 @@ module.exports = {
       .status(200)
       .json({ message: '해당 게시물을 구매하는데 성공하였습니다.' });
   },
+
   refundInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
 
@@ -62,7 +63,11 @@ module.exports = {
 
     const user = await userDb.findPkUser(Number(req.userId));
 
-    const payment = await paymentDb.getPayment(infoId);
+    const payment = await paymentDb.getPayment(Number(infoId));
+
+    if (Number(req.userId) !== payment?.userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
+    }
 
     if (!payment) {
       return res
@@ -70,11 +75,9 @@ module.exports = {
         .json({ message: '해당 게시물을 구매하지 않았습니다.' });
     }
 
-    await userDb.editUserPoint(user?.id, info.targetPoint);
+    await userDb.editUserPoint(user.id, info.targetPoint);
 
-    await paymentDb.refundPayment(payment.tid).catch(() => {
-      return res.status(400).json({ message: '환불하는데 실패하였습니다.' });
-    });
+    await paymentDb.refundPayment(payment.tid);
 
     return res.status(200).json({ message: '환불 완료 했습니다.' });
   },

@@ -16,6 +16,12 @@ module.exports = {
       return res.status(409).json({ message: '중복된 유저 입니다.' });
     }
 
+    const findNickname = await userDb.checkNickname(nickname);
+
+    if (findNickname) {
+      return res.status(400).json({ message: '중복된 닉네임 입니다.' });
+    }
+
     const hashPw: string = await bcrypt.hash(password).catch((err: Error) => {
       console.log(err);
     });

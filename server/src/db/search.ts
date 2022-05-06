@@ -8,9 +8,13 @@ export async function searchByTitle(
   pages: number,
   limit: number,
   info_type: string,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     where: {
       title: {
         [Op.like]: '%' + titles + '%',
@@ -26,10 +30,11 @@ export async function searchByTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -45,9 +50,13 @@ export async function searchByContent(
   pages: number,
   limit: number,
   info_type: string,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     where: {
       content: {
         [Op.like]: '%' + content + '%',
@@ -63,10 +72,11 @@ export async function searchByContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -81,9 +91,13 @@ export async function searchAllTitle(
   titles: string,
   pages: number,
   limit: number,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     where: {
       title: {
         [Op.like]: '%' + titles + '%',
@@ -98,10 +112,11 @@ export async function searchAllTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -116,9 +131,13 @@ export async function searchAllContent(
   content: string,
   pages: number,
   limit: number,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     where: {
       content: {
         [Op.like]: '%' + content + '%',
@@ -133,10 +152,11 @@ export async function searchAllContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -152,9 +172,13 @@ export async function searchByNick(
   pages: number,
   limit: number,
   info_type: string,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     where: {
       type: info_type,
     },
@@ -167,10 +191,11 @@ export async function searchByNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -190,9 +215,13 @@ export async function searchAllNick(
   nickname: string,
   pages: number,
   limit: number,
+  like: string,
 ) {
   return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
     limit,
     offset: (pages - 1) * 10,
     attributes: [
@@ -202,10 +231,11 @@ export async function searchAllNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
