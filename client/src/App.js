@@ -76,12 +76,14 @@ function App() {
               <Route path=":postId" element={<Post />} />
             </Route> */}
           </Route>
+          <Route path="contentfree" element={<ContentFree />} />
+          <Route path="contentpaid" element={<ContentPaid />} />
           {/* 유료컨텐츠, 무료컨텐츠 */}
           <Route path="freeboard" element={<FreeBoard />}>
-            <Route path=":postId" element={<ContentFree />} />
+            {/* <Route path=":postId" element={<ContentFree />} /> */}
           </Route>
           <Route path="paidboard" element={<PaidBoard />}>
-            <Route path=":postId" element={<ContentPaid />} />
+            {/* <Route path=":postId" element={<ContentPaid />} /> */}
           </Route>
           <Route path="mypage" element={<SideBar />}>
             <Route index element={<Mypage />} />
