@@ -20,6 +20,7 @@ export async function searchByTitle(
         [Op.like]: '%' + titles + '%',
       },
       type: info_type,
+      activate: true,
     },
     limit,
     offset: (pages - 1) * 10,
@@ -62,6 +63,7 @@ export async function searchByContent(
         [Op.like]: '%' + content + '%',
       },
       type: info_type,
+      activate: true,
     },
     limit,
     offset: (pages - 1) * 10,
@@ -102,6 +104,7 @@ export async function searchAllTitle(
       title: {
         [Op.like]: '%' + titles + '%',
       },
+      activate: true,
     },
     limit,
     offset: (pages - 1) * 10,
@@ -142,6 +145,7 @@ export async function searchAllContent(
       content: {
         [Op.like]: '%' + content + '%',
       },
+      activate: true,
     },
     limit,
     offset: (pages - 1) * 10,
@@ -181,6 +185,7 @@ export async function searchByNick(
     ],
     where: {
       type: info_type,
+      activate: true,
     },
     limit,
     offset: (pages - 1) * 10,
@@ -224,6 +229,9 @@ export async function searchAllNick(
     ],
     limit,
     offset: (pages - 1) * 10,
+    where: {
+      activate: true,
+    },
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],

@@ -18,7 +18,7 @@ class Info extends Model {
     totalViews: number;
     userId: number;
     totalLikes: number;
-    activate: string;
+    activate: boolean;
   };
   public readonly id!: number;
   public title!: string;
@@ -28,7 +28,7 @@ class Info extends Model {
   public totalViews?: number;
   public userId!: number;
   public totalLikes!: number;
-  public activate?: string;
+  public activate?: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -78,9 +78,9 @@ Info.init(
       defaultValue: '0',
     },
     activate: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.BOOLEAN,
       allowNull: true,
-      defaultValue: 'false',
+      defaultValue: false,
     },
   },
   {
