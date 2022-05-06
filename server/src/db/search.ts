@@ -26,10 +26,11 @@ export async function searchByTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -63,10 +64,11 @@ export async function searchByContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -98,10 +100,11 @@ export async function searchAllTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -133,10 +136,11 @@ export async function searchAllContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -167,10 +171,11 @@ export async function searchByNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -202,10 +207,11 @@ export async function searchAllNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
