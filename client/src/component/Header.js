@@ -15,6 +15,7 @@ function Header() {
 
   const handleBar = () => {
     setIsOpen(!isOpen);
+    console.log('클릭');
   };
 
   return (
@@ -35,19 +36,17 @@ function Header() {
             />
           </NavLink>
         </div>
-        {isOpen ? (
-          <ul className="header-menu">
-            <NavLink to="/main">
-              <li>메인페이지</li>
-            </NavLink>
-            <NavLink to="/freeboard">
-              <li>무료 정보 게시판</li>
-            </NavLink>
-            <NavLink to="/paidboard">
-              <li>유료 정보 게시판</li>
-            </NavLink>
-          </ul>
-        ) : null}
+        <ul className={isOpen ? 'header-menu open' : 'header-menu'}>
+          <NavLink to="/main">
+            <li>메인페이지</li>
+          </NavLink>
+          <NavLink to="/freeboard">
+            <li>무료 정보 게시판</li>
+          </NavLink>
+          <NavLink to="/paidboard">
+            <li>유료 정보 게시판</li>
+          </NavLink>
+        </ul>
         <ul className="header-info">
           <UserMenu />
         </ul>

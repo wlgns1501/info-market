@@ -58,10 +58,13 @@
     align-items: flex-start;
   }
   .header-menu {
-    /* display: none; */
+    display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
+  }
+  .header-menu.open {
+    display: block;
   }
   .header-menu li {
     width: 100%;
