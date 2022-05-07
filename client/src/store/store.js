@@ -3,6 +3,7 @@ import counterReducer from './slices/counter';
 import userInfoReducer from './slices/userInfo';
 import userPostReducer from './slices/userPost';
 import purchaseDetailsReducer from './slices/purchaseDetails';
+import pointReducer from './slices/point';
 
 export default configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export default configureStore({
     counter: counterReducer, //테스트용
     userPost: userPostReducer,
     purchaseDetails: purchaseDetailsReducer,
+    point: pointReducer,
   },
 });

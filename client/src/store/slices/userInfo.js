@@ -8,7 +8,6 @@ const initialState = {
   nickname: '',
   accToken: '',
   point: 0,
-  chargedPoint: 0,
   earnings: 0,
   grade: '',
   profileImg: '',
@@ -43,7 +42,9 @@ export const userInfoSlice = createSlice({
       }
     },
     clearState: (state) => {
-      state = { ...initialState };
+      stateKeys.forEach((el) => {
+        state[el] = initialState[el];
+      });
     },
   },
 });

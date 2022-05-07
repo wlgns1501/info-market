@@ -86,20 +86,8 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfoChange() {
-  const {
-    isLogin,
-    id,
-    email,
-    password,
-    nickname,
-    profileImg,
-    point,
-    accToken,
-    grade,
-    chargedPoint,
-    earnings,
-    phone,
-  } = useSelector(selectUserInfo);
+  const { isLogin, id, email, password, nickname, accToken, phone } =
+    useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
