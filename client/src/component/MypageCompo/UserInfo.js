@@ -6,6 +6,13 @@ import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
+import {
+  selectPoint,
+  updatePointState,
+  inputPayment,
+} from '../../store/slices/point';
+
+import ChargeBox from '../ChargeBox';
 
 const EntireContainer = styled.div`
   border: 5px solid blue;
@@ -16,6 +23,19 @@ const EntireContainer = styled.div`
   @media screen and (max-width: 590px) {
     font-size: 0.7rem;
   }
+  > div.modal div.content {
+    max-width: 600px;
+    background-color: #f3f702;
+    @media screen and (max-width: 700px) {
+      > div.charge-box {
+        font-size: 0.8rem;
+        > input,
+        button {
+          font-size: inherit;
+        }
+      }
+    }
+  }
   > ul#user-Info-container {
     margin-top: 0;
     border: 5px solid orange;
@@ -24,18 +44,21 @@ const EntireContainer = styled.div`
     list-style: none;
     padding-left: 0;
     align-items: center;
+    justify-content: space-around;
     > li {
       border: 1px dotted black;
-
+      height: 200px;
       &.profile {
-        flex: 3;
+        /* flex: 3; */
+        min-width: 35%;
         display: flex;
-        justify-content: center;
         align-items: center;
-        display: flex;
         justify-content: space-evenly;
-        > p {
-          border: 1px solid purple;
+        @media screen and (max-width: 800px) {
+          flex-direction: column;
+        }
+        > div {
+          border: 3px solid purple;
           margin: 0 5px 0 5px;
           display: flex;
           flex-direction: column;
@@ -52,62 +75,45 @@ const EntireContainer = styled.div`
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
+            @media screen and (max-width: 700px) {
+              min-width: 60px;
+              min-height: 60px;
+            }
           }
         }
       }
       &.my-points {
-        flex: 2;
+        /* flex: 2; */
+        min-width: 35%;
         display: flex;
         justify-content: center;
-        align-items: center;
+        /* align-items: center; */
         border: 1px solid green;
-        > div.point-container {
-          min-width: 90%;
-          border: 1px solid red;
+
+        > div.detail {
+          border: 2px solid black;
+          /* flex: 6; */
+          width: 85%;
           display: flex;
           flex-direction: column;
-          /* @media screen and (max-width: 800px) {
-            font-size: 0.9rem;
-          }
-          @media screen and (max-width: 590px) {
-            font-size: 0.7rem;
-          } */
-          > p.title {
+          justify-content: space-around;
+          align-items: stretch;
+          > div {
+            border: 1px solid blue;
             margin: 0;
-            padding: 2%;
-            border: 1px solid black;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          > div.detail {
-            border: 1px solid black;
-            flex: 6;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
+            /* width: 80%; */
+            &#charged {
+              /* margin-bottom: 5%; */
+            }
+            &#earnings {
+              /* margin-bottom: 7px; */
+            }
             > p {
-              border: 1px solid blue;
+              border: 1px solid orange;
               margin: 0;
               text-align: center;
-            }
-            > div#charged {
-              border: 1px solid blue;
-              margin: 10% auto;
-              > p {
-                border: 1px solid orange;
-                margin: 0;
-                text-align: center;
-              }
-            }
-            > div#earnings {
-              border: 1px solid blue;
-              > p {
-                border: 1px solid orange;
-                margin: 0;
-                text-align: center;
+              &.amount {
+                padding: 3%;
               }
             }
           }
@@ -115,7 +121,8 @@ const EntireContainer = styled.div`
       }
 
       &.charging-withdrawal {
-        flex: 2;
+        /* flex: 2; */
+        min-width: 30%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -137,20 +144,46 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfo() {
-  const {
-    nickname,
-    profileImg,
-    point,
-    accToken,
-    grade,
-    chargedPoint,
-    earnings,
-  } = useSelector(selectUserInfo);
+  const { id, nickname, profileImg, point, accToken, grade, earnings } =
+    useSelector(selectUserInfo);
+  const { modalOpen } = useSelector(selectPoint);
   const dispatch = useDispatch();
 
   const [image, setImage] = useState('');
   const [file, setFile] = useState('');
   const fileInput = useRef(null);
+
+  const config = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, config)
+      .then((res) => {
+        const { user } = res.data;
+        if (user) {
+          delete user.password;
+          dispatch(updateState({ ...user }));
+        }
+      })
+      .catch((err) => {
+        alert('회원정보 불러오기 실패');
+      });
+  }, []);
+
+  const handleModalOpen = (e) => {
+    e.preventDefault();
+    dispatch(
+      updatePointState({
+        modalOpen: true,
+      }),
+    );
+  };
 
   const profileBtnClick = (e) => {
     e.preventDefault();
@@ -181,7 +214,7 @@ function UserInfo() {
       withCredentials: true,
     };
     const response = await axios.post(
-      'http://localhost:8080',
+      `${process.env.REACT_APP_SERVER_DEV_URL}`,
       formData,
       config,
     );
@@ -194,6 +227,18 @@ function UserInfo() {
 
   return (
     <EntireContainer>
+      {modalOpen && (
+        <Modal
+          handleBtnClick={() =>
+            dispatch(
+              updatePointState({
+                modalOpen: false,
+              }),
+            )
+          }
+          content={<ChargeBox />}
+        />
+      )}
       {image && (
         <Modal
           content={
@@ -225,7 +270,7 @@ function UserInfo() {
             }}
             ref={fileInput}
           />
-          <p className="user-photo">
+          <div className="user-photo">
             <figure img={profileImg} onClick={profileBtnClick} />
             {profileImg && (
               <button
@@ -240,30 +285,27 @@ function UserInfo() {
                 기본 이미지로 변경
               </button>
             )}
-          </p>
-          <p style={{ whiteSpace: 'nowrap' }}>{nickname}</p>
-          <p style={{ whiteSpace: 'nowrap' }}>{grade}</p>
+          </div>
+          <div style={{ whiteSpace: 'nowrap' }}>{nickname}</div>
+          <div style={{ whiteSpace: 'nowrap' }}>{grade}</div>
         </li>
         <li className="my-points">
-          <div className="point-container">
-            <p className="title" style={{ whiteSpace: 'nowrap' }}>
-              보유 포인트
-            </p>
-            <div className="detail">
-              <p>{point} P</p>
-              <div id="charged">
-                <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
-                <p>{chargedPoint} P</p>
-              </div>
-              <div id="earnings">
-                <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
-                <p>{earnings} P</p>
-              </div>
+          <div className="detail">
+            <div id="charged">
+              <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
+              <p className="amount">{point} P</p>
+            </div>
+            <div id="earnings">
+              <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
+              <p className="amount">{earnings} P</p>
             </div>
           </div>
+          {/* </div> */}
         </li>
         <li className="charging-withdrawal">
-          <button style={{ whiteSpace: 'nowrap' }}>포인트 충전</button>
+          <button onClick={handleModalOpen} style={{ whiteSpace: 'nowrap' }}>
+            포인트 충전
+          </button>
           <button style={{ whiteSpace: 'nowrap' }}>포인트 출금</button>
         </li>
       </ul>

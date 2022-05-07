@@ -31,7 +31,7 @@ const EntireContainer = styled.div`
 
 export default function Modal({ content, handleBtnClick }) {
   return (
-    <EntireContainer>
+    <EntireContainer className="modal">
       <div className="content">
         <span className="x-btn" onClick={handleBtnClick}>
           &times;

@@ -3,7 +3,14 @@ import * as searchDb from '../db/search';
 
 module.exports = {
   get: async (req: Request, res: Response) => {
-    const { search_type, info_type, pages, limit } = req.query;
+    const { search_type, info_type, pages, limit, like_type } = req.query;
+    let like;
+
+    if (like_type === 'true') {
+      like = 'desc';
+    } else if (like_type === 'false') {
+      like = 'asc';
+    }
 
     if (search_type === 'titles') {
       const { titles } = req.query;
@@ -17,6 +24,7 @@ module.exports = {
           String(titles),
           Number(pages),
           Number(limit),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -32,6 +40,7 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -54,6 +63,7 @@ module.exports = {
           String(content),
           Number(pages),
           Number(limit),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -69,6 +79,7 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -80,6 +91,7 @@ module.exports = {
           .json({ info: findInfoBy, message: '해당 게시물을 불러왔습니다.' });
       }
     } else if (search_type === 'nickname') {
+      // 닉네임 검색 수정 필요. 몇개 있는지는 검색이 되지만 내용이 검색 안됨
       const { nickname } = req.query;
       if (!nickname) {
         return res.status(400).json({ message: '내용을 입력해 주세요.' });
@@ -90,6 +102,7 @@ module.exports = {
           String(nickname),
           Number(pages),
           Number(limit),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -105,6 +118,7 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
+          String(like),
         );
 
         if (findInfoBy.count === 0) {

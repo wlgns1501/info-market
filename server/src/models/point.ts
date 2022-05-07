@@ -1,30 +1,41 @@
 import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
-import { dbType } from '.';
-import Info from './info';
 import { sequelize } from './sequelize';
+import { dbType } from './index';
 import User from './user';
 
-class Like extends Model {
+class Point extends Model {
   public dataValues!: {
     id: number;
     userId: number;
-    infoId: number;
+    point: number;
+    status: string;
+    imp_uid: string;
+    merchant_uid: string;
+    payment_method_type: string;
   };
+
   public readonly id!: number;
   public userId!: BelongsToManyGetAssociationsMixin<User>;
-  public infoId!: BelongsToManyGetAssociationsMixin<Info>;
-
-  public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.
+  public point!: number;
+  public state!: string;
+  public readonly imp_uid!: string;
+  public readonly merchant_uid!: string;
+  public payment_method_type!: string;
+  public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-Like.init(
+Point.init(
   {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+    },
+    state: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -34,41 +45,44 @@ Like.init(
         key: 'id',
       },
     },
-    infoId: {
+    point: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'Info',
-        key: 'id',
-      },
+      defaultValue: 0,
+    },
+    merchant_uid: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    imp_uid: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    payment_method_type: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
   },
   {
     sequelize,
     timestamps: true,
     underscored: false,
-    modelName: 'Like',
-    tableName: 'Like',
+    modelName: 'Point',
+    tableName: 'Point',
     paranoid: true,
     // mb4 -> 이모티콘도 사용 가능
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_general_ci',
+    charset: 'utf8',
+    collate: 'utf8_general_ci',
   },
 );
 
 export const associate = (db: dbType) => {
-  db.Like.belongsTo(db.User, {
+  db.Point.belongsTo(db.User, {
     foreignKey: 'userId',
-    targetKey: 'id',
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  });
-  db.Like.belongsTo(db.Info, {
-    foreignKey: 'infoId',
     targetKey: 'id',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });
 };
 
-export default Like;
+export default Point;
