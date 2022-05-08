@@ -1,12 +1,12 @@
 import Admin from '../models/admin';
 
-export async function findAdminByPK(adminId: number) {
+export async function findAdminByPK(adminId: number): Promise<Admin | null> {
   return await Admin.findOne({
     where: { id: adminId },
   });
 }
 
-export async function findAdmin(email: string) {
+export async function findAdmin(email: string): Promise<Admin | null> {
   return await Admin.findOne({
     where: {
       email,
