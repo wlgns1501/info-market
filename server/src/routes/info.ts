@@ -24,6 +24,6 @@ router.delete('/:infoId/reply/:replyId', auth.me, replyControllers.removeReply);
 
 // 게시물 구매 order.js
 router.post('/:infoId/order', auth.me, orderControllers.orderInfo);
-router.delete('/:infoId/refund', auth.me, orderControllers.refundInfo);
+router.put('/:infoId/refund', auth.me, orderControllers.refundInfo);
 
 module.exports = router;
