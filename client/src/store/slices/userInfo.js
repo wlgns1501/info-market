@@ -16,6 +16,7 @@ const initialState = {
   selectedFile: null,
   progress: 0,
   showAlert: false,
+  previewImg: null,
 };
 
 // const mockData = {
