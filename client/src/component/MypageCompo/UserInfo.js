@@ -6,11 +6,7 @@ import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
-import {
-  selectPoint,
-  updatePointState,
-  inputPayment,
-} from '../../store/slices/point';
+import { selectPoint, updatePointState } from '../../store/slices/point';
 import ChargeBox from '../ChargeBox';
 import AWS from 'aws-sdk';
 import { v1, v3, v4, v5 } from 'uuid';
