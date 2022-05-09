@@ -1,13 +1,13 @@
 import React from 'react';
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
-import freeBoardData from '../../../mockdata/freeBoardData';
-const { posts, total } = freeBoardData;
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserInfo } from '../../../store/slices/userInfo';
+import { useNavigate } from 'react-router-dom';
 
 const OrderContainer = styled.div`
   background-color: #e68feb;
@@ -113,7 +113,13 @@ function Post({ post }) {
     updatedAt,
   } = post;
 
-  const day = createdAt.split(' ')[0];
+  const day = createdAt.split('T')[0];
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/main/search/${id}`);
+  };
+
   return (
     <li className="post">
       <div className="writer_createdAt">
@@ -125,8 +131,9 @@ function Post({ post }) {
         </span>
         <span className="createdAt">{day}</span>
       </div>
-      <p className="title">{title}</p>
-      {/* <p className="content">{content}</p> */}
+      <p className="title" style={{ cursor: 'pointer' }} onClick={handleClick}>
+        {title}
+      </p>
       <div className="total_Likes_Views">
         <span className="totalLikes">
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
@@ -139,33 +146,72 @@ function Post({ post }) {
   );
 }
 
-function FreeBoard() {
+function PaidBoard() {
+  const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
-  // const [list, setList] = useState([...posts.slice(0, 8)]);
   const [page, setPage] = useState(1);
   const [totalCnt, setTotalCnt] = useState(null);
+  const [order, setOrder] = useState('최신순');
   const LIMIT = 6;
   const elm = useRef(null);
 
-  const testUrl = `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`;
-  // const url = `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`;
+  //서버 통신 헤더: post용, get용
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
   useEffect(() => {
+    const params = {
+      search_type: 'title',
+      info_type: 'Paid',
+      pages: page,
+      limit: LIMIT,
+      like_type: order === '인기순',
+      prevCount: totalCnt, //혹시나 추가
+    };
     axios
-      .get(testUrl)
+      // .get(`${process.env.REACT_APP_SERVER_DEV_URL}/search`, {
+      //   params,
+      //   ...getConfig,
+      // })
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`,
+        getConfig,
+      )
       .then((res) => {
-        const { rows, total } = res.data;
+        const { rows, count } = res.data.info;
+
         if (rows) setList([...list, ...rows]);
-        if (total) setTotalCnt(total);
+        if (count && count !== totalCnt) {
+          setTotalCnt(count);
+        }
       })
       .catch((err) => {
         if (err.response?.message) alert(err.response.message);
       });
-  }, [page]);
+  }, [page, order]);
 
   const handleScroll = (e) => {
     if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
       setPage((prevState) => prevState + 1);
   };
+
+  const handleChange = (e) => {
+    setOrder(e.target.value);
+    setList([]);
+    setPage(1);
+  };
+
   return (
     <>
       <OrderContainer>
@@ -176,8 +222,9 @@ function FreeBoard() {
               type="radio"
               name="info_order"
               value="최신순"
-              defaultChecked
+              checked={order === '최신순'}
               style={{ marginLeft: '0' }}
+              onChange={handleChange}
             />
             최신순
             <input
@@ -185,6 +232,8 @@ function FreeBoard() {
               type="radio"
               name="info_order"
               value="인기순"
+              checked={order === '인기순'}
+              onChange={handleChange}
             />
             인기순
           </span>
@@ -203,4 +252,4 @@ function FreeBoard() {
   );
 }
 
-export default FreeBoard;
+export default PaidBoard;

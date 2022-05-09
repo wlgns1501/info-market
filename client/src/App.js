@@ -21,6 +21,8 @@ import Mypage from './pages/user/Mypage';
 import Mainpage from './pages/user/Mainpage';
 import FreeBoard from './pages/content/contentBoard/FreeBoard';
 import PaidBoard from './pages/content/contentBoard/PaidBoard';
+import PostList from './pages/user/PostList';
+import Post from './pages/user/Post';
 import WriteContentFree from './pages/content/write/WriteContentFree';
 import ContentFree from './pages/content/ContentFree';
 import WriteContentPaid from './pages/content/write/WriteContentPaid';
@@ -70,14 +72,15 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="tos" element={<Tos />} />
           <Route path="signup" element={<Signup />} />
-          <Route path="main" element={<Mainpage />}>
-            {/* <Route path="searchResult">
+          <Route path="main">
+            <Route index element={<Mainpage />} />
+            <Route path="search">
               <Route index element={<PostList />} />
               <Route path=":postId" element={<Post />} />
-            </Route> */}
+            </Route>
           </Route>
-          <Route path="contentfree" element={<ContentFree />} />
-          <Route path="contentpaid" element={<ContentPaid />} />
+          {/* <Route path="contentfree" element={<ContentFree />} />
+          <Route path="contentpaid" element={<ContentPaid />} /> */}
           {/* 유료컨텐츠, 무료컨텐츠 */}
           <Route path="freeboard" element={<FreeBoard />}>
             {/* <Route path=":postId" element={<ContentFree />} /> */}

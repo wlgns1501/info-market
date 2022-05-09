@@ -330,7 +330,6 @@ function UserInfoChange() {
     // }
     // resultObj = {...tempObj}
 
-    console.log('resultObj: ', resultObj);
     const config = {
       headers: {
         'content-type': 'application/json',
@@ -338,6 +337,7 @@ function UserInfoChange() {
       },
       withCredentials: true,
     };
+
     axios
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
@@ -357,7 +357,10 @@ function UserInfoChange() {
     e.preventDefault();
     axios
       .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, {
-        Authorization: `Bearer ${accToken}`,
+        headers: {
+          Authorization: `Bearer ${accToken}`,
+        },
+        withCredentials: true,
       })
       .then((res) => dispatch(clearState()))
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));

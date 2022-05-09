@@ -175,12 +175,17 @@ function UserInfo() {
   const { modalOpen } = useSelector(selectPoint);
   const fileInput = useRef(null);
   const [selectedFile, setSelectedFile] = useState('');
-  // const [ProfileURL, setProfileURL] = useState('');
 
-  //서버 통신 헤더
-  const config = {
+  //서버 통신 헤더: post용, get용
+  const postConfig = {
     headers: {
       'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+  const getConfig = {
+    headers: {
       Authorization: `Bearer ${accToken}`,
     },
     withCredentials: true,
@@ -189,7 +194,7 @@ function UserInfo() {
   //처음 렌더링때 작동: 유저정보 불러오기
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, config)
+      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, getConfig)
       .then((res) => {
         const { user } = res.data;
         if (user) {
@@ -234,7 +239,31 @@ function UserInfo() {
     });
   };
 
-  //모달 안의 프로필 변경 버튼 클릭: s3에 파일 전송됨.
+  //모달 안의 프로필 변경 버튼 클릭
+  const handleChangeImg = () => {
+    if (profileImg) {
+      let temp = profileImg;
+      deleteImg(temp);
+    }
+    saveImg(selectedFile, 'image');
+  };
+
+  //s3에 있는 파일 삭제
+  const deleteImg = (fileName, callback) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
+
+    const cb = (err, data) => {
+      if (data) alert('삭제 성공');
+      if (err) alert('실패 실패');
+    };
+
+    myBucket.deleteObject(params, callback || cb);
+  };
+
+  //s3에 파일 전송.
   const saveImg = (file, path) => {
     const fileName = `${path}/${v4().toString().replaceAll('-', '')}.${
       file.type.split('/')[1]
@@ -249,20 +278,20 @@ function UserInfo() {
     myBucket
       .putObject(params, (err, data) => {
         //서버로 profileImg 값 보내주기.(일단 임시로 작성)
-        axios
-          .post(
-            `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
-            { profileImg: fileName },
-            config,
-          )
-          .then((res) => {
-            dispatch(
-              updateState({
-                profileImg: fileName,
-              }),
-            );
-          })
-          .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        // axios
+        //   .post(
+        //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
+        //     { profileImg: fileName },
+        //     postConfig,
+        //   )
+        //   .then((res) => {
+        //     dispatch(
+        //       updateState({
+        //         profileImg: fileName,
+        //       }),
+        //     );
+        //   })
+        //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
         //아래 코드는 서버랑 연동되면 삭제
         dispatch(
           updateState({
@@ -292,14 +321,46 @@ function UserInfo() {
       });
   };
 
+  //미리보기 모달창 취소버튼
+  const handleCancleClick = (e) => {
+    e.preventDefault();
+    if (showAlert) return;
+
+    setSelectedFile(null);
+    dispatch(
+      updateState({
+        previewImg: null,
+      }),
+    );
+    fileInput.current.value = '';
+  };
+
   //기본 이미지로 변경 버튼 클릭
   const resetImg = () => {
-    //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
+    //아래코드는 일단 임시(나중에 삭제)
     dispatch(
       updateState({
         profileImg: null,
       }),
     );
+    //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
+    const deleteDB = () => {
+      axios
+        .delete(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
+          getConfig,
+        )
+        .then((res) => {
+          dispatch(
+            updateState({
+              profileImg: null,
+            }),
+          );
+        })
+        .catch((err) => console.log(err));
+    };
+
+    deleteImg(profileImg, deleteDB);
   };
 
   return (
@@ -327,28 +388,16 @@ function UserInfo() {
                 }}
                 alt="preview-img"
               />
-              <button
-                onClick={() => saveImg(selectedFile, 'image')}
-                disabled={showAlert}
-              >
+              <button onClick={handleChangeImg} disabled={showAlert}>
                 프로필 변경하기
               </button>
-              <button
-                disabled={showAlert}
-                onClick={() =>
-                  dispatch(
-                    updateState({
-                      previewImg: null,
-                    }),
-                  )
-                }
-              >
+              <button disabled={showAlert} onClick={handleCancleClick}>
                 취소
               </button>
               {showAlert && <p>업로드 진행률: {progress} %</p>}
             </div>
           }
-          handleBtnClick={() => dispatch(updateState({ previewImg: null }))}
+          handleBtnClick={handleCancleClick}
         />
       )}
       <ul id="user-Info-container">
@@ -366,8 +415,6 @@ function UserInfo() {
           />
           <div className="user-photo">
             <figure
-              // img={`https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${profileImg}`}
-              // img="https://info-market-upload.s3.ap-northeast-2.amazonaws.com/image/afa0493f428c4050ba1859f290a3d7d6.jpeg"
               style={{
                 backgroundImage: `url(${
                   profileImg
