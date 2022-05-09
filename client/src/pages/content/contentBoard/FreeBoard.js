@@ -149,7 +149,7 @@ function FreeBoard() {
   useEffect(() => {
     axios
       .get(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`,
+        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/info?pages=${page}&limit=${LIMIT}`,
       )
       .then((res) => {
         const { rows, total } = res.data;
