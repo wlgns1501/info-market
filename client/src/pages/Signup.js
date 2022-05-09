@@ -149,7 +149,7 @@ function Signup() {
     setMessage({ ...message, result: '' });
     axios
       .post(
-        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/signup`,
+        'http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/signup',
         { email, password, phone, nickname },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -159,11 +159,13 @@ function Signup() {
       .then((res) => {
         const { id } = res.data;
         if (id) {
+          alert('성공');
           dispatch(updateState({ id }));
           navigate(`/login`);
         }
       })
       .catch((err) => {
+        console.log('에러: ', err);
         alert(err.response.message);
       });
   };

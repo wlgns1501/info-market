@@ -71,7 +71,7 @@ const Payment = (effect, deps) => {
       //여기에 서버로 결제 정보 보내주면 됨.
       axios
         .post(
-          `${process.env.REACT_APP_SERVER_DEV_URL}/point/approve`,
+          `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/point/approve`,
           {
             imp_uid,
             merchant_uid,
