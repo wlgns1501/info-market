@@ -1,5 +1,6 @@
 import { Sequelize, Op, where } from 'sequelize';
 
+import Reply from '../models/reply';
 import Info from '../models/info';
 import User from '../models/user';
 
@@ -22,6 +23,16 @@ export async function getInfo(infoId: number) {
       {
         model: User,
         attributes: [],
+      },
+      {
+        model: Reply,
+        attributes: ['content', 'createdAt'],
+        include: [
+          {
+            model: User,
+            attributes: ['nickname'],
+          },
+        ],
       },
     ],
   });
