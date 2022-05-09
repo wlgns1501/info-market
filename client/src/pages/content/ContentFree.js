@@ -1,17 +1,13 @@
 import '../../css/Content.css'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import contentData from '../../mockdata/contentData';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  updateState,
-  clearState,
-  selectUserInfo,
-} from '../../store/slices/userInfo.js';
+import HeartButton from '../../component/content/Heart';
+import Comment from '../../component/content/Comment';
 
 const { posts } = contentData;
 
-function Post({ post }) {
+function Post({ post, HeartButton }) {
   const {
     id,
     title,
@@ -28,16 +24,19 @@ function Post({ post }) {
   const [like, setLike] = useState(false);
   const [checkLike, setCheckLike] = useState(totalLikes)
 
-  /* 추가시 totalView +1, -1 되는것 만들어야함 */
-  const likeClick = () => {
-    if (like) {
-      setLike(false);
-      console.log('빠졌나??')
-    } else {
-      setLike(true)
-      console.log('추가됬나??')
-    }
-  }
+  /* 추가시 totalLikes +1, -1 되는것 만들어야함 */
+  // const likeClick = () => {
+  //   if (like) {
+  //     setLike(false);
+  //     console.log('빠졌나??')
+  //   } else {
+  //     setLike(true)
+  //     setCheckLike(totalLikes + 1)
+  //     console.log('추가됬나??')
+  //     console.log(checkLike)
+  //   }
+  // }
+
 
   /* 댓글작성 클릭시, post 전달되게 새로 짜야함 */
   // const handleReply = () => {
@@ -93,17 +92,17 @@ function Post({ post }) {
         <div className='body'>
           {content}
           <div className='like'>
-            {like ? (
-              <div onClick={likeClick}>♥</div>
+            {/* {like ? (
+              <div onClick={likeClick} checkLike={checkLike}>♥</div>
             ) : (
               <div onClick={likeClick}>♡</div>
-            )}
+            )} */}
             {/* <button>추천하기</button>
             <div>{totalLikes}</div> */}
-            <div>추천개수:{totalLikes}</div>
+            {/* <div>추천개수:{totalLikes}</div> */}
           </div>
         </div>
-        <div className='reply'>
+        {/* <div className='reply'>
           <div className='content_reply_write'>
             <textarea placeholder='작성할 댓글 입력'></textarea>
             <button>댓글달기</button>
@@ -113,7 +112,8 @@ function Post({ post }) {
               {reviews}
             </div>
           </div>
-        </div>
+        </div> */}
+        <Comment />
       </div>
     </div>
   )
