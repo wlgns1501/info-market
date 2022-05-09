@@ -87,7 +87,6 @@ const EntireContainer = styled.div`
             min-width: 80px;
             min-height: 80px;
             border-radius: 50%;
-            background-image: url(${(props) => props.img || user});
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
@@ -170,12 +169,13 @@ function UserInfo() {
     grade,
     earnings,
     previewImg,
-    selectedFile,
     progress,
     showAlert,
   } = useSelector(selectUserInfo);
   const { modalOpen } = useSelector(selectPoint);
   const fileInput = useRef(null);
+  const [selectedFile, setSelectedFile] = useState('');
+  // const [ProfileURL, setProfileURL] = useState('');
 
   //서버 통신 헤더
   const config = {
@@ -224,7 +224,6 @@ function UserInfo() {
     reader.readAsDataURL(fileBlob);
     return new Promise((resolve) => {
       reader.onload = () => {
-        // setImage(reader.result);
         dispatch(
           updateState({
             previewImg: reader.result,
@@ -240,7 +239,6 @@ function UserInfo() {
     const fileName = `${path}/${v4().toString().replaceAll('-', '')}.${
       file.type.split('/')[1]
     }`;
-
     const params = {
       ACL: 'public-read-write',
       Body: file,
@@ -250,29 +248,27 @@ function UserInfo() {
 
     myBucket
       .putObject(params, (err, data) => {
-        if (data) {
-          //서버로 profileImg 값 보내주기.(일단 임시로 작성)
-          // axios
-          //   .post(
-          //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
-          //     { profileImg: fileName },
-          //     config,
-          //   )
-          //   .then((res) => {
-          //     dispatch(
-          //       updateState({
-          //         profileImg: fileName,
-          //       }),
-          //     );
-          //   })
-          //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
-          //아래 코드는 서버랑 연동되면 삭제
-          dispatch(
-            updateState({
-              profileImg: fileName,
-            }),
-          );
-        }
+        //서버로 profileImg 값 보내주기.(일단 임시로 작성)
+        // axios
+        //   .post(
+        //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
+        //     { profileImg: fileName },
+        //     config,
+        //   )
+        //   .then((res) => {
+        //     dispatch(
+        //       updateState({
+        //         profileImg: fileName,
+        //       }),
+        //     );
+        //   })
+        //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        //아래 코드는 서버랑 연동되면 삭제
+        dispatch(
+          updateState({
+            profileImg: fileName,
+          }),
+        );
       })
       .on('httpUploadProgress', (evt) => {
         dispatch(
@@ -282,14 +278,14 @@ function UserInfo() {
           }),
         );
         setTimeout(() => {
+          setSelectedFile('');
           dispatch(
             updateState({
               showAlert: false,
-              selectedFile: null,
               previewImg: null,
             }),
           );
-        }, 3000);
+        }, 2000);
       })
       .send((err) => {
         if (err) console.log(err);
@@ -301,7 +297,7 @@ function UserInfo() {
     //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
     dispatch(
       updateState({
-        profileImg: '',
+        profileImg: null,
       }),
     );
   };
@@ -331,10 +327,14 @@ function UserInfo() {
                 }}
                 alt="preview-img"
               />
-              <button onClick={() => saveImg(selectedFile, 'image')}>
+              <button
+                onClick={() => saveImg(selectedFile, 'image')}
+                disabled={showAlert}
+              >
                 프로필 변경하기
               </button>
               <button
+                disabled={showAlert}
                 onClick={() =>
                   dispatch(
                     updateState({
@@ -359,18 +359,23 @@ function UserInfo() {
             accept="image/*"
             name="profile-img"
             onChange={(e) => {
-              dispatch(
-                updateState({
-                  selectedFile: e.target.files[0],
-                }),
-              );
+              setSelectedFile(e.target.files[0]);
               encodeFileToBase64(e.target.files[0]);
             }}
             ref={fileInput}
           />
           <div className="user-photo">
             <figure
-              img={`https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/{profileImg}`}
+              // img={`https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${profileImg}`}
+              // img="https://info-market-upload.s3.ap-northeast-2.amazonaws.com/image/afa0493f428c4050ba1859f290a3d7d6.jpeg"
+              style={{
+                backgroundImage: `url(${
+                  profileImg
+                    ? `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/` +
+                      profileImg
+                    : user
+                })`,
+              }}
               onClick={profileBtnClick}
             />
             {profileImg && (
