@@ -189,7 +189,10 @@ function UserInfo() {
   //처음 렌더링때 작동: 유저정보 불러오기
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, config)
+      .get(
+        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/users/${id}`,
+        config,
+      )
       .then((res) => {
         const { user } = res.data;
         if (user) {
