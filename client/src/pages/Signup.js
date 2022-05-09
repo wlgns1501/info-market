@@ -41,6 +41,7 @@ function Signup() {
     if (key === 'phone') {
       setUserInfo({ ...userInfo, [key]: `${e.target.value}` });
       setChecked({ ...checked, phoneCk: false });
+      setMessage({ ...message, phoneMsg: '' });
     }
     setUserInfo({ ...userInfo, [key]: e.target.value });
     if (key === 'email') setChecked({ ...checked, emailCk: false });
@@ -107,11 +108,11 @@ function Signup() {
     if (!phoneRegex.test(userInfo.phone)) {
       return setMessage({
         ...message,
-        phoneMsg: '형식에 맞지 않는 번호입니다.',
+        phoneMsg: `형식에 맞게('-'를 포함) 입력해주세요.`,
       });
     }
     //인증번호 받아서 인증하는 api...
-    setMessage({ ...message, phoneMsg: '' });
+    setMessage({ ...message, phoneMsg: '인증되었습니다.' });
     setChecked({ ...checked, phoneCk: true });
   };
 
@@ -149,7 +150,7 @@ function Signup() {
     setMessage({ ...message, result: '' });
     axios
       .post(
-        'http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/signup',
+        `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`,
         { email, password, phone, nickname },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -210,7 +211,9 @@ function Signup() {
             onChange={handleInputValue('phone')}
           />
           <button onClick={handlePhoneCheck}>인증번호받기</button>
-          <Msg className="phone-msg">{message.phoneMsg}</Msg>
+          <Msg className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}>
+            {message.phoneMsg}
+          </Msg>
         </div>
         {/* <div>
             <input type='text' className='signup-phone-check' placeholder='인증번호' onChange={handleInputValue('phone')}></input>

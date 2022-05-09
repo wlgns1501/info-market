@@ -1,27 +1,27 @@
-import AWS from 'aws-sdk';
-import { v1, v3, v4, v5 } from 'uuid';
+// import AWS from 'aws-sdk';
+// import { v1, v3, v4, v5 } from 'uuid';
 
 // const [selectedFile, setSelectedFile] = useState(null);
 // const [progress, setProgress] = useState(0);
 // const [showAlert, setShowAlert] = useState(false);
 // const [s3FileName, setS3FileName] = useState(null);
 
-const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
-const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
-const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
-const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+// const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+// const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+// const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
+// const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
 
-AWS.config.update({
-  accessKeyId: ACCESS_KEY,
-  secretAccessKey: SECRET_ACCESS_KEY,
-});
+// AWS.config.update({
+//   accessKeyId: ACCESS_KEY,
+//   secretAccessKey: SECRET_ACCESS_KEY,
+// });
 
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
-});
+// const myBucket = new AWS.S3({
+//   params: { Bucket: S3_BUCKET },
+//   region: REGION,
+// });
 
-// const imgS3Url = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/{profileImg}`;
+// // const imgS3Url = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/{profileImg}`;
 
 // const uploadFile = (file, type) => {
 //   const { id, accToken } = useSelector(selectUserInfo);

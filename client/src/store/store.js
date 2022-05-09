@@ -4,6 +4,7 @@ import userInfoReducer from './slices/userInfo';
 import userPostReducer from './slices/userPost';
 import purchaseDetailsReducer from './slices/purchaseDetails';
 import pointReducer from './slices/point';
+import postListReducer from './slices/postList';
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
     userPost: userPostReducer,
     purchaseDetails: purchaseDetailsReducer,
     point: pointReducer,
+    postList: postListReducer,
   },
 });

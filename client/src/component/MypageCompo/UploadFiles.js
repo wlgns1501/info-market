@@ -12,7 +12,7 @@ const UploadFiles = forwardRef((props, ref) => {
   const { accToken } = useSelector(selectUserInfo);
   const config = {
     headers: {
-      'content-type': 'multipart/form-data',
+      'content-type': 'application/json',
       Authorization: `Bearer ${accToken}`,
     },
     withCredentials: true,
