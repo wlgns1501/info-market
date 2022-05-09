@@ -11,8 +11,24 @@ import {
   updatePointState,
   inputPayment,
 } from '../../store/slices/point';
-
 import ChargeBox from '../ChargeBox';
+import AWS from 'aws-sdk';
+import { v1, v3, v4, v5 } from 'uuid';
+
+const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
+const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+
+AWS.config.update({
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY,
+});
+
+const myBucket = new AWS.S3({
+  params: { Bucket: S3_BUCKET },
+  region: REGION,
+});
 
 const EntireContainer = styled.div`
   border: 5px solid blue;
@@ -71,7 +87,6 @@ const EntireContainer = styled.div`
             min-width: 80px;
             min-height: 80px;
             border-radius: 50%;
-            background-image: url(${(props) => props.img || user});
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
@@ -144,15 +159,25 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfo() {
-  const { id, nickname, profileImg, point, accToken, grade, earnings } =
-    useSelector(selectUserInfo);
-  const { modalOpen } = useSelector(selectPoint);
   const dispatch = useDispatch();
-
-  const [image, setImage] = useState(null);
-  const [file, setFile] = useState(null);
+  const {
+    id,
+    nickname,
+    profileImg,
+    point,
+    accToken,
+    grade,
+    earnings,
+    previewImg,
+    progress,
+    showAlert,
+  } = useSelector(selectUserInfo);
+  const { modalOpen } = useSelector(selectPoint);
   const fileInput = useRef(null);
+  const [selectedFile, setSelectedFile] = useState('');
+  // const [ProfileURL, setProfileURL] = useState('');
 
+  //서버 통신 헤더
   const config = {
     headers: {
       'content-type': 'application/json',
@@ -161,6 +186,7 @@ function UserInfo() {
     withCredentials: true,
   };
 
+  //처음 렌더링때 작동: 유저정보 불러오기
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, config)
@@ -176,6 +202,7 @@ function UserInfo() {
       });
   }, []);
 
+  //포인트 결제 모달 열기
   const handleModalOpen = (e) => {
     e.preventDefault();
     dispatch(
@@ -185,44 +212,94 @@ function UserInfo() {
     );
   };
 
+  //프로필 사진을 클릭하면 파일 업로드 input창이 클릭됨.
   const profileBtnClick = (e) => {
     e.preventDefault();
     fileInput.current.click();
   };
 
+  //선택한 이미지파일 --> 미리보기
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
     return new Promise((resolve) => {
       reader.onload = () => {
-        setImage(reader.result);
+        dispatch(
+          updateState({
+            previewImg: reader.result,
+          }),
+        );
         resolve();
       };
     });
   };
 
-  const saveImg = async () => {
-    //loading indicator: true
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-        Authorization: `Bearer ${accToken}`,
-      },
-      withCredentials: true,
+  //모달 안의 프로필 변경 버튼 클릭: s3에 파일 전송됨.
+  const saveImg = (file, path) => {
+    const fileName = `${path}/${v4().toString().replaceAll('-', '')}.${
+      file.type.split('/')[1]
+    }`;
+    const params = {
+      ACL: 'public-read-write',
+      Body: file,
+      Bucket: S3_BUCKET,
+      Key: fileName,
     };
-    const response = await axios.post(
-      `${process.env.REACT_APP_SERVER_DEV_URL}`,
-      formData,
-      config,
+
+    myBucket
+      .putObject(params, (err, data) => {
+        //서버로 profileImg 값 보내주기.(일단 임시로 작성)
+        // axios
+        //   .post(
+        //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
+        //     { profileImg: fileName },
+        //     config,
+        //   )
+        //   .then((res) => {
+        //     dispatch(
+        //       updateState({
+        //         profileImg: fileName,
+        //       }),
+        //     );
+        //   })
+        //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        //아래 코드는 서버랑 연동되면 삭제
+        dispatch(
+          updateState({
+            profileImg: fileName,
+          }),
+        );
+      })
+      .on('httpUploadProgress', (evt) => {
+        dispatch(
+          updateState({
+            progress: Math.round((evt.loaded / evt.total) * 100),
+            showAlert: true,
+          }),
+        );
+        setTimeout(() => {
+          setSelectedFile('');
+          dispatch(
+            updateState({
+              showAlert: false,
+              previewImg: null,
+            }),
+          );
+        }, 2000);
+      })
+      .send((err) => {
+        if (err) console.log(err);
+      });
+  };
+
+  //기본 이미지로 변경 버튼 클릭
+  const resetImg = () => {
+    //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
+    dispatch(
+      updateState({
+        profileImg: null,
+      }),
     );
-    // dispatch(updateState({
-    //   profileImg: response.data//어쩌구..
-    // }))
-    //loading indicator: false
-    setImage('');
   };
 
   return (
@@ -239,22 +316,39 @@ function UserInfo() {
           content={<ChargeBox />}
         />
       )}
-      {image && (
+      {previewImg && (
         <Modal
           content={
             <div>
               <img
-                src={image}
+                src={previewImg}
                 style={{
                   height: '15vh',
                 }}
                 alt="preview-img"
               />
-              <button onClick={saveImg}>업로드</button>
-              <button onClick={() => setImage('')}>취소</button>
+              <button
+                onClick={() => saveImg(selectedFile, 'image')}
+                disabled={showAlert}
+              >
+                프로필 변경하기
+              </button>
+              <button
+                disabled={showAlert}
+                onClick={() =>
+                  dispatch(
+                    updateState({
+                      previewImg: null,
+                    }),
+                  )
+                }
+              >
+                취소
+              </button>
+              {showAlert && <p>업로드 진행률: {progress} %</p>}
             </div>
           }
-          handleBtnClick={() => setImage('')}
+          handleBtnClick={() => dispatch(updateState({ previewImg: null }))}
         />
       )}
       <ul id="user-Info-container">
@@ -265,25 +359,27 @@ function UserInfo() {
             accept="image/*"
             name="profile-img"
             onChange={(e) => {
-              setFile(e.target.files[0]);
+              setSelectedFile(e.target.files[0]);
               encodeFileToBase64(e.target.files[0]);
             }}
             ref={fileInput}
           />
           <div className="user-photo">
-            <figure img={profileImg} onClick={profileBtnClick} />
+            <figure
+              // img={`https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${profileImg}`}
+              // img="https://info-market-upload.s3.ap-northeast-2.amazonaws.com/image/afa0493f428c4050ba1859f290a3d7d6.jpeg"
+              style={{
+                backgroundImage: `url(${
+                  profileImg
+                    ? `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/` +
+                      profileImg
+                    : user
+                })`,
+              }}
+              onClick={profileBtnClick}
+            />
             {profileImg && (
-              <button
-                onClick={() => {
-                  dispatch(
-                    updateState({
-                      profileImg: '',
-                    }),
-                  );
-                }}
-              >
-                기본 이미지로 변경
-              </button>
+              <button onClick={resetImg}>기본 이미지로 변경</button>
             )}
           </div>
           <div style={{ whiteSpace: 'nowrap' }}>{nickname}</div>
@@ -300,7 +396,6 @@ function UserInfo() {
               <p className="amount">{earnings} P</p>
             </div>
           </div>
-          {/* </div> */}
         </li>
         <li className="charging-withdrawal">
           <button onClick={handleModalOpen} style={{ whiteSpace: 'nowrap' }}>
