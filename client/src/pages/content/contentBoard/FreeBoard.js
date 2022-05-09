@@ -112,6 +112,9 @@ function Post({ post }) {
     updatedAt,
   } = post;
 
+  useEffect(() => {
+    console.log('post: ', post);
+  }, []);
   const day = createdAt.split(' ')[0];
   return (
     <li className="post">
@@ -152,9 +155,9 @@ function FreeBoard() {
         `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/info?pages=${page}&limit=${LIMIT}`,
       )
       .then((res) => {
-        const { rows, total } = res.data;
+        const { rows, count } = res.data.info;
         if (rows) setList([...list, ...rows]);
-        if (total) setTotalCnt(total);
+        if (count) setTotalCnt(count);
       })
       .catch((err) => {
         if (err.response?.message) alert(err.response.message);
