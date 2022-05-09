@@ -10,9 +10,12 @@ const initialState = {
   point: 0,
   earnings: 0,
   grade: '',
-  profileImg: '',
   phone: '',
   accout: '',
+  profileImg: '',
+  selectedFile: null,
+  progress: 0,
+  showAlert: false,
 };
 
 // const mockData = {

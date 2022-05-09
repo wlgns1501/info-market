@@ -149,8 +149,8 @@ function UserInfo() {
   const { modalOpen } = useSelector(selectPoint);
   const dispatch = useDispatch();
 
-  const [image, setImage] = useState('');
-  const [file, setFile] = useState('');
+  const [image, setImage] = useState(null);
+  const [file, setFile] = useState(null);
   const fileInput = useRef(null);
 
   const config = {

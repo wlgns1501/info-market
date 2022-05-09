@@ -18,6 +18,12 @@ const EntireContainer = styled.div`
   min-height: 78vh;
   /* border: 3px solid blue; */
   overflow-y: scroll;
+  /* > p.no-content {
+    margin: 0;
+    border: 1px solid black;
+    min-height: 78vh;
+    line-height: 78vh;
+  } */
   > div#order {
     position: fixed;
     background-color: #e68feb;
@@ -141,25 +147,25 @@ function FreeBoard() {
   const elm = useRef(null);
 
   useEffect(() => {
-    console.log('@', process.env.REACT_APP_SERVER_DEV_URL);
     axios
-      .get(`http://localhost:80/test/freeBoard?pages=${page}&limit=${LIMIT}`)
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`,
+      )
       .then((res) => {
         const { rows, total } = res.data;
-        if (!rows || !rows.length) {
-          // alert('마지막 페이지입니다.');
-          return;
-        }
-        setList([...list, ...rows]);
-        setTotalCnt(total);
+        if (rows) setList([...list, ...rows]);
+        if (total) setTotalCnt(total);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response?.message) alert(err.response.message);
+      });
   }, [page]);
 
   const handleScroll = (e) => {
     if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
       setPage((prevState) => prevState + 1);
   };
+
   return (
     <EntireContainer id="box" ref={elm} onScroll={handleScroll}>
       <div id="order">
@@ -174,13 +180,14 @@ function FreeBoard() {
           />
           인기순
         </span>
-        <span className="count">총 게시물 수 : {totalCnt}</span>
+        <span className="count">총 게시물 수 : {totalCnt || 0}</span>
       </div>
+      {/* {list.length === 0} */}
       <ul className="postList">
         {list.map((post) => (
           <Post key={post.id} post={post} />
         ))}
-        {/* <>{isLoading && <Loading/>}</> */}
+        {/* isLoading && <Loading /> */}
       </ul>
     </EntireContainer>
   );
