@@ -340,7 +340,7 @@ function UserInfoChange() {
     };
     axios
       .put(
-        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/users/${id}`,
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
         resultObj,
         config,
       )
@@ -356,12 +356,9 @@ function UserInfoChange() {
   const handleWithdrawal = (e) => {
     e.preventDefault();
     axios
-      .delete(
-        `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/${id}`,
-        {
-          Authorization: `Bearer ${accToken}`,
-        },
-      )
+      .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, {
+        Authorization: `Bearer ${accToken}`,
+      })
       .then((res) => dispatch(clearState()))
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));
   };

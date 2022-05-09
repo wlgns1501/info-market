@@ -147,7 +147,7 @@ function FreeBoard() {
   const LIMIT = 6;
   const elm = useRef(null);
 
-  const testUrl = `http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/info?pages=${page}&limit=${LIMIT}`;
+  const testUrl = `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`;
   // const url = `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`;
   useEffect(() => {
     axios

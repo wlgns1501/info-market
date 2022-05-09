@@ -149,7 +149,7 @@ function Signup() {
     setMessage({ ...message, result: '' });
     axios
       .post(
-        'http://ec2-13-125-246-202.ap-northeast-2.compute.amazonaws.com/auth/signup',
+        `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`,
         { email, password, phone, nickname },
         {
           headers: { 'Content-Type': 'application/json' },
