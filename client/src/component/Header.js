@@ -14,7 +14,6 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleBar = () => {
-    console.log('bar눌림');
     setIsOpen(!isOpen);
   };
 
@@ -25,13 +24,18 @@ function Header() {
           <FontAwesomeIcon
             icon={faBars}
             className="header-faBars"
-            onClick={() => handleBar()}
+            onClick={handleBar}
           />
           <NavLink to="/">
-            <img src={logo} alt="logo " className="header-logo" />
+            <img
+              src={logo}
+              alt="logo "
+              className="header-logo"
+              style={{ minWidth: '150px' }}
+            />
           </NavLink>
         </div>
-        <ul className="header-menu">
+        <ul className={isOpen ? 'header-menu open' : 'header-menu'}>
           <NavLink to="/main">
             <li>메인페이지</li>
           </NavLink>
@@ -43,17 +47,6 @@ function Header() {
           </NavLink>
         </ul>
         <ul className="header-info">
-          {/* <li>
-            <FontAwesomeIcon
-              icon={faCircleUser}
-              className="faCircleUser"
-              size="2x"
-              // onClick={}
-            >
-              <li>로그아웃</li>
-              <li>마이페이지</li>
-            </FontAwesomeIcon>
-          </li> */}
           <UserMenu />
         </ul>
       </nav>

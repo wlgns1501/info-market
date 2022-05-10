@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -21,7 +21,7 @@ sequelize
 
 const corsOption = {
   // origin: 'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com',
-  origin: '*',
+  origin: 'http://localhost:3000',
   // optionsSuccessStatus: 200,
   credentials: true, // allow the Access-Control-Allow-Credentials
   // withcredentials: true, // allow the Access-Control-Allow-Credentials
@@ -43,7 +43,7 @@ app.use(morgan('dev'));
 app.use('/', indexRouter);
 
 // http://15.164.104.171/
-app.get('/api', async (req: Request, res: Response) => {});
+// app.get('/api', async (req: Request, res: Response) => {});
 
 // // 지원하지 않는 api
 app.use((req, res, next) => {
@@ -51,10 +51,10 @@ app.use((req, res, next) => {
 });
 
 // 서버 에러
-// app.use((error, req, res, next) => {
-//   console.error(error);
-//   res.sendStatus(500);
-// });
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(error);
+  res.sendStatus(500);
+});
 
 app.get('/', (req, res) => {
   console.log('get');

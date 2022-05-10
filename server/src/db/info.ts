@@ -1,9 +1,10 @@
-import { Sequelize, Op } from 'sequelize';
+import { Sequelize, Op, where } from 'sequelize';
 
+import Reply from '../models/reply';
 import Info from '../models/info';
 import User from '../models/user';
 
-export async function getInfo(infoId: string) {
+export async function getInfo(infoId: number) {
   return await Info.findOne({
     where: { id: infoId },
     attributes: [
@@ -13,21 +14,35 @@ export async function getInfo(infoId: string) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
         model: User,
         attributes: [],
       },
+      {
+        model: Reply,
+        attributes: ['content', 'createdAt'],
+        include: [
+          {
+            model: User,
+            attributes: ['nickname'],
+          },
+        ],
+      },
     ],
   });
 }
 
-export async function getInfos(pages: number, limit: number) {
+export async function getInfos(
+  pages: number,
+  limit: number,
+  activate: boolean,
+) {
   return await Info.findAndCountAll({
     order: [['createdAt', 'desc']],
     limit,
@@ -39,8 +54,9 @@ export async function getInfos(pages: number, limit: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
+      'activate',
       'type',
     ],
     include: [
@@ -49,6 +65,9 @@ export async function getInfos(pages: number, limit: number) {
         attributes: [],
       },
     ],
+    where: {
+      activate,
+    },
   });
 }
 
@@ -67,7 +86,7 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
     ],
@@ -86,6 +105,7 @@ export async function createInfo(
   targetPoint: number,
   type: string,
   userId: number,
+  activate: boolean,
 ) {
   return await Info.create({
     title,
@@ -93,10 +113,11 @@ export async function createInfo(
     targetPoint,
     type,
     userId,
+    activate,
   });
 }
 
-export async function removeInfo(infoId: string) {
+export async function removeInfo(infoId: number) {
   return await Info.destroy({
     where: { id: infoId },
   });
@@ -131,5 +152,81 @@ export async function SGEditInfo(
       type,
     },
     { where: { id: infoId } },
+  );
+}
+
+export async function viewsAdd(infoId: number, views: number) {
+  return await Info.update(
+    {
+      totalViews: views + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function LikesAdd(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function LikesSub(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes - 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function adminEditInfo(
+  infoId: number,
+  title: string,
+  content: string,
+  targetPoint: number,
+  type: string,
+  activate: boolean,
+) {
+  return await Info.update(
+    {
+      title,
+      content,
+      targetPoint,
+      type,
+      activate,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function activateInfo(activate: boolean, infoId: number) {
+  return await Info.update(
+    {
+      activate,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
   );
 }

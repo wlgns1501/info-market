@@ -1,9 +1,4 @@
-import { Sequelize, Op } from 'sequelize';
-
-import Info from '../models/info';
-import User from '../models/user';
 import Reply from '../models/reply';
-import { stringify } from 'querystring';
 
 export async function writeReply(
   content: string,
@@ -33,13 +28,13 @@ export async function modifyReply(
   );
 }
 
-export async function deleteReply(replyId: number) {
-  return await Info.destroy({
+export async function deleteReply(replyId: string) {
+  return await Reply.destroy({
     where: { id: replyId },
   });
 }
 
-export async function getReply(replyId: number) {
+export async function getReply(replyId: string) {
   return await Reply.findOne({
     where: { id: replyId },
   });

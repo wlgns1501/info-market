@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
@@ -41,9 +42,16 @@ const EntireContainer = styled.li`
 `;
 
 function UserMenu() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { isLogin } = useSelector(selectUserInfo);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+  const { isLogin, accToken } = useSelector(selectUserInfo);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
   const handleButtonClick = useCallback((e) => {
     e.stopPropagation();
@@ -62,13 +70,13 @@ function UserMenu() {
   }, [isOpen]);
 
   const handleLogOut = () => {
-    // axios
-    //   .get(
-    //     'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com/auth/logout',
-    //   )
-    //   .then((res) => dispatch(logout()))
-    //   .catch((err) => console.log(err));
-    dispatch(clearState());
+    axios
+      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/logout`, null, config)
+      .then((res) => {
+        dispatch(clearState());
+        navigate('/main');
+      })
+      .catch((err) => alert(err.response.message));
   };
 
   return (
@@ -91,10 +99,7 @@ function UserMenu() {
             </Link>
           </li>
           <li className="signup-btn">
-            <Link
-              to="/signup"
-              style={{ textDecoration: 'none', color: 'black' }}
-            >
+            <Link to="/tos" style={{ textDecoration: 'none', color: 'black' }}>
               회원가입
             </Link>
           </li>

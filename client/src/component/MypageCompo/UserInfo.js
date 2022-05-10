@@ -6,6 +6,25 @@ import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
+import { selectPoint, updatePointState } from '../../store/slices/point';
+import ChargeBox from '../ChargeBox';
+import AWS from 'aws-sdk';
+import { v1, v3, v4, v5 } from 'uuid';
+
+const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
+const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+
+AWS.config.update({
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY,
+});
+
+const myBucket = new AWS.S3({
+  params: { Bucket: S3_BUCKET },
+  region: REGION,
+});
 
 const EntireContainer = styled.div`
   border: 5px solid blue;
@@ -16,6 +35,19 @@ const EntireContainer = styled.div`
   @media screen and (max-width: 590px) {
     font-size: 0.7rem;
   }
+  > div.modal div.content {
+    max-width: 600px;
+    background-color: #f3f702;
+    @media screen and (max-width: 700px) {
+      > div.charge-box {
+        font-size: 0.8rem;
+        > input,
+        button {
+          font-size: inherit;
+        }
+      }
+    }
+  }
   > ul#user-Info-container {
     margin-top: 0;
     border: 5px solid orange;
@@ -24,18 +56,21 @@ const EntireContainer = styled.div`
     list-style: none;
     padding-left: 0;
     align-items: center;
+    justify-content: space-around;
     > li {
       border: 1px dotted black;
-
+      height: 200px;
       &.profile {
-        flex: 3;
+        /* flex: 3; */
+        min-width: 35%;
         display: flex;
-        justify-content: center;
         align-items: center;
-        display: flex;
         justify-content: space-evenly;
-        > p {
-          border: 1px solid purple;
+        @media screen and (max-width: 800px) {
+          flex-direction: column;
+        }
+        > div {
+          border: 3px solid purple;
           margin: 0 5px 0 5px;
           display: flex;
           flex-direction: column;
@@ -48,66 +83,48 @@ const EntireContainer = styled.div`
             min-width: 80px;
             min-height: 80px;
             border-radius: 50%;
-            background-image: url(${(props) => props.img || user});
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
+            @media screen and (max-width: 700px) {
+              min-width: 60px;
+              min-height: 60px;
+            }
           }
         }
       }
       &.my-points {
-        flex: 2;
+        /* flex: 2; */
+        min-width: 35%;
         display: flex;
         justify-content: center;
-        align-items: center;
+        /* align-items: center; */
         border: 1px solid green;
-        > div.point-container {
-          min-width: 90%;
-          border: 1px solid red;
+
+        > div.detail {
+          border: 2px solid black;
+          /* flex: 6; */
+          width: 85%;
           display: flex;
           flex-direction: column;
-          /* @media screen and (max-width: 800px) {
-            font-size: 0.9rem;
-          }
-          @media screen and (max-width: 590px) {
-            font-size: 0.7rem;
-          } */
-          > p.title {
+          justify-content: space-around;
+          align-items: stretch;
+          > div {
+            border: 1px solid blue;
             margin: 0;
-            padding: 2%;
-            border: 1px solid black;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          > div.detail {
-            border: 1px solid black;
-            flex: 6;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
+            /* width: 80%; */
+            &#charged {
+              /* margin-bottom: 5%; */
+            }
+            &#earnings {
+              /* margin-bottom: 7px; */
+            }
             > p {
-              border: 1px solid blue;
+              border: 1px solid orange;
               margin: 0;
               text-align: center;
-            }
-            > div#charged {
-              border: 1px solid blue;
-              margin: 10% auto;
-              > p {
-                border: 1px solid orange;
-                margin: 0;
-                text-align: center;
-              }
-            }
-            > div#earnings {
-              border: 1px solid blue;
-              > p {
-                border: 1px solid orange;
-                margin: 0;
-                text-align: center;
+              &.amount {
+                padding: 3%;
               }
             }
           }
@@ -115,7 +132,8 @@ const EntireContainer = styled.div`
       }
 
       &.charging-withdrawal {
-        flex: 2;
+        /* flex: 2; */
+        min-width: 30%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -137,79 +155,245 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfo() {
+  const dispatch = useDispatch();
   const {
+    id,
     nickname,
     profileImg,
     point,
     accToken,
     grade,
-    chargedPoint,
     earnings,
+    previewImg,
+    progress,
+    showAlert,
   } = useSelector(selectUserInfo);
-  const dispatch = useDispatch();
-
-  const [image, setImage] = useState('');
-  const [file, setFile] = useState('');
+  const { modalOpen } = useSelector(selectPoint);
   const fileInput = useRef(null);
+  const [selectedFile, setSelectedFile] = useState('');
 
+  //서버 통신 헤더: post용, get용
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
+  //처음 렌더링때 작동: 유저정보 불러오기
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`, getConfig)
+      .then((res) => {
+        const { user } = res.data;
+        if (user) {
+          delete user.password;
+          dispatch(updateState({ ...user }));
+        }
+      })
+      .catch((err) => {
+        alert('회원정보 불러오기 실패');
+      });
+  }, []);
+
+  //포인트 결제 모달 열기
+  const handleModalOpen = (e) => {
+    e.preventDefault();
+    dispatch(
+      updatePointState({
+        modalOpen: true,
+      }),
+    );
+  };
+
+  //프로필 사진을 클릭하면 파일 업로드 input창이 클릭됨.
   const profileBtnClick = (e) => {
     e.preventDefault();
     fileInput.current.click();
   };
 
+  //선택한 이미지파일 --> 미리보기
   const encodeFileToBase64 = (fileBlob) => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
     return new Promise((resolve) => {
       reader.onload = () => {
-        setImage(reader.result);
+        dispatch(
+          updateState({
+            previewImg: reader.result,
+          }),
+        );
         resolve();
       };
     });
   };
 
-  const saveImg = async () => {
-    //loading indicator: true
-    const formData = new FormData();
-    formData.append('file', file);
+  //모달 안의 프로필 변경 버튼 클릭
+  const handleChangeImg = () => {
+    if (profileImg) {
+      let temp = profileImg;
+      deleteImg(temp);
+    }
+    saveImg(selectedFile, 'image');
+  };
 
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-        Authorization: `Bearer ${accToken}`,
-      },
-      withCredentials: true,
+  //s3에 있는 파일 삭제
+  const deleteImg = (fileName, callback) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
     };
-    const response = await axios.post(
-      'http://localhost:8080',
-      formData,
-      config,
+
+    const cb = (err, data) => {
+      if (data) alert('삭제 성공');
+      if (err) alert('실패 실패');
+    };
+
+    myBucket.deleteObject(params, callback || cb);
+  };
+
+  //s3에 파일 전송.
+  const saveImg = (file, path) => {
+    const fileName = `${path}/${v4().toString().replaceAll('-', '')}.${
+      file.type.split('/')[1]
+    }`;
+    const params = {
+      ACL: 'public-read-write',
+      Body: file,
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
+
+    myBucket
+      .putObject(params, (err, data) => {
+        //서버로 profileImg 값 보내주기.(일단 임시로 작성)
+        // axios
+        //   .post(
+        //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
+        //     { profileImg: fileName },
+        //     postConfig,
+        //   )
+        //   .then((res) => {
+        //     dispatch(
+        //       updateState({
+        //         profileImg: fileName,
+        //       }),
+        //     );
+        //   })
+        //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        //아래 코드는 서버랑 연동되면 삭제
+        dispatch(
+          updateState({
+            profileImg: fileName,
+          }),
+        );
+      })
+      .on('httpUploadProgress', (evt) => {
+        dispatch(
+          updateState({
+            progress: Math.round((evt.loaded / evt.total) * 100),
+            showAlert: true,
+          }),
+        );
+        setTimeout(() => {
+          setSelectedFile('');
+          dispatch(
+            updateState({
+              showAlert: false,
+              previewImg: null,
+            }),
+          );
+        }, 2000);
+      })
+      .send((err) => {
+        if (err) console.log(err);
+      });
+  };
+
+  //미리보기 모달창 취소버튼
+  const handleCancleClick = (e) => {
+    e.preventDefault();
+    if (showAlert) return;
+
+    setSelectedFile(null);
+    dispatch(
+      updateState({
+        previewImg: null,
+      }),
     );
-    // dispatch(updateState({
-    //   profileImg: response.data//어쩌구..
-    // }))
-    //loading indicator: false
-    setImage('');
+    fileInput.current.value = '';
+  };
+
+  //기본 이미지로 변경 버튼 클릭
+  const resetImg = () => {
+    //아래코드는 일단 임시(나중에 삭제)
+    dispatch(
+      updateState({
+        profileImg: null,
+      }),
+    );
+    //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
+    const deleteDB = () => {
+      axios
+        .delete(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
+          getConfig,
+        )
+        .then((res) => {
+          dispatch(
+            updateState({
+              profileImg: null,
+            }),
+          );
+        })
+        .catch((err) => console.log(err));
+    };
+
+    deleteImg(profileImg, deleteDB);
   };
 
   return (
     <EntireContainer>
-      {image && (
+      {modalOpen && (
+        <Modal
+          handleBtnClick={() =>
+            dispatch(
+              updatePointState({
+                modalOpen: false,
+              }),
+            )
+          }
+          content={<ChargeBox />}
+        />
+      )}
+      {previewImg && (
         <Modal
           content={
             <div>
               <img
-                src={image}
+                src={previewImg}
                 style={{
                   height: '15vh',
                 }}
                 alt="preview-img"
               />
-              <button onClick={saveImg}>업로드</button>
-              <button onClick={() => setImage('')}>취소</button>
+              <button onClick={handleChangeImg} disabled={showAlert}>
+                프로필 변경하기
+              </button>
+              <button disabled={showAlert} onClick={handleCancleClick}>
+                취소
+              </button>
+              {showAlert && <p>업로드 진행률: {progress} %</p>}
             </div>
           }
-          handleBtnClick={() => setImage('')}
+          handleBtnClick={handleCancleClick}
         />
       )}
       <ul id="user-Info-container">
@@ -220,50 +404,46 @@ function UserInfo() {
             accept="image/*"
             name="profile-img"
             onChange={(e) => {
-              setFile(e.target.files[0]);
+              setSelectedFile(e.target.files[0]);
               encodeFileToBase64(e.target.files[0]);
             }}
             ref={fileInput}
           />
-          <p className="user-photo">
-            <figure img={profileImg} onClick={profileBtnClick} />
+          <div className="user-photo">
+            <figure
+              style={{
+                backgroundImage: `url(${
+                  profileImg
+                    ? `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/` +
+                      profileImg
+                    : user
+                })`,
+              }}
+              onClick={profileBtnClick}
+            />
             {profileImg && (
-              <button
-                onClick={() => {
-                  dispatch(
-                    updateState({
-                      profileImg: '',
-                    }),
-                  );
-                }}
-              >
-                기본 이미지로 변경
-              </button>
+              <button onClick={resetImg}>기본 이미지로 변경</button>
             )}
-          </p>
-          <p style={{ whiteSpace: 'nowrap' }}>{nickname}</p>
-          <p style={{ whiteSpace: 'nowrap' }}>{grade}</p>
+          </div>
+          <div style={{ whiteSpace: 'nowrap' }}>{nickname}</div>
+          <div style={{ whiteSpace: 'nowrap' }}>{grade}</div>
         </li>
         <li className="my-points">
-          <div className="point-container">
-            <p className="title" style={{ whiteSpace: 'nowrap' }}>
-              보유 포인트
-            </p>
-            <div className="detail">
-              <p>{point} P</p>
-              <div id="charged">
-                <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
-                <p>{chargedPoint} P</p>
-              </div>
-              <div id="earnings">
-                <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
-                <p>{earnings} P</p>
-              </div>
+          <div className="detail">
+            <div id="charged">
+              <p style={{ whiteSpace: 'nowrap' }}>충전 포인트</p>
+              <p className="amount">{point} P</p>
+            </div>
+            <div id="earnings">
+              <p style={{ whiteSpace: 'nowrap' }}>누적 수익 포인트</p>
+              <p className="amount">{earnings} P</p>
             </div>
           </div>
         </li>
         <li className="charging-withdrawal">
-          <button style={{ whiteSpace: 'nowrap' }}>포인트 충전</button>
+          <button onClick={handleModalOpen} style={{ whiteSpace: 'nowrap' }}>
+            포인트 충전
+          </button>
           <button style={{ whiteSpace: 'nowrap' }}>포인트 출금</button>
         </li>
       </ul>

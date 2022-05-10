@@ -1,142 +1,98 @@
 import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
+import freeBoardData from '../../mockdata/freeBoardData';
+import Footer from '../../component/Footer';
+import search from '../../images/search.jpg';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
-  border: 3px solid red;
-  min-height: 100vh;
+  margin: auto auto;
+  width: 120vh;
+  height: 80vh;
+  border: 5px solid red;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  > section {
-    border: 3px solid blue;
-    min-width: 70%;
-    min-height: 100%;
+  justify-content: center;
+  > div.top {
+    width: 100%;
+    border: 2px solid orange;
+    height: 20%;
     display: flex;
-    flex-direction: column;
-    > #search {
-      border: 3px solid green;
+    justify-content: center;
+    align-items: center;
+    /* background-color: palegreen; */
+    > div.bar {
+      width: 80%;
     }
+  }
+`;
 
-    > div#posts-container {
-      border: 5px solid yellow;
-      min-height: 80%;
-      display: flex;
-      flex-direction: column;
-
-      > div#sales-top-10 {
-        border: 5px solid pink;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        > p {
-          border: 1px solid black;
-        }
-        > ul {
-          border: 1px solid black;
-          padding: 0;
-          list-style: none;
-          display: flex;
-          flex-direction: column;
-          flex-wrap: auto;
-          /* justify-content: space-between; */
-          > li {
-            border: 1px solid lightcoral;
-          }
-        }
-        > span {
-          border: 1px solid black;
-          display: flex;
-          justify-content: flex-end;
-          > button {
-          }
-        }
+const UlContainer = styled.ul`
+  list-style: none;
+  padding: 0;
+  border: 2px solid blue;
+  margin: 0;
+  width: 45%;
+  margin-top: -30px;
+  &.first {
+    margin-right: 5%;
+    border: 3px solid yellow;
+  }
+  > li {
+    border: 1px solid black;
+    display: flex;
+    > p {
+      &.title {
+        width: 90%;
+        overflow: hidden;
       }
-      > div#free-newest-10 {
-        border: 5px solid pink;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        > p {
-          border: 1px solid black;
-        }
-        > ul {
-          border: 1px solid black;
-          padding: 0;
-          list-style: none;
-          display: flex;
-          flex-direction: column;
-          flex-wrap: auto;
-          /* justify-content: space-between; */
-          > li {
-            border: 1px solid lightcoral;
-          }
-        }
-        > span {
-          border: 1px solid black;
-          display: flex;
-          justify-content: flex-end;
-          > button {
-          }
-        }
+      &.writer {
+        text-align: center;
+        width: 10%;
+        border-left: 2px solid gray;
+        margin-left: 10px;
       }
     }
   }
 `;
 
-function Mainpage() {
+function Post({ post }) {
+  const { id, title, writer } = post;
   return (
-    <EntireContainer>
-      <section>
-        <Search id="search" />
-        {/* <Search
-          id="search"
-          searchOptions={searchOptions}
-          dispatch={dispatch}
-          updateSearch={updateSearch}
-        /> */}
-        <div id="posts-container">
-          <div id="sales-top-10">
-            <p>유료 정보글 TOP 10</p>
-            <ul>
-              <li>111111111111111111111</li>
-              <li>222222222222222222222</li>
-              <li>333333333333333333333</li>
-              <li>444444444444444444444</li>
-              <li>555555555555555555555</li>
-              <li>666666666666666666666</li>
-              <li>777777777777777777777</li>
-              <li>888888888888888888888</li>
-              <li>999999999999999999999</li>
-              <li>101010101010101010101</li>
-            </ul>
-            <span>
-              <button>더 보기</button>
-            </span>
-          </div>
-          <div id="free-newest-10">
-            <p>무료 정보글 최신 10</p>
-            <ul>
-              <li>111111111111111111111</li>
-              <li>222222222222222222222</li>
-              <li>333333333333333333333</li>
-              <li>444444444444444444444</li>
-              <li>555555555555555555555</li>
-              <li>666666666666666666666</li>
-              <li>777777777777777777777</li>
-              <li>888888888888888888888</li>
-              <li>999999999999999999999</li>
-              <li>101010101010101010101</li>
-            </ul>
-            <span>
-              <button>더 보기</button>
-            </span>
-          </div>
+    <li>
+      <p className="title">{title}</p>
+      <p className="writer">{writer}</p>
+    </li>
+  );
+}
+
+function List({ posts, className }) {
+  return (
+    <UlContainer className={className}>
+      {posts.map((post) => (
+        <Post key={post.id} post={post} />
+      ))}
+    </UlContainer>
+  );
+}
+
+function Mainpage() {
+  const { posts } = freeBoardData;
+
+  return (
+    <>
+      <EntireContainer>
+        <div className="top">
+          <Search />
         </div>
-      </section>
-    </EntireContainer>
+        <List className="first" posts={posts} />
+        <List posts={posts} />
+        <Footer />
+      </EntireContainer>
+    </>
   );
 }
 

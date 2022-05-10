@@ -74,7 +74,8 @@ const SideBar = () => {
     ['무료글 작성', '/mypage/freeWriting', ''],
   ];
 
-  if (['실버', '골드'].includes(grade))
+  //아래 Bronze는 나중에 빼기
+  if (['Bronze', 'Silver', 'Gold'].includes(grade))
     links.push(['유료글 작성', '/mypage/salesWriting', '']);
 
   return (
