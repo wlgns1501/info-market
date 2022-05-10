@@ -176,9 +176,8 @@ function Writing() {
 
   //파일 선택
   const handleInputChange = (e) => {
-    const fileObj = e.target.files[0];
+    // const fileObj = e.target.files[0];
     // const ext = fileObj.name.split('.').pop();
-    // if(ext === '')
     setSelectedFile(e.target.files[0]);
   };
 
