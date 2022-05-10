@@ -14,7 +14,7 @@ function Post() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { postId } = useParams();
-  const { accToken, isAdmin } = useSelector(selectUserInfo);
+  const { accToken } = useSelector(selectUserInfo);
   const { type } = useSelector(selectSelectedPost);
 
   const getConfig = {

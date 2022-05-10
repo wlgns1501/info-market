@@ -14,9 +14,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 
-const { posts } = contentData;
-
-function ContentFree({ post, HeartButton }) {
+function ContentFree() {
   const dispatch = useDispatch();
   const {
     id,

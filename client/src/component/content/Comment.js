@@ -1,12 +1,9 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import {
-  updatePostState,
   selectSelectedPost,
-  addLike,
-  cancelLike,
   addComment,
   deleteComment,
   modifyComment,
@@ -42,7 +39,6 @@ function Comment() {
   const [input, setInput] = useState('');
   const [modifyVal, setModifyVal] = useState('');
   const [editMode, setEditMode] = useState(false);
-  const [comments, setComments] = useState([]);
   const textEl = useRef(null);
 
   const postConfig = {
@@ -100,7 +96,7 @@ function Comment() {
       )
       .then((res) => {
         const { reply } = res.data;
-        if (Number(replyId) === Number(reply.id)) {
+        if (String(replyId) === String(reply.id)) {
           dispatch(deleteComment({ replyId }));
         }
       })
@@ -154,7 +150,8 @@ function Comment() {
             <p>작성일자 : {R.createdAt}</p>
             <Button
               className={
-                (R.userId === userInfo.id || userInfo.isAdmin) && 'authorized'
+                (R.userId === userInfo.id || userInfo.grade === 'admin') &&
+                'authorized'
               }
               onClick={() => remove(R.id)}
             >
