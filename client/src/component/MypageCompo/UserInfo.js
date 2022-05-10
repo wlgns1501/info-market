@@ -342,9 +342,10 @@ function UserInfo() {
     //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
     const deleteDB = () => {
       axios
-        .delete(
+        .post(
           `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
-          getConfig,
+          { profileImg: '' },
+          postConfig,
         )
         .then((res) => {
           dispatch(
