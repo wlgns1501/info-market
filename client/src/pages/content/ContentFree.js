@@ -1,80 +1,59 @@
-import '../../css/Content.css'
-import React, { useEffect, useState } from 'react';
+import '../../css/Content.css';
+import React, { useEffect, useRef, useState } from 'react';
 import contentData from '../../mockdata/contentData';
 import axios from 'axios';
-import HeartButton from '../../component/content/Heart';
 import Comment from '../../component/content/Comment';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUserInfo } from '../../store/slices/userInfo';
+import {
+  updatePostState,
+  selectSelectedPost,
+  addLike,
+  cancelLike,
+} from '../../store/slices/selectedPost';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 const { posts } = contentData;
 
-function Post({ post, HeartButton }) {
+function ContentFree({ post, HeartButton }) {
+  const dispatch = useDispatch();
   const {
     id,
     title,
-    writer,
+    nickname,
     content,
     totalLikes,
     reviews,
     totalViews,
+    like,
     createdAt,
     updatedAt,
-  } = post;
+    fileURL,
+  } = useSelector(selectSelectedPost);
 
-  const [reply, setReply] = useState(false);
-  const [like, setLike] = useState(false);
-  const [checkLike, setCheckLike] = useState(totalLikes)
+  // const download = useRef(null);
 
-  /* 추가시 totalLikes +1, -1 되는것 만들어야함 */
-  // const likeClick = () => {
-  //   if (like) {
-  //     setLike(false);
-  //     console.log('빠졌나??')
-  //   } else {
-  //     setLike(true)
-  //     setCheckLike(totalLikes + 1)
-  //     console.log('추가됬나??')
-  //     console.log(checkLike)
-  //   }
-  // }
-
-
-  /* 댓글작성 클릭시, post 전달되게 새로 짜야함 */
-  // const handleReply = () => {
-  //   if (!reply) {
-  //     axios.post(
-  //       // `http://localhost:3000/info/${infoId}/reply`,
-  //       {content}
-  //       {
-  //         headers: { 'Content-Type': 'application/json' },
-  //         withCredentials: true,
-  //       },
-  //     )
-  //       .then((res) => {
-  //         if (res.data) {
-  //           dispatch(
-  //             updateState({
-  //               ...res.data,
-  //             })
-  //           )
-  //         }
-  //       })
-  //   }
-  // }
-
-  /* 댓글 추가시, useEffect 로 바로 밑에 보여지게끔 해야함 */
+  const likeClick = () => {
+    //이미 추천한 게시글이면,
+    if (like) {
+      dispatch(cancelLike());
+    } else {
+      dispatch(addLike());
+    }
+    dispatch(updatePostState({ like: !like }));
+  };
 
   return (
     <div>
       <strong>무료글 상세보기</strong>
       <p>무료컨텐츠 상세 페이지 입니다</p>
-      <div className='container'>
-        <div className='title'>
-          {title}
-        </div>
-        <div className='info'>
+      <div className="container">
+        <div className="title">{title}</div>
+        <div className="info">
           <dl>
             <dt>작성자</dt>
-            <dd>{writer}</dd>
+            <dd>{nickname}</dd>
           </dl>
           <dl>
             <dt>작성일자</dt>
@@ -89,18 +68,22 @@ function Post({ post, HeartButton }) {
             <dd>{totalLikes}</dd>
           </dl>
         </div>
-        <div className='body'>
-          {content}
-          <div className='like'>
-            {/* {like ? (
-              <div onClick={likeClick} checkLike={checkLike}>♥</div>
-            ) : (
-              <div onClick={likeClick}>♡</div>
-            )} */}
-            {/* <button>추천하기</button>
-            <div>{totalLikes}</div> */}
-            {/* <div>추천개수:{totalLikes}</div> */}
-          </div>
+        <div className="body">{content}</div>
+        <div className="like download" style={{ height: '50px' }}>
+          <span onClick={likeClick}>
+            {like ? '♥' : '♡'} {totalLikes}
+          </span>
+          {/* 아래 첨부파일은 회원만 다운 가능 */}
+          <a
+            // ref={download}
+            href={`https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`}
+            // style={{ display: 'none' }}
+          >
+            <FontAwesomeIcon
+              icon={faFileArrowDown}
+              style={{ fontSize: '1.5rem' }}
+            />
+          </a>
         </div>
         {/* <div className='reply'>
           <div className='content_reply_write'>
@@ -116,20 +99,19 @@ function Post({ post, HeartButton }) {
         <Comment />
       </div>
     </div>
-  )
+  );
 }
 
-function ContentFree() {
-
-  return (
-    <div>
-      <ul className="posts">
-        {posts.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </ul>
-    </div>
-  )
-}
+// function ContentFree() {
+//   return (
+//     <div>
+//       <ul className="posts">
+//         {posts.map((post) => (
+//           <Post key={post.id} post={post} />
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
 
 export default ContentFree;

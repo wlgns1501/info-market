@@ -79,8 +79,9 @@ function App() {
               <Route path=":postId" element={<Post />} />
             </Route>
           </Route>
-          {/* <Route path="contentfree" element={<ContentFree />} />
-          <Route path="contentpaid" element={<ContentPaid />} /> */}
+          {/* 아래 두개는 나중에 삭제 */}
+          <Route path="contentfree" element={<ContentFree />} />
+          <Route path="contentpaid" element={<ContentPaid />} />
           {/* 유료컨텐츠, 무료컨텐츠 */}
           <Route path="freeboard" element={<FreeBoard />}>
             {/* <Route path=":postId" element={<ContentFree />} /> */}

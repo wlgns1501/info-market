@@ -53,7 +53,7 @@ function Login() {
                 isLogin: true,
               }),
             );
-            navigate('/main');
+            navigate(-1);
           }
           return;
         })
