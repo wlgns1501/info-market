@@ -32,6 +32,7 @@ function ContentFree({ post, HeartButton }) {
     fileURL,
   } = useSelector(selectSelectedPost);
 
+  const { isLogin } = useSelector(selectUserInfo);
   // const download = useRef(null);
 
   const likeClick = () => {
@@ -76,42 +77,23 @@ function ContentFree({ post, HeartButton }) {
           {/* 아래 첨부파일은 회원만 다운 가능 */}
           <a
             // ref={download}
-            href={`https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`}
-            // style={{ display: 'none' }}
+            href={
+              isLogin
+                ? `https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`
+                : '#'
+            }
           >
             <FontAwesomeIcon
               icon={faFileArrowDown}
               style={{ fontSize: '1.5rem' }}
+              onClick={() => alert('다운로드는 회원만 가능합니다.')}
             />
           </a>
         </div>
-        {/* <div className='reply'>
-          <div className='content_reply_write'>
-            <textarea placeholder='작성할 댓글 입력'></textarea>
-            <button>댓글달기</button>
-          </div>
-          <div className='content_reply'>
-            <div>
-              {reviews}
-            </div>
-          </div>
-        </div> */}
         <Comment />
       </div>
     </div>
   );
 }
-
-// function ContentFree() {
-//   return (
-//     <div>
-//       <ul className="posts">
-//         {posts.map((post) => (
-//           <Post key={post.id} post={post} />
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
 
 export default ContentFree;
