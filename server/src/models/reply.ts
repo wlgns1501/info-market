@@ -1,12 +1,4 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  HasManyGetAssociationsMixin,
-  HasManyRemoveAssociationsMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { BelongsToGetAssociationMixin, DataTypes, Model } from 'sequelize';
 import User from './user';
 import Info from './info';
 import { sequelize } from './sequelize';
@@ -21,8 +13,8 @@ class Reply extends Model {
   };
   public readonly id!: number;
   public content!: string;
-  public userId!: BelongsToManyGetAssociationsMixin<User>;
-  public infoId!: BelongsToManyGetAssociationsMixin<Info>;
+  public userId!: BelongsToGetAssociationMixin<User>;
+  public infoId!: BelongsToGetAssociationMixin<Info>;
 
   public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.
   public readonly updatedAt!: Date;

@@ -8,17 +8,16 @@ module.exports = {
     const { userId } = req;
     const { content } = req.body;
 
-    const exUser = await userDb.findPkUser(userId);
+    //const exUser = await userDb.findPkUser(userId);
+    const replyData = await replyDb.writeReply(content, userId, Number(infoId));
 
     if (!content) {
       return res.status(400).json({ message: '댓글을 입력해 주세요' });
     }
 
-    const replyData = await replyDb.writeReply(content, userId, Number(infoId));
-
     return res.status(203).json({
-      reply: replyData,
-      nickname: exUser?.nickname,
+      replyId: replyData.id,
+      createdAt: replyData.createdAt,
       message: '댓글을 작성했습니다.',
     });
   },
@@ -28,7 +27,7 @@ module.exports = {
     const { userId } = req;
     const { content } = req.body;
 
-    const exUser = await userDb.findPkUser(userId);
+    //const exUser = await userDb.findPkUser(userId);
     const exReply = await replyDb.getReply(replyId);
 
     if (!content) {
@@ -41,18 +40,14 @@ module.exports = {
         .json({ message: '해당 댓글을 작성한 유저가 아닙니다.' });
     }
 
-    const replyData = await replyDb.modifyReply(
+    await replyDb.modifyReply(
       content,
       userId,
       Number(infoId),
       Number(exReply?.id),
     );
 
-    return res.status(201).json({
-      reply: replyData,
-      nuckname: exUser?.nickname,
-      message: '댓글을 수정했습니다.',
-    });
+    return res.status(201).json({ replyId, message: '댓글을 수정했습니다.' });
   },
 
   removeReply: async (req: Request, res: Response) => {
@@ -73,6 +68,6 @@ module.exports = {
 
     await replyDb.deleteReply(replyId);
 
-    return res.status(203).json({ numessage: '댓글을 삭제했습니다.' });
+    return res.status(203).json({ replyId, message: '댓글을 삭제했습니다.' });
   },
 };

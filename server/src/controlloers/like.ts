@@ -8,15 +8,20 @@ module.exports = {
     const { infoId } = req.params;
     const { userId } = req;
 
-    const userInfo = await userDb.findPkUser(userId);
-    const likeInfo = await likeDb.findUser(userId);
-    if (userInfo!.id === likeInfo!.dataValues.userId) {
+    const userInfo = await userDb.findPkUser(Number(userId));
+    const likeInfo = await likeDb.findUser(Number(userId), Number(infoId));
+    console.log(userInfo);
+    console.log(likeInfo);
+
+    if (userInfo?.id === likeInfo?.userId) {
       return res.status(403).json({ message: '이미 추천한 게시물입니다.' });
     }
 
     await likeDb.likeClick(Number(userId), Number(infoId));
 
     const info = await infoDb.getInfo(Number(infoId));
+    // console.log(info.id);
+    // console.log(info?.totalLikes);
     await infoDb.LikesAdd(info!.id, Number(info!.totalLikes));
 
     return res.status(200).json({ message: '해당 게시물을 추천했습니다.' });
@@ -25,16 +30,18 @@ module.exports = {
     const { infoId } = req.params;
     const { userId } = req;
 
-    //const userInfo = await userDb.findPkUser(userId);
-    const likeInfo = await likeDb.findUser(userId);
+    const userInfo = await userDb.findPkUser(userId);
+    const likeInfo = await likeDb.findUser(Number(userId), Number(infoId));
+    console.log(userInfo);
+    console.log(likeInfo);
 
-    // if (userInfo!.id === likeInfo?.dataValues.userId) {
-    //   return res
-    //     .status(403)
-    //     .json({ message: '이미 추천을 취소한 게시물입니다.' });
-    // }
+    if (userInfo !== null && likeInfo === null) {
+      return res
+        .status(403)
+        .json({ message: '이미 추천을 취소한 게시물입니다.' });
+    }
 
-    await likeDb.likeClickCancel(Number(infoId));
+    await likeDb.likeClickCancel(userId, Number(infoId));
 
     const info = await infoDb.getInfo(Number(infoId));
     await infoDb.LikesSub(info!.id, Number(info!.totalLikes));

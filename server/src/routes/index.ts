@@ -28,6 +28,6 @@ router.use('/users', usersRouter);
 router.use('/point', pointRouter);
 
 // 소셜 로그인
-router.use('/oauth', oauthRouter);
+//router.use('/oauth', oauthRouter);
 
 module.exports = router;

@@ -1,10 +1,4 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 
@@ -19,7 +13,9 @@ class Info extends Model {
     userId: number;
     totalLikes: number;
     activate: boolean;
+    file: string;
   };
+
   public readonly id!: number;
   public title!: string;
   public content!: string;
@@ -27,10 +23,12 @@ class Info extends Model {
   public type!: string;
   public totalViews?: number;
   public userId!: number;
-  public totalLikes!: number;
+  public totalLikes?: number;
   public activate?: boolean;
+  public file?: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
 Info.init(
@@ -46,7 +44,7 @@ Info.init(
       allowNull: false,
     },
     content: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     targetPoint: {
@@ -62,7 +60,7 @@ Info.init(
     totalViews: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -75,12 +73,17 @@ Info.init(
     totalLikes: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: '0',
+      defaultValue: 0,
     },
     activate: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,
+    },
+    file: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: '',
     },
   },
   {
