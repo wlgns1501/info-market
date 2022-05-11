@@ -10,7 +10,7 @@ module.exports = {
 
     const userInfo = await userDb.findPkUser(userId);
     const likeInfo = await likeDb.findUser(userId);
-    if (userInfo!.id === likeInfo?.dataValues.userId) {
+    if (userInfo!.id === likeInfo!.dataValues.userId) {
       return res.status(403).json({ message: '이미 추천한 게시물입니다.' });
     }
 

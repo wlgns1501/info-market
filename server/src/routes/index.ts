@@ -7,6 +7,7 @@ const infoRouter = require('./info');
 const searchRouter = require('./search');
 const usersRouter = require('./users');
 const pointRouter = require('./point');
+const oauthRouter = require('./oauth');
 
 // 로그인, 로그아웃, 회원가입, 회원 탈퇴
 router.use('/auth', authRouter);
@@ -25,5 +26,8 @@ router.use('/users', usersRouter);
 
 // 포인트 충전 및 환불
 router.use('/point', pointRouter);
+
+// 소셜 로그인
+router.use('/oauth', oauthRouter);
 
 module.exports = router;
