@@ -59,6 +59,7 @@ module.exports = {
       type,
       userId,
       activate,
+      req.body.file,
     );
 
     return res
@@ -100,20 +101,30 @@ module.exports = {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
     }
 
-    const { title, content, type, targetPoint } = req.body;
+    // const { title, content, type, targetPoint } = req.body;
 
-    if (grade === 'Bronze' && type === 'Free' && targetPoint === 0) {
-      const info = await infoDb.BronzeEditInfo(infoId, title, content);
-      console.log(info);
+    if (
+      grade === 'Bronze' &&
+      req.body.type === 'Free' &&
+      req.body.targetPoint === 0
+    ) {
+      const info = await infoDb.BronzeEditInfo(
+        infoId,
+        req.body.title,
+        req.body.content,
+        req.body.file,
+      );
+      // console.log(info);
 
       return res.status(200).json({ message: ' 게시물이 수정되었습니다.' });
     } else if (grade !== 'Bronze') {
       const info = await infoDb.SGEditInfo(
         infoId,
-        title,
-        content,
-        targetPoint,
-        type,
+        req.body.title,
+        req.body.content,
+        req.body.targetPoint,
+        req.body.type,
+        req.body.file,
       );
 
       return res.status(200).json({ message: ' 게시물이 수정되었습니다.' });
@@ -122,13 +133,18 @@ module.exports = {
       message: '해당 회원 등급은 유료 게시물로 변경 할 수 없습니다.',
     });
   },
+
+  // 무한스크롤
   getInfoes: async (req: Request, res: Response) => {
-    let { pages, limit } = req.query;
+    let { pages, limit, lastId } = req.query;
     const activate = true;
+    const cursor = lastId || 0;
+
     const infoes = await infoDb.getInfos(
       Number(pages),
       Number(limit),
       activate,
+      Number(cursor),
     );
 
     if (infoes.count === 0) {
@@ -139,5 +155,23 @@ module.exports = {
       info: infoes,
       message: `${pages} 번 페이지 게시물들을 가져왔습니다.`,
     });
+  },
+  editFile: async (req: Request, res: Response) => {
+    const { infoId } = req.params;
+    const { userId } = req;
+
+    const info = await infoDb.getInfo(Number(infoId));
+
+    if (!info) {
+      return res
+        .status(406)
+        .json({ message: '해당 게시물이 존재하지 않습니다.' });
+    }
+
+    if (info.userId != userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
+    }
+
+    await infoDb.editInfoFile(Number(infoId), req.body.file);
   },
 };

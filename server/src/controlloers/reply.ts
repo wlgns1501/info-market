@@ -50,7 +50,7 @@ module.exports = {
 
     return res.status(201).json({
       reply: replyData,
-      nuckname: exUser?.nickname,
+      nickname: exUser?.nickname,
       message: '댓글을 수정했습니다.',
     });
   },
@@ -73,6 +73,6 @@ module.exports = {
 
     await replyDb.deleteReply(replyId);
 
-    return res.status(203).json({ numessage: '댓글을 삭제했습니다.' });
+    return res.status(203).json({ message: '댓글을 삭제했습니다.' });
   },
 };

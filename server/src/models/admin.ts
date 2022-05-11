@@ -15,6 +15,7 @@ class Admin extends Model {
 
   public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
 Admin.init(

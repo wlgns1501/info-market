@@ -9,7 +9,7 @@ const {
 module.exports = {
   signup: async (req: Request, res: Response) => {
     const { email, password, nickname, phone } = req.body;
-
+    console.log(req.body);
     const exUser = await userDb.findUser(email);
 
     if (exUser) {
