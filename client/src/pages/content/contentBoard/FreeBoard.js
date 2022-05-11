@@ -179,7 +179,7 @@ function FreeBoard() {
       lastId: list.pop()?.id,
     };
 
-    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free`;
 
     axios
       .get(infoURL, {
