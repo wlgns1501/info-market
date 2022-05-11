@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { selectSearch, updateSearch } from '../store/slices/search';
+import { useNavigate } from 'react-router-dom';
 
 const boxShadow = '0 4px 6px rgb(32 33 36 / 28%)';
 // const activeBorderRadius = '1rem 1rem 0 0';
@@ -119,19 +120,30 @@ function SelectBox({ items, className, role }) {
 
 export default function Search({ single }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { inputVal } = useSelector(selectSearch);
+
   const buttonEl = useRef(null);
+
   const handleKeyPress = (e) => {
     e.preventDefault();
     if (e.key === 'Enter') buttonEl.current.click();
   };
+
   const inputChange = (e) => {
+    console.log('@@@');
     dispatch(
       updateSearch({
         inputVal: e.target.value,
       }),
     );
   };
+
+  const searchClick = (e) => {
+    e.preventDefault();
+    navigate('/main/search');
+  };
+
   return single ? (
     <InputContainer className="bar">
       {/* <form>
@@ -191,9 +203,15 @@ export default function Search({ single }) {
             placeholder="검색어를 입력하세요."
             value={inputVal}
             onChange={inputChange}
+            // onKeyPress={handleKeyPress}
           />
         </span>
-        <button id="search-icon" type="submit">
+        <button
+          id="search-icon"
+          type="submit"
+          ref={buttonEl}
+          onClick={searchClick}
+        >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
       </form>

@@ -176,7 +176,6 @@ function PaidBoard() {
 
   useEffect(() => {
     const params = {
-      // search_type: 'title',
       info_type: 'Paid',
       pages: page,
       limit: LIMIT,
@@ -185,7 +184,6 @@ function PaidBoard() {
     };
 
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
-    const searchURL = `${process.env.REACT_APP_SERVER_DEV_URL}/search`;
 
     axios
       .get(infoURL, {
