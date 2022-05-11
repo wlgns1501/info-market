@@ -13,8 +13,8 @@ export async function likeClickCancel(infoId: number) {
   });
 }
 
-export async function findUser(userId: number) {
+export async function findUser(userId: number, infoId: number) {
   return await Like.findOne({
-    where: { userId },
+    where: { userId, infoId },
   });
 }

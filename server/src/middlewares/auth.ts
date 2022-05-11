@@ -56,6 +56,7 @@ module.exports = {
           req.userId = user.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
           req.token = token;
           req.grade = user.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
+
           next();
         }
       },

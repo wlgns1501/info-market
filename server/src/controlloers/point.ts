@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as pointDb from '../db/point';
 import axios from 'axios';
 import { config } from '../config';
+import * as userDb from '../db/user';
 
 module.exports = {
   getToken: async (req: Request, res: Response) => {
@@ -13,11 +14,21 @@ module.exports = {
   },
   approve: async (req: Request, res: Response) => {
     const imp_key = config.imp.imp_key;
+    // console.log(imp_key);
+
     const imp_secret = config.imp.imp_secret;
     const url: string = 'https://api.iamport.kr/users/getToken';
-    // const { userId } = req.query;
-    const userId: number = 1;
-    // console.log(req.body.payment_method);
+    const { userId } = req;
+    // const userId: number = 1;
+
+    const user = await userDb.findPkUser(Number(userId));
+    // console.log(user);
+
+    if (!user) {
+      return res.status(403).json({ message: '유저가 존재하지 않습니다.' });
+    }
+
+    let userPoint: number = user.point;
 
     if (!req.body.imp_uid) {
       return res.status(400).json({ message: '결제 번호를 받지 못했습니다.' });
@@ -30,7 +41,7 @@ module.exports = {
     const pointCharge = await pointDb.createPoint(
       req.body.imp_uid,
       req.body.status,
-      userId,
+      Number(userId),
       req.body.amount,
       req.body.merchant_uid,
       req.body.pay_method,
@@ -56,7 +67,7 @@ module.exports = {
           .json({ message: 'iamport 토큰을 받아오는데 실패하였습니다.' });
       });
 
-    const imp_token = response.data.response.access_token;
+    const imp_token: string = response.data.response.access_token;
 
     const complete_url: string = `https://api.iamport.kr/payments/${req.body.imp_uid}`;
 
@@ -75,14 +86,14 @@ module.exports = {
     const paymentData = getPaymentData.data.response;
 
     const order = await pointDb.findUserChargePoint(
-      userId,
+      Number(userId),
       paymentData.merchant_uid,
     );
 
     const amountToBePaid = order?.point;
 
     const { amount, status } = paymentData;
-    console.log(paymentData);
+    // console.log(paymentData);
 
     if (amount === amountToBePaid) {
       // await pointDb.findAndUpdate(merchant_uid,  )
@@ -90,6 +101,8 @@ module.exports = {
         case 'ready':
           break;
         case 'paid':
+          userPoint += amount;
+          await userDb.editUserPoint(Number(userId), userPoint);
           return res
             .status(200)
             .json({ status: 'success', message: '결제에 성공하였습니다.' });

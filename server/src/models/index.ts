@@ -6,6 +6,7 @@ import Reply, { associate as associateReply } from './reply';
 import Like, { associate as associateLike } from './like';
 import Point, { associate as associatePoint } from './point';
 export * from './sequelize';
+
 const db = {
   User,
   Info,
@@ -23,3 +24,4 @@ associateInfo(db);
 associatePayment(db);
 associateReply(db);
 associateLike(db);
+associatePoint(db);
