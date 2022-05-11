@@ -38,16 +38,10 @@ export async function getInfo(infoId: number) {
   });
 }
 
-export async function getInfos(
-  pages: number,
-  limit: number,
-  activate: boolean,
-  cursor: number,
-) {
-  return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
-    limit,
-
+export async function getInfos() {
+  return await Info.findAll({
+    order: [['totalLikes', 'desc']],
+    limit: 10,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -66,12 +60,6 @@ export async function getInfos(
         attributes: [],
       },
     ],
-    where: {
-      activate,
-      id: {
-        [Op.lt]: cursor,
-      },
-    },
   });
 }
 
@@ -285,4 +273,81 @@ export async function editInfoFile(infoId: number, file: string) {
       },
     },
   );
+}
+
+export async function findFreeInfo(
+  pages: number,
+  limit: number,
+  like: string,
+  cursor: number,
+) {
+  return await Info.findAndCountAll({
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      id: { [Op.gt]: cursor },
+
+      type: 'Free',
+    },
+  });
+}
+
+export async function findPaidInfo(
+  pages: number,
+  limit: number,
+  like_type: string,
+  activate: boolean,
+  cursor: number,
+) {
+  return await Info.findAndCountAll({
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like_type],
+    ],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      id: { [Op.gt]: cursor },
+      activate,
+      type: 'Paid',
+    },
+  });
 }

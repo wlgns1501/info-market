@@ -1,3 +1,4 @@
+import Info from '../models/info';
 import { Request, Response } from 'express';
 import * as infoDb from '../db/info';
 
@@ -134,26 +135,17 @@ module.exports = {
     });
   },
 
-  // 무한스크롤
+  // 무한스크롤 / 인기순 10개
   getInfoes: async (req: Request, res: Response) => {
-    let { pages, limit, lastId } = req.query;
-    const activate = true;
-    const cursor = lastId || 0;
+    const infoes = await infoDb.getInfos();
 
-    const infoes = await infoDb.getInfos(
-      Number(pages),
-      Number(limit),
-      activate,
-      Number(cursor),
-    );
-
-    if (infoes.count === 0) {
+    if (!infoes) {
       return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
     }
 
     return res.status(200).json({
       info: infoes,
-      message: `${pages} 번 페이지 게시물들을 가져왔습니다.`,
+      message: `인기 게시물들을 가져왔습니다.`,
     });
   },
   editFile: async (req: Request, res: Response) => {
@@ -173,5 +165,75 @@ module.exports = {
     }
 
     await infoDb.editInfoFile(Number(infoId), req.body.file);
+  },
+  getFreeInfo: async (req: Request, res: Response) => {
+    let { pages, limit, like_type } = req.query;
+    let cursor: number;
+
+    let like;
+
+    if (!req.query.lastId) {
+      cursor = await Info.count();
+    } else {
+      cursor = Number(req.query.lastId);
+    }
+
+    if (like_type === 'true') {
+      like = 'desc';
+    } else if (like_type === 'false') {
+      like = 'asc';
+    }
+
+    const freeInfo = await infoDb.findFreeInfo(
+      Number(pages),
+      Number(limit),
+      like,
+      Number(cursor),
+    );
+
+    if (freeInfo.count === 0) {
+      return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+    }
+
+    return res.status(200).json({
+      info: freeInfo,
+      message: `${pages} 번 페이지 게시물들을 불러왔습니다.`,
+    });
+  },
+  getPaidInfo: async (req: Request, res: Response) => {
+    let { pages, limit, like_type } = req.query;
+    const activate = true;
+    let cursor: number;
+
+    let like;
+
+    if (like_type === 'true') {
+      like = 'desc';
+    } else if (like_type === 'false') {
+      like = 'asc';
+    }
+
+    if (!req.query.lastId) {
+      cursor = await Info.count();
+    } else {
+      cursor = Number(req.query.lastId);
+    }
+
+    const freeInfo = await infoDb.findPaidInfo(
+      Number(pages),
+      Number(limit),
+      like,
+      activate,
+      Number(cursor),
+    );
+
+    if (freeInfo.count === 0) {
+      return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+    }
+
+    return res.status(200).json({
+      info: freeInfo,
+      message: `${pages} 번 페이지 게시물들을 불러왔습니다.`,
+    });
   },
 };

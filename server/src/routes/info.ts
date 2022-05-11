@@ -13,6 +13,8 @@ router.delete('/:infoId', auth.me, infoControllers.removeInfo);
 router.put('/:infoId', auth.me, infoControllers.putInfo);
 router.get('/', infoControllers.getInfoes);
 router.put('/:infoId/file', auth.me, infoControllers.editFile);
+router.get('/free', infoControllers.getFreeInfo);
+router.get('/paid', infoControllers.getPaidInfo);
 
 // 추천 like.js
 router.put('/:infoId/like', auth.me, likeControllers.like);
