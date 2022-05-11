@@ -126,12 +126,11 @@ export default function Search({ single }) {
   const buttonEl = useRef(null);
 
   const handleKeyPress = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (e.key === 'Enter') buttonEl.current.click();
   };
 
   const inputChange = (e) => {
-    console.log('@@@');
     dispatch(
       updateSearch({
         inputVal: e.target.value,
@@ -141,6 +140,7 @@ export default function Search({ single }) {
 
   const searchClick = (e) => {
     e.preventDefault();
+    if (!inputVal) return alert('검색어가 없습니다.');
     navigate('/main/search');
   };
 
@@ -203,7 +203,7 @@ export default function Search({ single }) {
             placeholder="검색어를 입력하세요."
             value={inputVal}
             onChange={inputChange}
-            // onKeyPress={handleKeyPress}
+            onKeyPress={handleKeyPress}
           />
         </span>
         <button

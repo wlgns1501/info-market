@@ -17,7 +17,6 @@ const initialState = {
   isPurchased: false,
   //아래는 테스트용
   fileURL: null,
-  // fileURL: null,
 };
 
 const stateKeys = Object.keys(initialState);
