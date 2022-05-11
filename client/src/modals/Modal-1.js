@@ -14,6 +14,7 @@ const EntireContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
+  /* 모달 뒷배경 */
   background: rgba(0, 0, 0, 0.3);
   > div.content {
     width: 50vw;
@@ -35,11 +36,11 @@ const EntireContainer = styled.div`
   }
 `;
 
-export default function Modal({ content, handleBtnClick }) {
+export default function Modal({ content, handleBtnClick, role }) {
   const { showAlert } = useSelector(selectUserInfo);
   return (
     <EntireContainer className="modal">
-      <div className="content">
+      <div className={`content ${role}`}>
         <span
           className={showAlert ? 'x-btn loading' : 'x-btn'}
           onClick={handleBtnClick}

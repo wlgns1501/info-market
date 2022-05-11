@@ -37,7 +37,11 @@ const EntireContainer = styled.div`
   }
   > div.modal div.content {
     max-width: 600px;
-    background-color: #f3f702;
+    &.payment {
+      /* 모달창 배경색 */
+      background-color: #f3f702;
+    }
+
     @media screen and (max-width: 700px) {
       > div.charge-box {
         font-size: 0.8rem;
@@ -364,6 +368,7 @@ function UserInfo() {
     <EntireContainer>
       {modalOpen && (
         <Modal
+          role="payment"
           handleBtnClick={() =>
             dispatch(
               updatePointState({
@@ -376,6 +381,7 @@ function UserInfo() {
       )}
       {previewImg && (
         <Modal
+          role="previewImg"
           content={
             <div>
               <img

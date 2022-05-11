@@ -1,9 +1,14 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUserInfo } from '../store/slices/userInfo';
-import { inputPayment } from '../store/slices/point';
+import { selectUserInfo, updateState } from '../store/slices/userInfo';
+import {
+  selectSelectedPost,
+  updatePostState,
+} from '../store/slices/selectedPost';
+import { selectPoint, inputPayment, confirmPay } from '../store/slices/point';
 import Payment from './Payment';
+import axios from 'axios';
 
 const ChargeBoxContainer = styled.div`
   /* border: 3px solid black; */
@@ -32,6 +37,82 @@ const ChargeBoxContainer = styled.div`
     border-radius: 5px;
   }
 `;
+
+const PayBox = styled.div`
+  border: 3px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  > p {
+    margin: 0;
+  }
+`;
+
+export function PayWithPoints({ handleClick }) {
+  const dispatch = useDispatch();
+  const { targetPoint, id: infoId } = useSelector(selectSelectedPost);
+  const { payNow } = useSelector(selectPoint);
+  const { id: userId, point, accToken } = useSelector(selectUserInfo);
+
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
+  //확인 클릭 --> 결제 진행(포인트 차감)
+  useEffect(() => {
+    const restPoint = Number(point) - Number(targetPoint);
+    if (payNow) {
+      //loading indicator start
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}/order`,
+          { restPoint, userId },
+          postConfig,
+        )
+        .then((res) => {
+          const { info } = res.data;
+          if (info) {
+            dispatch(updateState({ point: restPoint }));
+            dispatch(updatePostState({ isPurchased: true }));
+            alert('결제 성공');
+          }
+        })
+        .catch((err) => alert('결제 실패'));
+      //loading indicator end
+      handleClick(); //ContentPaid의 preStep --> false
+      dispatch(
+        confirmPay({
+          answer: false,
+        }),
+      );
+    }
+  }, [payNow]);
+
+  //point slice: payNow --> true, ContentPaid: preStep --> false
+  const yes = () => {
+    dispatch(
+      confirmPay({
+        answer: true,
+      }),
+    );
+  };
+
+  return (
+    <PayBox>
+      <p>{targetPoint} P가 차감됩니다.</p>
+      <p>결제하시겠습니까?</p>
+      <button onClick={yes}>확인</button>
+      <button onClick={handleClick}>취소</button>
+    </PayBox>
+  );
+}
 
 export default function ChargeBox() {
   const dispatch = useDispatch();

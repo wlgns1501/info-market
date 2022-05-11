@@ -1,6 +1,5 @@
 import '../../css/Content.css';
 import React, { useEffect, useRef, useState } from 'react';
-import contentData from '../../mockdata/contentData';
 import axios from 'axios';
 import Comment from '../../component/content/Comment';
 import { useSelector, useDispatch } from 'react-redux';
@@ -84,7 +83,7 @@ function ContentFree() {
             <FontAwesomeIcon
               icon={faFileArrowDown}
               style={{ fontSize: '1.5rem' }}
-              onClick={() => alert('다운로드는 회원만 가능합니다.')}
+              onClick={() => !isLogin && alert('회원만 가능한 서비스입니다.')}
             />
           </a>
         </div>

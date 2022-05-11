@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
 
 const initialState = {
   paymentInput: {
@@ -8,6 +7,7 @@ const initialState = {
     buyer_email: '',
   },
   modalOpen: false,
+  payNow: false,
 };
 const stateKeys = Object.keys(initialState);
 export const pointSlice = createSlice({
@@ -25,6 +25,10 @@ export const pointSlice = createSlice({
     initPayment: (state) => {
       state.paymentInput = { ...initialState.paymentInput };
     },
+    confirmPay: (state, action) => {
+      const { answer } = action.payload;
+      state.payNow = answer;
+    },
     // clearState: (state) => {
     //   stateKeys.forEach((el) => {
     //     state[el] = initialState[el];
@@ -33,7 +37,7 @@ export const pointSlice = createSlice({
   },
 });
 
-export const { inputPayment, updatePointState, initPayment } =
+export const { inputPayment, updatePointState, initPayment, confirmPay } =
   pointSlice.actions;
 export default pointSlice.reducer;
 export const selectPoint = (state) => state.point;
