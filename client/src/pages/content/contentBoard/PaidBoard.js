@@ -102,23 +102,20 @@ const EntireContainer = styled.div`
 
 function Post({ post }) {
   const {
-    id,
+    id: postId,
     title,
-    writer,
+    nickname,
     content,
     totalLikes,
-    reviews,
     totalViews,
     createdAt,
     updatedAt,
+    userId,
+    targetPoint,
   } = post;
 
   const day = createdAt.split('T')[0];
   const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/main/search/${id}`);
-  };
 
   return (
     <li className="post">
@@ -127,11 +124,15 @@ function Post({ post }) {
           <span className="icon">
             <FontAwesomeIcon icon={faUser} />
           </span>
-          {writer}
+          {nickname}
         </span>
         <span className="createdAt">{day}</span>
       </div>
-      <p className="title" style={{ cursor: 'pointer' }} onClick={handleClick}>
+      <p
+        className="title"
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate(`/main/search/${postId}`)}
+      >
         {title}
       </p>
       <div className="total_Likes_Views">
@@ -139,6 +140,9 @@ function Post({ post }) {
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
         </span>
         <span className="totalViews">
+          <span style={{ marginRight: '20px', border: '3px solid gold' }}>
+            {targetPoint} P
+          </span>
           <FontAwesomeIcon icon={faEye} /> {totalViews}
         </span>
       </div>
@@ -172,27 +176,27 @@ function PaidBoard() {
 
   useEffect(() => {
     const params = {
-      search_type: 'title',
+      // search_type: 'title',
       info_type: 'Paid',
       pages: page,
       limit: LIMIT,
       like_type: order === '인기순',
-      prevCount: totalCnt, //혹시나 추가
+      lastId: list.pop()?.id,
     };
+
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
+    const searchURL = `${process.env.REACT_APP_SERVER_DEV_URL}/search`;
+
     axios
-      // .get(`${process.env.REACT_APP_SERVER_DEV_URL}/search`, {
-      //   params,
-      //   ...getConfig,
-      // })
-      .get(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/info?pages=${page}&limit=${LIMIT}`,
-        getConfig,
-      )
+      .get(infoURL, {
+        params,
+        ...getConfig,
+      })
       .then((res) => {
         const { rows, count } = res.data.info;
 
         if (rows) setList([...list, ...rows]);
-        if (count && count !== totalCnt) {
+        if (count && page === 1) {
           setTotalCnt(count);
         }
       })

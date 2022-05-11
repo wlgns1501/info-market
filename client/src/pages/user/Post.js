@@ -14,7 +14,7 @@ function Post() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { postId } = useParams();
-  const { accToken, isAdmin } = useSelector(selectUserInfo);
+  const { accToken } = useSelector(selectUserInfo);
   const { type } = useSelector(selectSelectedPost);
 
   const getConfig = {
@@ -28,8 +28,8 @@ function Post() {
     axios
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}`, getConfig)
       .then((res) => {
-        const { info, reply } = res.data;
-        dispatch(updatePostState({ reviews: [...reply], ...info.rows }));
+        const { info } = res.data;
+        dispatch(updatePostState({ ...info, reviews: [...info.Replies] }));
         //조회수는 애초에 get 요청 보내질 때 서버에서 조회수 1 더하고 응답하는 걸로...
       })
       .catch((err) => {

@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../css/Login.css';
 import logo from '../images/logo.png';
 import { NavLink } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   updateState,
@@ -13,22 +13,17 @@ import {
 
 function Login() {
   const navigate = useNavigate();
+  const { state: sign } = useLocation();
   const dispatch = useDispatch();
   const { email, password } = useSelector(selectUserInfo);
-
+  const [role, setRole] = useState('일반');
   const handleRegister = () => {
     navigate(`/tos`);
   };
 
-  // const [loginInfo, setLoginInfo] = useState({
-  //   email: '',
-  //   password: '',
-  // });
-
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputValue = (key) => (e) => {
-    // setLoginInfo({ ...loginInfo, [key]: e.target.value });
     dispatch(updateState({ [key]: e.target.value }));
   };
 
@@ -36,9 +31,11 @@ function Login() {
     if (!email || !password) {
       return setErrorMessage('이메일과 비밀번호를 입력하세요');
     } else {
+      const normalURL = `${process.env.REACT_APP_SERVER_DEV_URL}/auth/login`;
+      const adminURL = `${process.env.REACT_APP_SERVER_DEV_URL}/admin/login`;
       axios
         .post(
-          `${process.env.REACT_APP_SERVER_DEV_URL}/auth/login`,
+          role === '관리자' ? adminURL : normalURL,
           { email, password },
           {
             headers: { 'Content-Type': 'application/json' },
@@ -53,9 +50,10 @@ function Login() {
                 isLogin: true,
               }),
             );
-            navigate(-1);
+            //이전 페이지가 회원가입, 홈화면이면 메인으로 이동하게 하기.
+            if (sign) navigate('/main');
+            else navigate(-1);
           }
-          return;
         })
         .catch((err) => {
           dispatch(clearState());
@@ -84,12 +82,32 @@ function Login() {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') loginRef.current.click();
   };
+
+  const handleRoleCheck = (e) => {
+    setRole(e.target.value);
+  };
+
   return (
-    //   <NavLink to='/'>
-    //     <img src={logo} alt='logo ' className='login-logo' />
-    //   </NavLink>
     <div className="login-container">
       <div className="login-input">
+        <div className="radio-btn">
+          <input
+            type="radio"
+            name="role"
+            value="일반"
+            checked={role === '일반'}
+            onChange={handleRoleCheck}
+          />
+          일반
+          <input
+            type="radio"
+            name="role"
+            value="관리자"
+            checked={role === '관리자'}
+            onChange={handleRoleCheck}
+          />
+          관리자
+        </div>
         <input
           type="email"
           className="login-id"

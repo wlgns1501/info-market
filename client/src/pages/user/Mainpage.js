@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
 import freeBoardData from '../../mockdata/freeBoardData';
-import Footer from '../../component/Footer';
-import search from '../../images/search.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const EntireContainer = styled.div`
   margin: auto auto;
@@ -60,11 +60,18 @@ const UlContainer = styled.ul`
 `;
 
 function Post({ post }) {
-  const { id, title, writer } = post;
+  const navigate = useNavigate();
+  const { id: postId, title, nickname, userId } = post;
+
+  const handleClick = () => {
+    navigate(`main/search/${postId}`);
+  };
   return (
     <li>
-      <p className="title">{title}</p>
-      <p className="writer">{writer}</p>
+      <p className="title" onClick={handleClick}>
+        {title}
+      </p>
+      <p className="writer">{nickname}</p>
     </li>
   );
 }
@@ -80,7 +87,44 @@ function List({ posts, className }) {
 }
 
 function Mainpage() {
-  const { posts } = freeBoardData;
+  const { posts } = freeBoardData; //임시
+  const { accToken } = useSelector(selectUserInfo);
+  const [paidList, setPaidList] = useState([]);
+  const [freeList, setFreeList] = useState([]);
+
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
+  useEffect(() => {
+    //무료 인기 10개, 유료 인기 10개
+    const params = {
+      // search_type: 'title',
+      // info_type: 'Paid',
+      limit: 10,
+      like_type: true,
+    };
+
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
+    const searchURL = `${process.env.REACT_APP_SERVER_DEV_URL}/search`;
+
+    axios
+      .get(infoURL, {
+        params,
+        ...getConfig,
+      })
+      .then((res) => {
+        const { paidRows, freeRows } = res.data.info;
+        if (paidRows) setPaidList([...paidList, ...paidRows]);
+        if (freeRows) setFreeList([...freeList, ...freeRows]);
+      })
+      .catch((err) => {
+        if (err.response?.message) alert(err.response.message);
+      });
+  }, []);
 
   return (
     <>
@@ -88,9 +132,8 @@ function Mainpage() {
         <div className="top">
           <Search />
         </div>
-        <List className="first" posts={posts} />
-        <List posts={posts} />
-        <Footer />
+        <List className="first" posts={paidList} />
+        <List className="second" posts={freeList} />
       </EntireContainer>
     </>
   );

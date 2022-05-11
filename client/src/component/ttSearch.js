@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { selectSearch, updateSearch } from '../store/slices/search';
+import { faCircleXmark } from '@fortawesome/free-regular-svg-icons';
 
 const boxShadow = '0 4px 6px rgb(32 33 36 / 28%)';
 // const activeBorderRadius = '1rem 1rem 0 0';
@@ -56,7 +55,6 @@ export const InputContainer = styled.div`
       cursor: pointer;
     }
   }
-
   /* width: 50%;
   margin: 0 auto;
   border-radius: 50px;
@@ -66,7 +64,7 @@ export const InputContainer = styled.div`
   padding: 1rem;
   border: 1px solid rgb(223, 225, 229);
   z-index: 3;
-
+ 
   > input {
     flex: 1 0 0;
     background-color: transparent;
@@ -82,67 +80,42 @@ export const InputContainer = styled.div`
   } */
 `;
 
-function SelectBox({ items, className, role }) {
-  const dispatch = useDispatch();
-  const { selectBox1, selectBox2 } = useSelector(selectSearch);
-
-  const handleSelect = (e) => {
-    if (role === 'first') {
-      dispatch(
-        updateSearch({
-          selectBox1: e.target.value,
-        }),
-      );
-    } else {
-      dispatch(
-        updateSearch({
-          selectBox2: e.target.value,
-        }),
-      );
-    }
-  };
-
+function SelectBox({ items, value, handleSelect }) {
   return (
     <select
       name="filter"
-      value={role === 'first' ? selectBox1 : selectBox2}
-      onChange={handleSelect}
+      value={value}
+      onChange={(e) => handleSelect(e.target.value)}
     >
-      {items.map(([name, value], i) => (
-        <option key={i} value={value}>
-          {name}
+      {items.map((item, i) => (
+        <option key={i} value={item}>
+          {item}
         </option>
       ))}
     </select>
   );
 }
 
-export default function Search({ single }) {
-  const dispatch = useDispatch();
-  const { inputVal } = useSelector(selectSearch);
+export default function Search({
+  single,
+  searchOptions,
+  handleSelect,
+  handleInputChange,
+  searchClick,
+}) {
   const buttonEl = useRef(null);
   const handleKeyPress = (e) => {
     e.preventDefault();
     if (e.key === 'Enter') buttonEl.current.click();
   };
-  const inputChange = (e) => {
-    dispatch(
-      updateSearch({
-        inputVal: e.target.value,
-      }),
-    );
-  };
+
   return single ? (
     <InputContainer className="bar">
-      {/* <form>
+      <form>
         <SelectBox
           value={searchOptions.selectValue}
           className="selet-box second"
-          items={[
-            ['전체', 'All'],
-            ['무료', 'Free'],
-            ['유료', 'Paid'],
-          ]}
+          items={['전체', '무료', '유료']}
           handleSelect={handleSelect}
         />
         <span>
@@ -153,6 +126,7 @@ export default function Search({ single }) {
             value={searchOptions.inputValue}
             onKeyPress={handleKeyPress}
           />
+          {/* <FontAwesomeIcon id="delete-button" icon={faCircleXmark} /> */}
         </span>
         <button
           id="search-icon"
@@ -162,36 +136,22 @@ export default function Search({ single }) {
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
-      </form> */}
+      </form>
     </InputContainer>
   ) : (
     <InputContainer className="bar">
       <form>
         <SelectBox
           className="selet-box first"
-          items={[
-            ['제목', 'title'],
-            ['내용', 'content'],
-            ['작성자', 'nickname'],
-          ]}
-          role="first"
+          items={['제목', '내용', '작성자']}
         />
         <SelectBox
           className="selet-box second"
-          items={[
-            ['전체', 'All'],
-            ['무료', 'Free'],
-            ['유료', 'Paid'],
-          ]}
-          role="second"
+          items={['전체', '무료', '유료']}
         />
         <span>
-          <input
-            type="search"
-            placeholder="검색어를 입력하세요."
-            value={inputVal}
-            onChange={inputChange}
-          />
+          <input type="search" placeholder="검색어를 입력하세요." />
+          {/* <FontAwesomeIcon id="delete-button" icon={faCircleXmark} /> */}
         </span>
         <button id="search-icon" type="submit">
           <FontAwesomeIcon icon={faMagnifyingGlass} />
