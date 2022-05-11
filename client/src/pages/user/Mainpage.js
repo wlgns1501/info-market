@@ -89,8 +89,7 @@ function List({ posts, className }) {
 function Mainpage() {
   const { posts } = freeBoardData; //임시
   const { accToken } = useSelector(selectUserInfo);
-  const [paidList, setPaidList] = useState([]);
-  const [freeList, setFreeList] = useState([]);
+  const [list, setList] = useState([]);
 
   const getConfig = {
     headers: {
@@ -100,26 +99,13 @@ function Mainpage() {
   };
 
   useEffect(() => {
-    //무료 인기 10개, 유료 인기 10개
-    const params = {
-      // search_type: 'title',
-      // info_type: 'Paid',
-      limit: 10,
-      like_type: true,
-    };
-
+    //인기 top 10개
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
-    const searchURL = `${process.env.REACT_APP_SERVER_DEV_URL}/search`;
-
     axios
-      .get(infoURL, {
-        params,
-        ...getConfig,
-      })
+      .get(infoURL, getConfig)
       .then((res) => {
-        const { paidRows, freeRows } = res.data.info;
-        if (paidRows) setPaidList([...paidList, ...paidRows]);
-        if (freeRows) setFreeList([...freeList, ...freeRows]);
+        const { info } = res.data;
+        setList([...list, ...info]);
       })
       .catch((err) => {
         if (err.response?.message) alert(err.response.message);
@@ -132,8 +118,7 @@ function Mainpage() {
         <div className="top">
           <Search />
         </div>
-        <List className="first" posts={paidList} />
-        <List className="second" posts={freeList} />
+        <List posts={list} />
       </EntireContainer>
     </>
   );

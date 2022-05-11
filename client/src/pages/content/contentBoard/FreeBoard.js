@@ -172,7 +172,6 @@ function FreeBoard() {
 
   useEffect(() => {
     const params = {
-      // search_type: 'title',
       info_type: 'Free',
       pages: page,
       limit: LIMIT,
@@ -181,7 +180,6 @@ function FreeBoard() {
     };
 
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
-    const searchURL = `${process.env.REACT_APP_SERVER_DEV_URL}/search`;
 
     axios
       .get(infoURL, {
