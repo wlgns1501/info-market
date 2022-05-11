@@ -16,7 +16,7 @@ const initialState = {
   like: false,
   isPurchased: false,
   //아래는 테스트용
-  fileURL: 'image/4e9cb1e6b51848968dbc2446042fce8f.png',
+  fileURL: null,
   // fileURL: null,
 };
 

@@ -183,7 +183,7 @@ function PaidBoard() {
       lastId: list.pop()?.id,
     };
 
-    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/paid`;
 
     axios
       .get(infoURL, {
