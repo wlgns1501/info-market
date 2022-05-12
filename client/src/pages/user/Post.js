@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import {
   updatePostState,
+  clearPostState,
   selectSelectedPost,
 } from '../../store/slices/selectedPost';
 import ContentFree from '../content/ContentFree';
@@ -25,6 +26,8 @@ function Post() {
   };
 
   useEffect(() => {
+    //혹시나 해서 초기화 함. 근데 오류나면 지우기.
+    dispatch(clearPostState());
     axios
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}`, getConfig)
       .then((res) => {

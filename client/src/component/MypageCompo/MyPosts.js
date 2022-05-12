@@ -74,7 +74,7 @@ function Post({ post }) {
   return (
     <PostContainer>
       <td className="id">{id}</td>
-      <td className="type">{type === 'free' ? '무료' : '유료'}</td>
+      <td className="type">{type === 'Free' ? '무료' : '유료'}</td>
       <td className="type">{activate || '대기중'}</td>
       <td onClick={handleClick} className="title">
         {title}
@@ -95,10 +95,8 @@ function MyPosts() {
   const [totalCnt, setTotalCnt] = useState(null);
   const LIMIT = 6;
   const offset = page * LIMIT - LIMIT;
-  const totalPage = Math.ceil(totalCnt / LIMIT);
+  const totalPage = Math.ceil(totalCnt / LIMIT) || 1;
 
-  //mock data 테스트용
-  const { posts, total } = myPostData; //나중에 삭제
   //게시글 리스트
   const [postList, setPostList] = useState([]);
 
@@ -133,11 +131,9 @@ function MyPosts() {
         config,
       )
       .then((res) => {
-        console.log(res.data);
-        //어떻게 데이터가 전달되는지 확인이 안 됨.
-        //res.data에서 rows, total를 가져왔다고 가정.
-        if (total) setTotalCnt(total);
-        // if (rows && rows.length > 0) setPostList([...postList, ...rows]);
+        const { rows, count } = res.data.info;
+        if (rows && rows.length > 0) setPostList([...postList, ...rows]);
+        if (count && page === 1) setTotalCnt(Number(count));
       })
       .catch((err) => err.response?.message && alert(err.response.message));
   }, [page]);

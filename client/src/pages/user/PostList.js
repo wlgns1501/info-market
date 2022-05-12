@@ -1,20 +1,85 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Search from '../../component/Search';
+import Pagination from '../../component/Pagination';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import { updateSearch, selectSearch } from '../../store/slices/search';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
+import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
 
-const EntireContainer = styled.div``;
+const EntireContainer = styled.div`
+  > ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+  }
+`;
+const PostContainer = styled.li``;
 
-function Post({ post }) {}
+function Post({ post }) {
+  const navigate = useNavigate();
+  const {
+    id: postId,
+    title,
+    nickname,
+    content,
+    totalLikes,
+    totalViews,
+    createdAt,
+    updatedAt,
+    userId,
+    targetPoint,
+    type,
+  } = post;
+
+  const day = createdAt.split('T')[0];
+
+  //type으로 유료, 무료 구분해서 디자인하기
+  return (
+    <PostContainer>
+      <div className="writer_createdAt">
+        <span className="writer">
+          <span className="icon">
+            <FontAwesomeIcon icon={faUser} />
+          </span>
+          {nickname}
+        </span>
+        <span className="createdAt">{day}</span>
+      </div>
+      <p
+        className="title"
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate(`/main/search/${postId}`)}
+      >
+        {title}
+      </p>
+      <div className="total_Likes_Views">
+        <span className="totalLikes">
+          <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
+        </span>
+        <span className="totalViews">
+          {type === 'Paid' && (
+            <span style={{ marginRight: '20px', border: '3px solid gold' }}>
+              {targetPoint} P
+            </span>
+          )}
+          <FontAwesomeIcon icon={faEye} /> {totalViews}
+        </span>
+      </div>
+    </PostContainer>
+  );
+}
 
 function PostList() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { accToken } = useSelector(selectUserInfo);
-  const { inputVal, selectBox1, selectBox2 } = useSelector(selectSearch);
+  const { inputVal, selectBox1, selectBox2, page, list, totalPage } =
+    useSelector(selectSearch);
 
   const getConfig = {
     headers: {
@@ -23,31 +88,40 @@ function PostList() {
     withCredentials: true,
   };
 
-  const [page, setPage] = useState(1);
   const LIMIT = 10;
   const offset = page * LIMIT - LIMIT;
-  const [totalCount, setTotalCount] = useState(null);
-  const [list, setList] = useState([]);
-  const totalPage = Math.ceil(Number(totalCount) / LIMIT);
 
   useEffect(() => {
+    //아래 코드는 그때 그때 다시 받지 않게 함.
+    if (list.length > offset) return;
+
     const params = {
       search_type: selectBox1,
       info_type: selectBox2,
       pages: page,
       limit: LIMIT,
-      inputVal, //고치기
+      [selectBox1]: inputVal,
     };
+
     axios
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/search`, {
         params,
         ...getConfig,
       })
       .then((res) => {
-        console.log('검색 결과: ', res.data);
         const { count, rows } = res.data.info;
-        if (count && page === 1) setTotalCount(count);
-        if (rows) setList([...list, ...rows]);
+        if (count && page === 1) {
+          const totalPage = Math.ceil(Number(count) / LIMIT);
+          const totalMark = Math.ceil(totalPage / 10);
+          dispatch(
+            updateSearch({
+              totalCount: count,
+              totalPage,
+              totalMark,
+            }),
+          );
+        }
+        if (rows) dispatch(updateSearch({ list: [...rows] }));
       })
       .catch((err) => {
         alert(err.response.message);
@@ -57,16 +131,14 @@ function PostList() {
 
   return (
     <EntireContainer>
-      <button disabled={page === totalPage} onClick={() => setPage(page + 1)}>
-        다음
-      </button>
-      <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-        이전
-      </button>
       <Search />
-      {list.slice(offset, offset + LIMIT).map((post) => {
-        <Post key={post.id} post={post} />;
-      })}
+      <ul className="postList">
+        {list.slice(offset, offset + LIMIT).map((post) => {
+          <Post key={post.id} post={post} />;
+        })}
+        {list.length === 0 && <li>해당하는 정보가 없습니다.</li>}
+      </ul>
+      <Pagination />
     </EntireContainer>
   );
 }

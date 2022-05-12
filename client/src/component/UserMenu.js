@@ -33,6 +33,7 @@ const EntireContainer = styled.li`
     > li {
       padding: 15px 19px;
       font-family: var(--noto-sans);
+      white-space: nowrap;
       &:hover {
         background-color: #f4f4f4;
         cursor: pointer;
@@ -45,7 +46,7 @@ function UserMenu() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { isLogin, accToken } = useSelector(selectUserInfo);
+  const { isLogin, accToken, grade } = useSelector(selectUserInfo);
   const config = {
     headers: {
       Authorization: `Bearer ${accToken}`,
@@ -119,6 +120,8 @@ function UserMenu() {
               마이페이지
             </Link>
           </li>
+          <li onClick={() => navigate(`/mypage/freeWriting`)}>무료글 작성</li>
+          <li onClick={() => navigate(`/mypage/salesWriting`)}>유료글 작성</li>
         </ul>
       )}
     </EntireContainer>

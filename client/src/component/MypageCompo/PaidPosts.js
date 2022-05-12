@@ -69,22 +69,22 @@ const EntireContainer = styled.div`
   }
 `;
 
-function ValidBtn() {
-  return (
-    <span className="btn">
-      <button>구매 확정</button>
-      <button>환불 요청</button>
-    </span>
-  );
-}
+// function ValidBtn() {
+//   return (
+//     <span className="btn">
+//       <button>구매 확정</button>
+//       <button>환불 요청</button>
+//     </span>
+//   );
+// }
 
-function InValidBtn() {
-  return (
-    <span className="btn">
-      <button>구매 완료</button>
-    </span>
-  );
-}
+// function InValidBtn() {
+//   return (
+//     <span className="btn">
+//       <button>구매 완료</button>
+//     </span>
+//   );
+// }
 
 //타이틀 버튼 틀릭하면 해당 포스트로 이동
 function Post({ post }) {
@@ -113,11 +113,50 @@ function Post({ post }) {
 }
 
 function PaidPosts() {
-  //일단 ValidBtn만..
-  const { paidPostList } = useSelector(selectPurchaseDetails);
+  const { accToken } = useSelector(selectUserInfo);
+  const LIMIT = 10;
+  const [page, setPage] = useState(1);
+  const [totalCnt, setTotalCnt] = useState(0);
+  const [paidPostList, setPaidPostList] = useState([]);
+  const offset = page * LIMIT - LIMIT;
+  const totalPage = Math.ceil(totalCnt / LIMIT);
+
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
+  useEffect(() => {
+    //사실 이런 방식은 새로운 정보가 들어오면 같은 데이터가 list에 추가되는 걸 방지못함.. 예를 들어 5번 데이터가 2page에도 있고, 3page에도 있을 수 있음.
+    //이걸 프론트단에서 방지하려면 그때 그때 받아온 정보만을 렌더링하면 됨.
+    if (paidPostList.length > offset) return;
+
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/info/order?pages=${page}?limit=${LIMIT}`,
+        getConfig,
+      )
+      .then((res) => {
+        const { count, row } = res.data.info;
+        if (page === 1 && count) setTotalCnt(Number(count));
+        if (row && row.length > 0) setPaidPostList([...paidPostList, ...row]);
+      })
+      .catch((err) => err.response?.message && alert(err.response.message));
+  }, [page]);
+
   return (
     <EntireContainer>
-      {/* <Search single={true} /> */}
+      <div className="btns">
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+          {'<<'}
+        </button>
+        {page} / {totalPage}
+        <button disabled={page === totalPage} onClick={() => setPage(page + 1)}>
+          {'>>'}
+        </button>
+      </div>
       <ul className="posts">
         {paidPostList.map((post) => (
           <Post key={post.id} post={post} />

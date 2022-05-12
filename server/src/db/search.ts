@@ -23,7 +23,7 @@ export async function searchByTitle(
       activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -66,7 +66,7 @@ export async function searchByContent(
       activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -107,7 +107,7 @@ export async function searchAllTitle(
       activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -148,7 +148,7 @@ export async function searchAllContent(
       activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -188,7 +188,7 @@ export async function searchByNick(
       activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -228,7 +228,7 @@ export async function searchAllNick(
       ['totalLikes', like],
     ],
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     where: {
       activate: true,
     },

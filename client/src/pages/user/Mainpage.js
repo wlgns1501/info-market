@@ -59,15 +59,17 @@ const UlContainer = styled.ul`
   }
 `;
 
-function Post({ post }) {
+function Post({ post, order }) {
   const navigate = useNavigate();
   const { id: postId, title, nickname, userId } = post;
 
   const handleClick = () => {
     navigate(`main/search/${postId}`);
   };
+
   return (
     <li>
+      <span>{order}</span>
       <p className="title" onClick={handleClick}>
         {title}
       </p>
@@ -79,8 +81,8 @@ function Post({ post }) {
 function List({ posts, className }) {
   return (
     <UlContainer className={className}>
-      {posts.map((post) => (
-        <Post key={post.id} post={post} />
+      {posts.map((post, idx) => (
+        <Post key={post.id} post={post} order={idx + 1} />
       ))}
     </UlContainer>
   );

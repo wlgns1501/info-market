@@ -70,9 +70,8 @@ module.exports = {
   usersWriteInfo: async (req: Request, res: Response) => {
     const { pages, limit } = req.query;
     const { userId } = req;
-    console.log(pages);
 
-    console.log(userId);
+    console.log('userId : ', userId);
 
     const info = await infoDb.getMyInfos(
       Number(pages),
@@ -84,6 +83,7 @@ module.exports = {
     //     .status(400)
     //     .json({ message: '게시물을 불러오는데 실패하였습니다.' });
     // });
+    console.log(info);
 
     if (info.count === 0) {
       return res
@@ -133,5 +133,17 @@ module.exports = {
       info: findOrders,
       message: '내가 환불한 게시물을 불러왔습니다.',
     });
+  },
+  postImg: async (req: Request, res: Response) => {
+    const { profileImg } = req.body;
+    const { userId } = req;
+    if (!profileImg) {
+      return res.status(400).json({ message: '이미지 파일이 없습니다.' });
+    }
+
+    await userDb.postImg(profileImg, Number(userId));
+    return res
+      .status(200)
+      .json({ message: '이미지를 업로드 하는데 성공하였습니다.' });
   },
 };

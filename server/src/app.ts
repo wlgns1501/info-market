@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 const indexRouter = require('./routes/index');
 import { sequelize } from './models';
+import passport from 'passport';
+const passportConfig = require('./passport/index');
+
 dotenv.config();
 
 const app = express();
@@ -21,7 +24,7 @@ sequelize
 
 const corsOption = {
   // origin: 'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com',
-  origin: 'http://localhost:3000',
+  origin: 'http://info-market-client.s3-website.ap-northeast-2.amazonaws.com',
   // optionsSuccessStatus: 200,
   credentials: true, // allow the Access-Control-Allow-Credentials
   // withcredentials: true, // allow the Access-Control-Allow-Credentials
@@ -39,6 +42,11 @@ app.use(cookieParser());
 app.use(helmet());
 
 app.use(morgan('dev'));
+
+// passport 초기화 및 세션 연결
+// app.use(passport.initialize());
+// app.use(passport.session());
+// passportConfig();
 
 app.use('/', indexRouter);
 
