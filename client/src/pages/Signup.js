@@ -156,9 +156,10 @@ function Signup() {
         setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
       })
       .catch((err) => {
+        setChecked({ ...checked, nicknameCk: false });
         setMessage({
           ...message,
-          nicknameMsg: err.response?.message || '닉네임 사용 불가',
+          nicknameMsg: '닉네임 사용 불가',
         });
         alert('서버 에러: 닉네임 중복 검사 요청 실패');
       });
