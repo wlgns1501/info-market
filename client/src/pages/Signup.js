@@ -137,19 +137,21 @@ function Signup() {
   //닉네임 중복검사 클릭
   const handleNicknameCheck = (e) => {
     e.preventDefault();
-    setChecked({ ...checked, nicknameCk: true }); //나중에 삭제
-    // axios
-    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${userInfo.nickname}`)
-    //   .then((res) => setChecked({ ...checked, nicknameCk: true }))
-    //   .catch((err) => {
-    //     if (err.response?.message) {
-    //       return setMessage({
-    //         ...message,
-    //         nicknameMsg: err.response.message,
-    //       });
-    //     }
-    //     alert('서버 에러: 닉네임 중복 검사 요청 실패');
-    //   });
+
+    axios
+      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`, {
+        nickname: userInfo.nickname,
+      })
+      .then((res) => setChecked({ ...checked, nicknameCk: true }))
+      .catch((err) => {
+        if (err.response?.message) {
+          return setMessage({
+            ...message,
+            nicknameMsg: err.response.message,
+          });
+        }
+        alert('서버 에러: 닉네임 중복 검사 요청 실패');
+      });
     setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
   };
 
