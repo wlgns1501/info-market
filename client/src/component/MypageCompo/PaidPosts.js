@@ -119,7 +119,7 @@ function PaidPosts() {
   const [totalCnt, setTotalCnt] = useState(0);
   const [paidPostList, setPaidPostList] = useState([]);
   const offset = page * LIMIT - LIMIT;
-  const totalPage = Math.ceil(totalCnt / LIMIT);
+  const totalPage = Math.ceil(totalCnt / LIMIT) || 1;
 
   const getConfig = {
     headers: {
@@ -135,7 +135,7 @@ function PaidPosts() {
 
     axios
       .get(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/users/info/order?pages=${page}?limit=${LIMIT}`,
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/info/order?pages=${page}&limit=${LIMIT}`,
         getConfig,
       )
       .then((res) => {
