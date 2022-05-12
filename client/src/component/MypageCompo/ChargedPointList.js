@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { faMoneyCheckDollar } from '@fortawesome/free-solid-svg-icons';
-import chargedPointData from '../../mockdata/chargedPointData';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPurchaseDetails } from '../../store/slices/purchaseDetails';
 import { selectUserInfo } from '../../store/slices/userInfo';
+import axios from 'axios';
 
 const EntireContainer = styled.div`
   border: 3px solid green;
