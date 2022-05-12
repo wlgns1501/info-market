@@ -8,5 +8,6 @@ router.put('/:userId', auth.me, usersControllers.editUsersInfo);
 router.get('/info', auth.me, usersControllers.usersWriteInfo);
 router.get('/info/order', auth.me, usersControllers.usersOrderInfo);
 router.get('/info/refund', auth.me, usersControllers.usersRefundInfo);
+router.post('/:userId/img', auth.me, usersControllers.postImg);
 
 module.exports = router;

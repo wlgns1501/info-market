@@ -15,8 +15,16 @@ const initialState = {
   reviews: [], //[{id, nickname, userId, content, createdAt}, {}, {}, {}...]
   like: false,
   isPurchased: false,
-  //아래는 테스트용
   fileURL: null,
+  isOpen: false,
+  removeInfo: false,
+  infoEditMode: false,
+  titleChangeValue: null,
+  contentChangeValue: null,
+  fileChangeValue: null,
+  modifyFileStep: false,
+  modifyTextStep: false,
+  modyfiedFileName: null,
 };
 
 const stateKeys = Object.keys(initialState);

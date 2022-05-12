@@ -110,68 +110,66 @@ function Writing() {
   //업로드 버튼 클릭(파일 없이)
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(11111111111);
-    // axios
-    //   .post(
-    //     `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
-    //     {
-    //       type: 'Free',
-    //       targetPoint: 0,
-    //       ...textValues,
-    //     },
-    //     config,
-    //   )
-    //   .then((res) => {
-    //     if (res.data.infoId) alert('글이 등록되었습니다.');
-    //     setTextValues({
-    //       title: null,
-    //       content: null,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     alert('서버 에러 발생! 다시 시도해주세요.');
-    //   });
+    axios
+      .post(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
+        {
+          type: 'Free',
+          targetPoint: 0,
+          ...textValues,
+        },
+        config,
+      )
+      .then((res) => {
+        if (res.data.infoId) alert('글이 등록되었습니다.');
+        setTextValues({
+          title: null,
+          content: null,
+        });
+      })
+      .catch((err) => {
+        alert('서버 에러 발생! 다시 시도해주세요.');
+      });
   };
 
   //업로드 버튼 클릭(파일 업로드)
   const handleSubmitWithFile = (e) => {
     e.preventDefault();
-    console.log(2222222);
     //loading indicator 사용하기
-    // const fileName = `file/${v4().toString().replaceAll('-', '')}.${
-    //   file.type.split('/')[1]
-    // }`;
+    const fileName = `file/${v4().toString().replaceAll('-', '')}.${
+      selectedFile.type.split('/')[1]
+    }`;
 
-    // const params = {
-    //   ACL: 'public-read-write',
-    //   Body: selectedFile,
-    //   Bucket: S3_BUCKET,
-    //   Key: fileName,
-    // };
+    const params = {
+      ACL: 'public-read-write',
+      Body: selectedFile,
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
 
-    // myBucket.putObject(params, (err, data) => {
-    //   //서버로 파일 경로 보내주기.(일단 임시로 작성)
-    //   axios
-    //     .post(
-    //       `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
-    //       {
-    //         type: 'Free',
-    //         targetPoint: 0,
-    //         ...textValues,
-    //         fileURL: fileName,
-    //       },
-    //       config,
-    //     )
-    //     .then((res) => {
-    //       if (res.data.infoId) alert('글이 등록되었습니다.');
-    //       setTextValues({
-    //         title: null,
-    //         content: null,
-    //       });
-    //       setSelectedFile(null);
-    //     })
-    //     .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
-    // });
+    myBucket.putObject(params, (err, data) => {
+      //서버로 파일 경로 보내주기.(일단 임시로 작성)
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
+          {
+            type: 'Free',
+            targetPoint: 0,
+            ...textValues,
+            fileURL: fileName,
+          },
+          config,
+        )
+        .then((res) => {
+          if (res.data.infoId) alert('글이 등록되었습니다.');
+          setTextValues({
+            title: null,
+            content: null,
+          });
+          setSelectedFile(null);
+        })
+        .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+    });
   };
 
   //파일 선택

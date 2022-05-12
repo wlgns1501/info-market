@@ -1,5 +1,5 @@
-import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
-import { dbType } from '.';
+import { BelongsToGetAssociationMixin, DataTypes, Model } from 'sequelize';
+import { dbType } from './index';
 import Info from './info';
 import { sequelize } from './sequelize';
 import User from './user';
@@ -11,11 +11,12 @@ class Like extends Model {
     infoId: number;
   };
   public readonly id!: number;
-  public userId!: BelongsToManyGetAssociationsMixin<User>;
-  public infoId!: BelongsToManyGetAssociationsMixin<Info>;
+  public userId!: BelongsToGetAssociationMixin<User>;
+  public infoId!: BelongsToGetAssociationMixin<Info>;
 
   public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
 Like.init(

@@ -1,4 +1,4 @@
-import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
+import { BelongsToGetAssociationMixin, DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 import User from './user';
@@ -15,7 +15,7 @@ class Point extends Model {
   };
 
   public readonly id!: number;
-  public userId!: BelongsToManyGetAssociationsMixin<User>;
+  public userId!: BelongsToGetAssociationMixin<User>;
   public point!: number;
   public state!: string;
   public readonly imp_uid!: string;
@@ -23,6 +23,7 @@ class Point extends Model {
   public payment_method_type!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
 Point.init(
@@ -51,11 +52,11 @@ Point.init(
       defaultValue: 0,
     },
     merchant_uid: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     imp_uid: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     payment_method_type: {

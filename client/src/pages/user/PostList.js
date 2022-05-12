@@ -32,6 +32,7 @@ function Post({ post }) {
     createdAt,
     updatedAt,
     userId,
+    targetPoint,
     type,
   } = post;
 
@@ -61,6 +62,11 @@ function Post({ post }) {
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
         </span>
         <span className="totalViews">
+          {type === 'Paid' && (
+            <span style={{ marginRight: '20px', border: '3px solid gold' }}>
+              {targetPoint} P
+            </span>
+          )}
           <FontAwesomeIcon icon={faEye} /> {totalViews}
         </span>
       </div>
@@ -86,6 +92,9 @@ function PostList() {
   const offset = page * LIMIT - LIMIT;
 
   useEffect(() => {
+    //아래 코드는 그때 그때 다시 받지 않게 함.
+    if (list.length > offset) return;
+
     const params = {
       search_type: selectBox1,
       info_type: selectBox2,

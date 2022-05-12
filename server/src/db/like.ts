@@ -7,14 +7,14 @@ export async function likeClick(userId: number, infoId: number) {
   });
 }
 
-export async function likeClickCancel(infoId: number) {
+export async function likeClickCancel(userId: number, infoId: number) {
   return await Like.destroy({
-    where: { id: infoId },
+    where: { userId, infoId },
   });
 }
 
-export async function findUser(userId: number) {
+export async function findUser(userId: number, infoId: number) {
   return await Like.findOne({
-    where: { userId },
+    where: { userId, infoId },
   });
 }

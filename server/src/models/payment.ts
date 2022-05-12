@@ -1,10 +1,4 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { BelongsToGetAssociationMixin, DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 import User from './user';
@@ -20,12 +14,13 @@ class Payment extends Model {
   };
 
   public readonly id!: number;
-  public userId!: BelongsToManyGetAssociationsMixin<User>;
-  public infoId!: BelongsToManyGetAssociationsMixin<Info>;
+  public userId!: BelongsToGetAssociationMixin<User>;
+  public infoId!: BelongsToGetAssociationMixin<Info>;
   public state!: string;
   public readonly tid!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 }
 
 Payment.init(

@@ -27,7 +27,7 @@ function Signup() {
     emailCk: false,
     passwordCk: false,
     phoneCk: true, //나중에 고치기
-    nicknameCk: true, //나중에 고치기
+    nicknameCk: false,
   });
   const [message, setMessage] = useState({
     emailMsg: null,
@@ -139,13 +139,13 @@ function Signup() {
     e.preventDefault();
     setChecked({ ...checked, nicknameCk: true }); //나중에 삭제
     // axios
-    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/check/${userInfo.nickname}`)
+    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${userInfo.nickname}`)
     //   .then((res) => setChecked({ ...checked, nicknameCk: true }))
     //   .catch((err) => {
-    //     if (err.response === 'repeated') {
+    //     if (err.response?.message) {
     //       return setMessage({
     //         ...message,
-    //         nicknameMsg: '중복된 닉네임이 있습니다.',
+    //         nicknameMsg: err.response.message,
     //       });
     //     }
     //     alert('서버 에러: 닉네임 중복 검사 요청 실패');

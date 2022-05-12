@@ -12,7 +12,11 @@ module.exports = {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
-    const infos = await infoDb.getInfos(Number(pages), Number(limit), activate);
+    const infos = await infoDb.AdminGetInfo(
+      Number(pages),
+      Number(limit),
+      activate,
+    );
 
     if (infos.count === 0) {
       return res.status(400).json({ message: '게시물이 존재하지 않습니다.' });
@@ -24,7 +28,6 @@ module.exports = {
   },
   editInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-
     const { grade } = req;
 
     if (grade !== 'admin') {
@@ -52,7 +55,6 @@ module.exports = {
   },
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-
     const { grade } = req;
 
     if (grade !== 'admin') {
