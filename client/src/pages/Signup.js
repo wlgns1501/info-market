@@ -165,6 +165,11 @@ function Signup() {
       });
   };
 
+  useEffect(() => {
+    console.log('검사');
+    console.log(checked);
+  }, [checked]);
+
   const handleSignup = (e) => {
     e.preventDefault();
     const { email, password, phone, nickname } = userInfo;
@@ -202,7 +207,7 @@ function Signup() {
         })
         .catch((err) => {
           console.log('에러: ', err);
-          alert(err.response.message);
+          alert(err.response?.message);
         });
     } else {
       if (!email || !password || !phone || !nickname) {
