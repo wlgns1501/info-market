@@ -84,7 +84,14 @@ function ChargedPointList() {
   const [pointList, setPointList] = useState([]);
   const totalCount = pointList.length;
   const totalPage = Math.ceil(totalCount / LIMIT) || 1;
-  const { id: userId } = useSelector(selectUserInfo);
+  const { id: userId, accToken } = useSelector(selectUserInfo);
+
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
   const prevBtnClick = (e) => {
     e.preventDefault();
@@ -96,9 +103,14 @@ function ChargedPointList() {
   };
 
   useEffect(() => {
+    console.log('포인트 충전 내역');
     axios
-      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${userId}/point`)
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/${userId}/point`,
+        getConfig,
+      )
       .then((res) => {
+        console.log(res.data);
         const { paidPoint } = res.data;
         if (paidPoint) {
           setPointList([...pointList, ...paidPoint]);
