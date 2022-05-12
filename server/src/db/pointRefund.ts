@@ -20,3 +20,11 @@ export async function createPointRefund(
     state,
   });
 }
+
+export async function findRefund(userId: number) {
+  return await PointRefund.findAll({
+    where: {
+      userId,
+    },
+  });
+}

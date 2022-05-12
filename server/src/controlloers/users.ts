@@ -4,6 +4,7 @@ const bcrypt = require('./functions/bcrypt');
 import * as infoDb from '../db/info';
 import * as paymentDb from '../db/payment';
 import * as pointDb from '../db/point';
+import * as pointRefundDb from '../db/pointRefund';
 
 module.exports = {
   getUsersInfo: async (req: Request, res: Response) => {
@@ -38,6 +39,7 @@ module.exports = {
         .status(406)
         .json({ message: '해당 유저가 존재하지 않습니다.' });
     }
+
     let email: string;
     let password: string;
     let phone: string;
@@ -84,7 +86,7 @@ module.exports = {
     const { pages, limit } = req.query;
     const { userId } = req;
 
-    console.log('userId : ', userId);
+    // console.log('userId : ', userId);
 
     const info = await infoDb.getMyInfos(
       Number(pages),
@@ -154,18 +156,6 @@ module.exports = {
       .json({ message: '이미지를 업로드 하는데 성공하였습니다.' });
   },
   checkNickname: async (req: Request, res: Response) => {
-    const user = await userDb.findPkUser(Number(req.userId));
-
-    if (!user) {
-      return res
-        .status(406)
-        .json({ message: '해당 유저가 존재하지 않습니다.' });
-    }
-
-    if (user?.id != req.userId) {
-      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
-    }
-
     const findNickname = await userDb.checkNickname(req.body.nickname);
 
     if (findNickname) {
@@ -202,18 +192,6 @@ module.exports = {
       .json({ paidPoint, message: '포인트 충전 내역을 불러왔습니다.' });
   },
   checkEmail: async (req: Request, res: Response) => {
-    const user = await userDb.findPkUser(Number(req.userId));
-
-    if (!user) {
-      return res
-        .status(406)
-        .json({ message: '해당 유저가 존재하지 않습니다.' });
-    }
-
-    if (user?.id != req.userId) {
-      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
-    }
-
     const editInfo = await userDb.findUser(req.body.email);
 
     if (editInfo) {
@@ -221,5 +199,17 @@ module.exports = {
     }
 
     return res.status(200).json({ message: '사용할 수 있는 Email 입니다.' });
+  },
+  getRefundPoint: async (req: Request, res: Response) => {
+    const refundPoint = await pointRefundDb.findRefund(Number(req.userId));
+
+    if (!refundPoint) {
+      return res.status(406).json({ message: '포인트 환불 내역이 없습니다.' });
+    }
+
+    return res.status(200).json({
+      refund: refundPoint,
+      message: '포인트 환불 내역을 불러왔습니다.',
+    });
   },
 };
