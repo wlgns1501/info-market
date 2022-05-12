@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import myPostData from '../../mockdata/myPostData';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
@@ -101,7 +100,7 @@ function MyPosts() {
   const [postList, setPostList] = useState([]);
 
   //axios 헤더용
-  const { accToken, id: userId } = useSelector(selectUserInfo);
+  const { accToken } = useSelector(selectUserInfo);
   const config = {
     headers: {
       Authorization: `Bearer ${accToken}`,
