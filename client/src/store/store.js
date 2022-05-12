@@ -4,7 +4,7 @@ import userInfoReducer from './slices/userInfo';
 import userPostReducer from './slices/userPost';
 import purchaseDetailsReducer from './slices/purchaseDetails';
 import pointReducer from './slices/point';
-import postListReducer from './slices/postList';
+import searchReducer from './slices/search';
 import selectedPostReducer from './slices/selectedPost';
 
 export default configureStore({
@@ -14,7 +14,7 @@ export default configureStore({
     userPost: userPostReducer, //삭제?
     purchaseDetails: purchaseDetailsReducer, //삭제?
     point: pointReducer,
-    postList: postListReducer, //삭제?
+    search: searchReducer,
     selectedPost: selectedPostReducer,
   },
 });

@@ -14,9 +14,17 @@ const initialState = {
   updatedAt: null,
   reviews: [], //[{id, nickname, userId, content, createdAt}, {}, {}, {}...]
   like: false,
-  //아래는 테스트용
-  fileURL: 'image/4e9cb1e6b51848968dbc2446042fce8f.png',
-  // fileURL: null,
+  isPurchased: false,
+  fileURL: null,
+  isOpen: false,
+  removeInfo: false,
+  infoEditMode: false,
+  titleChangeValue: null,
+  contentChangeValue: null,
+  fileChangeValue: null,
+  modifyFileStep: false,
+  modifyTextStep: false,
+  modyfiedFileName: null,
 };
 
 const stateKeys = Object.keys(initialState);

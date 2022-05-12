@@ -16,7 +16,7 @@ function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [isSignup, setIsSignup] = useState(false);
+  const [role, setRole] = useState('일반');
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
@@ -27,7 +27,7 @@ function Signup() {
     emailCk: false,
     passwordCk: false,
     phoneCk: true, //나중에 고치기
-    nicknameCk: true, //나중에 고치기
+    nicknameCk: false,
   });
   const [message, setMessage] = useState({
     emailMsg: null,
@@ -37,15 +37,33 @@ function Signup() {
     nicknameMsg: null,
     result: null,
   });
+
+  //라디오 버튼 체크
+  const handleRoleCheck = (e) => {
+    setRole(e.target.value);
+  };
+
+  //입력값 상태로 저장
   const handleInputValue = (key) => (e) => {
     if (key === 'phone') {
       setUserInfo({ ...userInfo, [key]: `${e.target.value}` });
       setChecked({ ...checked, phoneCk: false });
       setMessage({ ...message, phoneMsg: '' });
+      return;
+    } else {
+      setUserInfo({ ...userInfo, [key]: e.target.value });
     }
-    setUserInfo({ ...userInfo, [key]: e.target.value });
-    if (key === 'email') setChecked({ ...checked, emailCk: false });
-    if (key === 'nickname') setChecked({ ...checked, nicknameCk: false });
+    setChecked({ ...checked, [`${key}Ck`]: false });
+    setMessage({ ...message, [`${key}Msg`]: '' });
+
+    // if (key === 'email') {
+    //   setChecked({ ...checked, emailCk: false });
+    //   setMessage({ ...message, emailMsg: '' });
+    // }
+    // if (key === 'nickname') {
+    //   setChecked({ ...checked, nicknameCk: false });
+    //   setMessage({ ...message, nicknameMsg: '' });
+    // }
   };
 
   //이메일 인증 버튼 클릭:
@@ -75,6 +93,7 @@ function Signup() {
   const handlePwdCheck = (e) => {
     setUserInfo({ ...userInfo, password: e.target.value });
     setChecked({ ...checked, passwordCk: false });
+    setMessage({ ...message, passwordMsg: '' });
 
     const pwdRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
@@ -85,7 +104,6 @@ function Signup() {
           '최소 8자, 하나 이상의 문자, 하나의 숫자와 특수 문자를 포함해야 합니다.',
       });
     }
-    setMessage({ ...message, passwordMsg: '' });
   };
 
   //비밀번호 재확인
@@ -121,13 +139,13 @@ function Signup() {
     e.preventDefault();
     setChecked({ ...checked, nicknameCk: true }); //나중에 삭제
     // axios
-    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/check/${userInfo.nickname}`)
+    //   .get(`${process.env.REACT_APP_SERVER_DEV_URL}/users/${userInfo.nickname}`)
     //   .then((res) => setChecked({ ...checked, nicknameCk: true }))
     //   .catch((err) => {
-    //     if (err.response === 'repeated') {
+    //     if (err.response?.message) {
     //       return setMessage({
     //         ...message,
-    //         nicknameMsg: '중복된 닉네임이 있습니다.',
+    //         nicknameMsg: err.response.message,
     //       });
     //     }
     //     alert('서버 에러: 닉네임 중복 검사 요청 실패');
@@ -139,42 +157,98 @@ function Signup() {
     e.preventDefault();
     const { email, password, phone, nickname } = userInfo;
     const { emailCk, passwordCk, phoneCk, nicknameCk } = checked;
-    if (!email || !password || !phone || !nickname) {
-      return setMessage({ ...message, result: '모두 입력해주세요.' });
-    }
 
-    if (!emailCk || !passwordCk || !phoneCk || !nicknameCk) {
-      return setMessage({ ...message, result: '모두 인증해주세요.' });
-    }
+    const normalURL = `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`;
+    const adminURL = `${process.env.REACT_APP_SERVER_DEV_URL}/admin/signup`;
 
-    setMessage({ ...message, result: '' });
-    axios
-      .post(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`,
-        { email, password, phone, nickname },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        },
-      )
-      .then((res) => {
-        const { id } = res.data;
-        if (id) {
-          alert('성공');
-          dispatch(updateState({ id }));
-          navigate(`/login`);
-        }
-      })
-      .catch((err) => {
-        console.log('에러: ', err);
-        alert(err.response.message);
-      });
+    if (role === '관리자') {
+      if (!email || !password || !emailCk || !passwordCk) {
+        return setMessage({
+          ...message,
+          result: 'email, password는 필수입니다.',
+        });
+      }
+
+      setMessage({ ...message, result: '' });
+
+      axios
+        .post(
+          adminURL,
+          { email, password },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          },
+        )
+        .then((res) => {
+          const { id } = res.data;
+          if (id) {
+            alert('회원가입 성공');
+            dispatch(updateState({ id }));
+            navigate(`/login`, { state: true });
+          }
+        })
+        .catch((err) => {
+          console.log('에러: ', err);
+          alert(err.response.message);
+        });
+    } else {
+      if (!email || !password || !phone || !nickname) {
+        return setMessage({ ...message, result: '모두 입력해주세요.' });
+      }
+
+      if (!emailCk || !passwordCk || !phoneCk || !nicknameCk) {
+        return setMessage({ ...message, result: '모두 인증해주세요.' });
+      }
+
+      setMessage({ ...message, result: '' });
+
+      axios
+        .post(
+          normalURL,
+          { email, password, phone, nickname },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          },
+        )
+        .then((res) => {
+          const { id } = res.data;
+          if (id) {
+            alert('회원가입 성공');
+            dispatch(updateState({ id }));
+            navigate(`/login`, { state: true });
+          }
+        })
+        .catch((err) => {
+          console.log('에러: ', err);
+          alert(err.response.message);
+        });
+    }
   };
   return (
     <div className="signup">
       <div className="signup-input">
         <h1>회원가입</h1>
         <div>모든 항목은 필수 입니다</div>
+        <div className="radio-btn">
+          <input
+            type="radio"
+            name="role"
+            value="일반"
+            checked={role === '일반'}
+            onChange={handleRoleCheck}
+          />
+          일반
+          <input
+            type="radio"
+            name="role"
+            value="관리자"
+            checked={role === '관리자'}
+            onChange={handleRoleCheck}
+          />
+          관리자
+        </div>
         <div>
           <input
             type="email"
@@ -209,24 +283,26 @@ function Signup() {
             className="signup-phone"
             placeholder="010-0000-0000"
             onChange={handleInputValue('phone')}
+            disabled={role === '관리자'}
           />
-          <button onClick={handlePhoneCheck}>인증번호받기</button>
+          <button onClick={handlePhoneCheck} disabled={role === '관리자'}>
+            인증번호받기
+          </button>
           <Msg className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}>
             {message.phoneMsg}
           </Msg>
         </div>
-        {/* <div>
-            <input type='text' className='signup-phone-check' placeholder='인증번호' onChange={handleInputValue('phone')}></input>
-            <button>확인</button>
-          </div> */}
         <div>
           <input
             type="text"
             className="signup-name"
             placeholder="닉네임"
             onChange={handleInputValue('nickname')}
+            disabled={role === '관리자'}
           />
-          <button onClick={handleNicknameCheck}>중복검사</button>
+          <button onClick={handleNicknameCheck} disabled={role === '관리자'}>
+            중복검사
+          </button>
           <Msg className={checked.emailCk ? 'checked' : ''}>
             {message.nicknameMsg}
           </Msg>

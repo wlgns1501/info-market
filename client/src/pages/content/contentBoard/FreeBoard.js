@@ -1,6 +1,5 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +7,7 @@ import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo } from '../../../store/slices/userInfo';
+import { useNavigate } from 'react-router-dom';
 
 const OrderContainer = styled.div`
   background-color: #e68feb;
@@ -102,17 +102,18 @@ const EntireContainer = styled.div`
 
 function Post({ post }) {
   const {
-    id,
+    id: postId,
     title,
-    writer,
+    nickname,
     content,
     totalLikes,
-    reviews,
     totalViews,
     createdAt,
     updatedAt,
+    userId,
   } = post;
 
+  const navigate = useNavigate();
   const day = createdAt.split('T')[0];
 
   return (
@@ -122,11 +123,17 @@ function Post({ post }) {
           <span className="icon">
             <FontAwesomeIcon icon={faUser} />
           </span>
-          {writer}
+          {nickname}
         </span>
         <span className="createdAt">{day}</span>
       </div>
-      {/* <p className="title" onClick={}>{title}</p> */}
+      <p
+        className="title"
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate(`/main/search/${postId}`)}
+      >
+        {title}
+      </p>
       <div className="total_Likes_Views">
         <span className="totalLikes">
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
@@ -165,23 +172,25 @@ function FreeBoard() {
 
   useEffect(() => {
     const params = {
-      search_type: 'title',
-      info_type: 'Paid',
+      info_type: 'Free',
       pages: page,
       limit: LIMIT,
       like_type: order === '인기순',
-      prevCount: totalCnt, //혹시나 추가
+      lastId: list.pop()?.id,
     };
+
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free`;
+
     axios
-      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/search`, {
+      .get(infoURL, {
         params,
         ...getConfig,
       })
       .then((res) => {
         const { rows, count } = res.data.info;
-        console.log(typeof count);
+
         if (rows) setList([...list, ...rows]);
-        if (count && count !== totalCnt) {
+        if (count && page === 1) {
           setTotalCnt(count);
         }
       })

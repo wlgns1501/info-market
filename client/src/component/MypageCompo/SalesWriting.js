@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import UploadFiles from './UploadFiles';
+import { useSelector } from 'react-redux';
+import { selectUserInfo } from '../../store/slices/userInfo';
+import { useNavigate } from 'react-router-dom';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
@@ -150,6 +153,16 @@ function Writing() {
 }
 
 function SalesWriting() {
+  const { isLogin, grade } = useSelector(selectUserInfo);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLogin) return navigate('/main');
+    if (grade === 'Bronze') {
+      alert('실버 등급부터 가능합니다.');
+      navigate(-1);
+    }
+  }, []);
+
   return (
     <WritingContainer>
       <Writing />
