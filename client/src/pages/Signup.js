@@ -151,7 +151,10 @@ function Signup() {
           withCredentials: true,
         },
       )
-      .then((res) => setChecked({ ...checked, nicknameCk: true }))
+      .then((res) => {
+        setChecked({ ...checked, nicknameCk: true });
+        setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
+      })
       .catch((err) => {
         if (err.response?.message) {
           return setMessage({
@@ -161,7 +164,6 @@ function Signup() {
         }
         alert('서버 에러: 닉네임 중복 검사 요청 실패');
       });
-    setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
   };
 
   const handleSignup = (e) => {
