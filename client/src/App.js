@@ -22,6 +22,7 @@ import PaidBoard from './pages/content/contentBoard/PaidBoard';
 import PostList from './pages/user/PostList';
 import Post from './pages/user/Post';
 import ContentPaid from './pages/content/ContentPaid';
+import ContentFree from './pages/content/ContentFree';
 
 function App() {
   return (
