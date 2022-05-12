@@ -99,3 +99,12 @@ export async function getPayments(
     ],
   });
 }
+
+export async function getUserPayment(infoId: number, userId: number) {
+  return await Payment.findOne({
+    where: {
+      userId,
+      infoId,
+    },
+  });
+}

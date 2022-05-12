@@ -101,7 +101,7 @@ function MyPosts() {
   const [postList, setPostList] = useState([]);
 
   //axios 헤더용
-  const { accToken } = useSelector(selectUserInfo);
+  const { accToken, id: userId } = useSelector(selectUserInfo);
   const config = {
     headers: {
       Authorization: `Bearer ${accToken}`,
@@ -125,6 +125,7 @@ function MyPosts() {
   //첫 렌더링: 내가 쓴 게시글 받아오기
   useEffect(() => {
     if (postList.length > offset) return;
+
     axios
       .get(
         `${process.env.REACT_APP_SERVER_DEV_URL}/users/info?pages=${page}&limit=${LIMIT}`,

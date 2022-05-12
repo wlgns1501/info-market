@@ -111,6 +111,12 @@ export const associate = (db: dbType) => {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });
+  db.User.hasMany(db.PointRefund, {
+    foreignKey: 'userId',
+    sourceKey: 'id',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  });
 };
 
 export default User;
