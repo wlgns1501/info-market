@@ -2,8 +2,8 @@ import express from 'express';
 const router = express.Router();
 const authControllers = require('../controlloers/auth');
 const authMe = require('../middlewares/auth');
-const validation = require('../middlewares/validator');
-import { body } from 'express-validator';
+// const validation = require('../middlewares/validator');
+// import { body } from 'express-validator';
 
 // 로그인
 router.post('/login', authControllers.login);
