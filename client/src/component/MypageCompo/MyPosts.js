@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import myPostData from '../../mockdata/myPostData';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
@@ -125,6 +124,7 @@ function MyPosts() {
   //첫 렌더링: 내가 쓴 게시글 받아오기
   useEffect(() => {
     if (postList.length > offset) return;
+
     axios
       .get(
         `${process.env.REACT_APP_SERVER_DEV_URL}/users/info?pages=${page}&limit=${LIMIT}`,

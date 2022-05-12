@@ -180,7 +180,7 @@ function PaidBoard() {
       pages: page,
       limit: LIMIT,
       like_type: order === '인기순',
-      lastId: list.pop()?.id,
+      lastId: list[list.length - 1]?.id,
     };
 
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/paid`;

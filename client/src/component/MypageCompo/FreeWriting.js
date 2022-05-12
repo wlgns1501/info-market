@@ -156,19 +156,35 @@ function Writing() {
             type: 'Free',
             targetPoint: 0,
             ...textValues,
-            fileURL: fileName,
+            file: fileName,
           },
           config,
         )
         .then((res) => {
-          if (res.data.infoId) alert('글이 등록되었습니다.');
           setTextValues({
             title: null,
             content: null,
           });
           setSelectedFile(null);
+          if (res.data.infoId) alert('글이 등록되었습니다.');
         })
-        .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        .catch((err) => {
+          deleteFile(fileName);
+          alert('파일업로드 주소가 서버에 반영 안 됨.');
+        });
+    });
+  };
+
+  //파일 삭제
+  const deleteFile = (fileName) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
+
+    myBucket.deleteObject(params, (err, data) => {
+      if (data) console.log('s3파일 삭제');
+      if (err) console.log('s3파일 삭제 실패');
     });
   };
 
@@ -203,9 +219,7 @@ function Writing() {
       <textarea
         name="content"
         id="content"
-        // rows="10"
-        // cols="55"
-        placeholder="내용"
+        placeholder="첨부파일에 대한 설명을 적어주세요."
         value={textValues.content}
         onChange={(e) =>
           setTextValues({ ...textValues, content: e.target.value })
