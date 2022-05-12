@@ -7,9 +7,9 @@ export async function likeClick(userId: number, infoId: number) {
   });
 }
 
-export async function likeClickCancel(infoId: number) {
+export async function likeClickCancel(userId: number, infoId: number) {
   return await Like.destroy({
-    where: { id: infoId },
+    where: { userId, infoId },
   });
 }
 

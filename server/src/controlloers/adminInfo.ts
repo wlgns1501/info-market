@@ -55,7 +55,6 @@ module.exports = {
   },
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-
     const { grade } = req;
 
     if (grade !== 'admin') {

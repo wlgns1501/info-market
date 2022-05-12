@@ -2,6 +2,7 @@ import Info from '../models/info';
 import { Request, Response } from 'express';
 import * as infoDb from '../db/info';
 import * as paymentDb from '../db/payment';
+import * as likeDb from '../db/like';
 
 module.exports = {
   getInfo: async (req: Request, res: Response) => {
@@ -12,6 +13,11 @@ module.exports = {
     }
 
     const info = await infoDb.getInfo(Number(infoId));
+    const like = await likeDb.findUser(
+      Number(info?.dataValues.userId),
+      Number(infoId),
+    );
+    console.log(like);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
@@ -34,7 +40,7 @@ module.exports = {
 
     return res.status(200).json({
       info,
-      isPurchased,
+      like: like ? true : false,
       message: '게시물을 가져왔습니다.',
     });
   },
