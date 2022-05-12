@@ -139,9 +139,18 @@ function Signup() {
     e.preventDefault();
 
     axios
-      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`, {
-        nickname: userInfo.nickname,
-      })
+      .post(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`,
+        {
+          nickname: userInfo.nickname,
+        },
+        {
+          headers: {
+            'content-type': 'application/json',
+          },
+          withCredentials: true,
+        },
+      )
       .then((res) => setChecked({ ...checked, nicknameCk: true }))
       .catch((err) => {
         if (err.response?.message) {
