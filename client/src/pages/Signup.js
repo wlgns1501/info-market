@@ -156,15 +156,19 @@ function Signup() {
         setMessage({ ...message, nicknameMsg: '사용 가능한 닉네임입니다.' });
       })
       .catch((err) => {
-        if (err.response?.message) {
-          return setMessage({
-            ...message,
-            nicknameMsg: err.response.message,
-          });
-        }
+        setChecked({ ...checked, nicknameCk: false });
+        setMessage({
+          ...message,
+          nicknameMsg: '닉네임 사용 불가',
+        });
         alert('서버 에러: 닉네임 중복 검사 요청 실패');
       });
   };
+
+  useEffect(() => {
+    console.log('검사');
+    console.log(checked);
+  }, [checked]);
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -203,7 +207,7 @@ function Signup() {
         })
         .catch((err) => {
           console.log('에러: ', err);
-          alert(err.response.message);
+          alert(err.response?.message);
         });
     } else {
       if (!email || !password || !phone || !nickname) {
@@ -316,7 +320,7 @@ function Signup() {
           <button onClick={handleNicknameCheck} disabled={role === '관리자'}>
             중복검사
           </button>
-          <Msg className={checked.emailCk ? 'checked' : ''}>
+          <Msg className={checked.nicknameCk ? 'checked' : ''}>
             {message.nicknameMsg}
           </Msg>
         </div>
