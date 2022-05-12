@@ -91,6 +91,14 @@ function UserInfoChange() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
   const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
   const [inputVal, setInputVal] = useState({
@@ -252,17 +260,13 @@ function UserInfoChange() {
         nickname: '현재 사용 중인 닉네임입니다.',
       });
     } else {
-      //api 완성되면 이 부분은 지움.
-      setInputVal({ ...inputVal, nickNameAuthentication: true });
-      setErrorMsg({ ...errorMsg, nickname: '' });
-      //api 완성되면 아래 코드 적용
       axios
         .post(
           `${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`,
           {
             nickname: inputVal.nickname,
           },
-          { Authorization: `Bearer ${accToken}` },
+          postConfig,
         )
         .then((res) => {
           setInputVal({ ...inputVal, nickNameAuthentication: true });
@@ -271,7 +275,7 @@ function UserInfoChange() {
         .catch((err) => {
           setErrorMsg({
             ...errorMsg,
-            nickname: '중복된 닉네임이 있습니다.',
+            nickname: err.response?.message || '닉네임 변경 불가',
           });
           setInputVal({ ...inputVal, nickname: '' });
         });
