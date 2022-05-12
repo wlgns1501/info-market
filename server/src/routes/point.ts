@@ -7,7 +7,7 @@ router.get('/getToken', auth.me, pointControllers.getToken);
 
 router.post('/approve', auth.me, pointControllers.approve);
 
-// router.post('/cancel', pointControllers.cancel);
+router.post('/cancel', pointControllers.cancel);
 
 // router.post('/order', pointControllers.order);
 

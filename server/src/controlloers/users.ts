@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 const bcrypt = require('./functions/bcrypt');
 import * as infoDb from '../db/info';
 import * as paymentDb from '../db/payment';
+import * as pointDb from '../db/point';
 
 module.exports = {
   getUsersInfo: async (req: Request, res: Response) => {
@@ -37,27 +38,39 @@ module.exports = {
         .status(406)
         .json({ message: '해당 유저가 존재하지 않습니다.' });
     }
+    let email: string;
+    let password: string;
+    let phone: string;
+    let nickname: string;
 
-    const { email, nickname, phone, password } = req.body;
-
-    const editInfo = await userDb.findUser(email);
-
-    if (editInfo) {
-      return res.status(400).json({ message: '중복된 email 입니다.' });
+    if (req.body.email) {
+      email = req.body.email;
+    } else {
+      email = user.email;
     }
 
-    const findNickname = await userDb.checkNickname(nickname);
-
-    if (findNickname) {
-      return res.status(400).json({ message: '중복된 닉네임 입니다.' });
+    if (req.body.password) {
+      password = await bcrypt.hash(req.body.password).catch((err: Error) => {
+        console.log(err);
+      });
+    } else {
+      password = user.password;
     }
 
-    const hashPw = await bcrypt.hash(password).catch((err: Error) => {
-      console.log(err);
-    });
+    if (req.body.phone) {
+      phone = req.body.phone;
+    } else {
+      phone = user.phone;
+    }
+
+    if (req.body.nickname) {
+      nickname = req.body.nickname;
+    } else {
+      nickname = user.nickname;
+    }
 
     await userDb
-      .editUserInfo(Number(userId), email, hashPw, nickname, phone)
+      .editUserInfo(Number(userId), email, password, nickname, phone)
       .catch(() => {
         return res
           .status(400)
@@ -78,12 +91,6 @@ module.exports = {
       Number(limit),
       Number(userId),
     );
-    // .catch(() => {
-    //   return res
-    //     .status(400)
-    //     .json({ message: '게시물을 불러오는데 실패하였습니다.' });
-    // });
-    console.log(info);
 
     if (info.count === 0) {
       return res
@@ -145,5 +152,74 @@ module.exports = {
     return res
       .status(200)
       .json({ message: '이미지를 업로드 하는데 성공하였습니다.' });
+  },
+  checkNickname: async (req: Request, res: Response) => {
+    const user = await userDb.findPkUser(Number(req.userId));
+
+    if (!user) {
+      return res
+        .status(406)
+        .json({ message: '해당 유저가 존재하지 않습니다.' });
+    }
+
+    if (user?.id != req.userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
+    }
+
+    const findNickname = await userDb.checkNickname(req.body.nickname);
+
+    if (findNickname) {
+      return res.status(400).json({ message: '중복된 닉네임 입니다.' });
+    }
+
+    return res.status(200).json({ message: '사용할 수 있는 닉네임 입니다.' });
+  },
+  paidPoint: async (req: Request, res: Response) => {
+    const { userId } = req.params;
+
+    if (userId != req.userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
+    }
+
+    const user = await userDb.findPkUser(Number(userId));
+
+    if (!user) {
+      return res
+        .status(406)
+        .json({ message: '해당 유저가 존재하지 않습니다.' });
+    }
+
+    const paidPoint = await pointDb.findUserPaidbyUserId(Number(userId));
+
+    if (!paidPoint) {
+      return res
+        .status(406)
+        .json({ message: '포인트를 충전한 내역이 없습니다.' });
+    }
+
+    return res
+      .status(200)
+      .json({ paidPoint, message: '포인트 충전 내역을 불러왔습니다.' });
+  },
+  checkEmail: async (req: Request, res: Response) => {
+    const user = await userDb.findPkUser(Number(req.userId));
+
+    if (!user) {
+      return res
+        .status(406)
+        .json({ message: '해당 유저가 존재하지 않습니다.' });
+    }
+
+    if (user?.id != req.userId) {
+      return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
+    }
+
+    const editInfo = await userDb.findUser(req.body.email);
+
+    if (editInfo) {
+      return res.status(400).json({ message: '중복된 Email 입니다.' });
+    }
+
+    return res.status(200).json({ message: '사용할 수 있는 Email 입니다.' });
   },
 };
