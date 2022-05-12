@@ -315,7 +315,7 @@ function Signup() {
           <button onClick={handleNicknameCheck} disabled={role === '관리자'}>
             중복검사
           </button>
-          <Msg className={checked.emailCk ? 'checked' : ''}>
+          <Msg className={checked.nicknameCk ? 'checked' : ''}>
             {message.nicknameMsg}
           </Msg>
         </div>
