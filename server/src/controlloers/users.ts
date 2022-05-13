@@ -8,10 +8,6 @@ import * as pointDb from '../db/point';
 module.exports = {
   getUsersInfo: async (req: Request, res: Response) => {
     const { userId } = req.params;
-    // console.log('여기가 설마 호출되니?');
-    // console.log(req.query);
-    // console.log(req.params);
-    // console.log(req.body);
 
     if (userId != req.userId) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
