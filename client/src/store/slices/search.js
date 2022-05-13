@@ -1,9 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  inputVal: null,
-  selectBox1: 'title',
-  selectBox2: 'All',
   page: 1,
   mark: 1,
   totalCount: null, //삭제?

@@ -3,8 +3,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { selectSearch, updateSearch } from '../store/slices/search';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import QueryString from 'qs';
 
 const boxShadow = '0 4px 6px rgb(32 33 36 / 28%)';
 // const activeBorderRadius = '1rem 1rem 0 0';
@@ -83,32 +83,9 @@ export const InputContainer = styled.div`
   } */
 `;
 
-function SelectBox({ items, className, role }) {
-  const dispatch = useDispatch();
-  const { selectBox1, selectBox2 } = useSelector(selectSearch);
-
-  const handleSelect = (e) => {
-    if (role === 'first') {
-      dispatch(
-        updateSearch({
-          selectBox1: e.target.value,
-        }),
-      );
-    } else {
-      dispatch(
-        updateSearch({
-          selectBox2: e.target.value,
-        }),
-      );
-    }
-  };
-
+function SelectBox({ items, className, selectVal, handleSelect }) {
   return (
-    <select
-      name="filter"
-      value={role === 'first' ? selectBox1 : selectBox2}
-      onChange={handleSelect}
-    >
+    <select name="filter" value={selectVal} onChange={handleSelect}>
       {items.map(([name, value], i) => (
         <option key={i} value={value}>
           {name}
@@ -119,29 +96,47 @@ function SelectBox({ items, className, role }) {
 }
 
 export default function Search({ single }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { inputVal } = useSelector(selectSearch);
+  const location = useLocation();
 
+  const [localIpVal, setLocalIpVal] = useState('');
+  const [localSelec1, setLocalSelec1] = useState('title');
+  const [localSelec2, setLocalSelec2] = useState('All');
   const buttonEl = useRef(null);
+
+  useEffect(() => {
+    const { search_type, info_type, input_value } = QueryString.parse(
+      location.search,
+      {
+        ignoreQueryPrefix: true,
+      },
+    );
+
+    if (search_type) setLocalSelec1(search_type);
+    if (info_type) setLocalSelec2(info_type);
+    if (input_value) setLocalIpVal(input_value);
+  }, []);
 
   const handleKeyPress = (e) => {
     // e.preventDefault();
     if (e.key === 'Enter') buttonEl.current.click();
   };
 
-  const inputChange = (e) => {
-    dispatch(
-      updateSearch({
-        inputVal: e.target.value,
-      }),
-    );
+  const handleSelect1 = (e) => {
+    setLocalSelec1(e.target.value);
+  };
+
+  const handleSelect2 = (e) => {
+    setLocalSelec2(e.target.value);
   };
 
   const searchClick = (e) => {
     e.preventDefault();
-    if (!inputVal) return alert('검색어가 없습니다.');
-    navigate('/main/search');
+    if (!localIpVal) return alert('검색어가 없습니다.');
+
+    navigate(
+      `/main/search?search_type=${localSelec1}&info_type=${localSelec2}&input_value=${localIpVal}`,
+    );
   };
 
   return single ? (
@@ -180,6 +175,8 @@ export default function Search({ single }) {
     <InputContainer className="bar">
       <form>
         <SelectBox
+          handleSelect={handleSelect1}
+          selectVal={localSelec1}
           className="selet-box first"
           items={[
             ['제목', 'title'],
@@ -189,6 +186,8 @@ export default function Search({ single }) {
           role="first"
         />
         <SelectBox
+          handleSelect={handleSelect2}
+          selectVal={localSelec2}
           className="selet-box second"
           items={[
             ['전체', 'All'],
@@ -201,8 +200,8 @@ export default function Search({ single }) {
           <input
             type="search"
             placeholder="검색어를 입력하세요."
-            value={inputVal}
-            onChange={inputChange}
+            value={localIpVal}
+            onChange={(e) => setLocalIpVal(e.target.value)}
             onKeyPress={handleKeyPress}
           />
         </span>
