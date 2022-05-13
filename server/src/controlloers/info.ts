@@ -197,11 +197,11 @@ module.exports = {
     let like;
     // console.log(pages);
 
-    console.log(req.query.lastId);
+    // console.log(req.query.lastId);
 
     if (Number(req.query.lastId) === 0) {
-      cursor = await Info.count();
-      console.log(cursor);
+      const recentInfo = await infoDb.recentInfo();
+      cursor = recentInfo.id;
     } else {
       cursor = Number(req.query.lastId);
     }
@@ -248,7 +248,7 @@ module.exports = {
       cursor = Number(req.query.lastId);
     }
 
-    const freeInfo = await infoDb.findPaidInfo(
+    const paidInfo = await infoDb.findPaidInfo(
       Number(pages),
       Number(limit),
       like,
@@ -256,12 +256,12 @@ module.exports = {
       Number(cursor),
     );
 
-    if (freeInfo.count === 0) {
+    if (paidInfo.count === 0) {
       return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
     }
 
     return res.status(200).json({
-      info: freeInfo,
+      info: paidInfo,
       message: `${pages} 번 페이지 게시물들을 불러왔습니다.`,
     });
   },
