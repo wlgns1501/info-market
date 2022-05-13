@@ -192,6 +192,7 @@ module.exports = {
     let cursor: number;
 
     let like;
+    console.log(req.query.lastId);
 
     if (!req.query.lastId) {
       cursor = await Info.count();
