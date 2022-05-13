@@ -146,7 +146,7 @@ function PostList() {
       <Search />
       <ul className="postList">
         {list.slice(offset, offset + LIMIT).map((post) => {
-          <Post key={post.id} post={post} />;
+          return <Post key={post.id} post={post} />;
         })}
         {list.length === 0 && <li>해당하는 정보가 없습니다.</li>}
       </ul>
