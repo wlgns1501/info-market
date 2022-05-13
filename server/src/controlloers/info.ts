@@ -1,3 +1,4 @@
+import Info from '../models/info';
 import { Request, Response } from 'express';
 import * as infoDb from '../db/info';
 import * as paymentDb from '../db/payment';
@@ -194,11 +195,11 @@ module.exports = {
     let cursor: number;
 
     let like;
-    console.log(pages);
+    // console.log(pages);
 
     console.log(req.query.lastId);
 
-    if (!req.query.lastId) {
+    if (Number(req.query.lastId) === 0) {
       cursor = await Info.count();
       console.log(cursor);
     } else {
@@ -241,7 +242,7 @@ module.exports = {
       like = 'asc';
     }
 
-    if (!req.query.lastId) {
+    if (Number(req.query.lastId) === 0) {
       cursor = await Info.count();
     } else {
       cursor = Number(req.query.lastId);
