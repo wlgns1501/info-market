@@ -13,11 +13,6 @@ module.exports = {
     }
 
     const info = await infoDb.getInfo(Number(infoId));
-    const like = await likeDb.findUser(
-      Number(info?.dataValues.userId),
-      Number(infoId),
-    );
-    console.log(like);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
@@ -25,24 +20,30 @@ module.exports = {
 
     await infoDb.viewsAdd(info.id, Number(info.totalViews));
 
-    let isPurchased;
+    if (req.userId) {
+      let isPurchased;
 
-    const checkPay = await paymentDb.getUserPayment(
-      Number(infoId),
-      Number(req.userId),
-    );
+      const checkPay = await paymentDb.getUserPayment(
+        Number(infoId),
+        Number(req.userId),
+      );
 
-    if (!checkPay) {
-      isPurchased = false;
-    } else {
-      isPurchased = true;
+      if (!checkPay) {
+        isPurchased = false;
+      } else {
+        isPurchased = true;
+      }
+
+      const like = await likeDb.findUser(Number(req.userId), Number(infoId));
+
+      return res.status(200).json({
+        info,
+        like: like ? true : false,
+        message: '게시물을 가져왔습니다.',
+      });
     }
 
-    return res.status(200).json({
-      info,
-      like: like ? true : false,
-      message: '게시물을 가져왔습니다.',
-    });
+    return res.status(200).json({ info, message: '게시물을 가져왔습니다.' });
   },
   writeInfo: async (req: Request, res: Response) => {
     const { title, content, targetPoint, type } = req.body;
