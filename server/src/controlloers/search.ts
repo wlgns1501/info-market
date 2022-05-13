@@ -4,14 +4,7 @@ import * as searchDb from '../db/search';
 module.exports = {
   // 무한 스크롤
   get: async (req: Request, res: Response) => {
-    const { search_type, info_type, pages, limit, like_type } = req.query;
-    let like;
-
-    if (like_type === 'true') {
-      like = 'desc';
-    } else if (like_type === 'false') {
-      like = 'asc';
-    }
+    const { search_type, info_type, pages, limit } = req.query;
 
     if (search_type === 'titles') {
       const { title } = req.query;
@@ -25,7 +18,6 @@ module.exports = {
           String(title),
           Number(pages),
           Number(limit),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -41,7 +33,6 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -64,7 +55,6 @@ module.exports = {
           String(content),
           Number(pages),
           Number(limit),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -80,7 +70,6 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -103,7 +92,6 @@ module.exports = {
           String(nickname),
           Number(pages),
           Number(limit),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
@@ -119,7 +107,6 @@ module.exports = {
           Number(pages),
           Number(limit),
           String(info_type),
-          String(like),
         );
 
         if (findInfoBy.count === 0) {
