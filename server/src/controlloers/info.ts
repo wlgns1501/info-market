@@ -190,6 +190,8 @@ module.exports = {
   },
 
   getFreeInfo: async (req: Request, res: Response) => {
+    // 없으면 undefined가 온다.
+
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
@@ -198,6 +200,7 @@ module.exports = {
 
     if (!req.query.lastId) {
       cursor = await Info.count();
+      console.log(cursor);
     } else {
       cursor = Number(req.query.lastId);
     }
