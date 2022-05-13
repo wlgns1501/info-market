@@ -1,4 +1,3 @@
-import Info from '../models/info';
 import { Request, Response } from 'express';
 import * as infoDb from '../db/info';
 import * as paymentDb from '../db/payment';
@@ -191,11 +190,12 @@ module.exports = {
 
   getFreeInfo: async (req: Request, res: Response) => {
     // 없으면 undefined가 온다.
-
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
     let like;
+    console.log(pages);
+
     console.log(req.query.lastId);
 
     if (!req.query.lastId) {

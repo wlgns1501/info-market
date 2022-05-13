@@ -6,7 +6,7 @@ module.exports = {
   get: async (req: Request, res: Response) => {
     const { search_type, info_type, pages, limit } = req.query;
 
-    if (search_type === 'titles') {
+    if (search_type === 'title') {
       const { title } = req.query;
 
       if (!title) {
