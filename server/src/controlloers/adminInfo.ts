@@ -56,6 +56,7 @@ module.exports = {
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
     const { grade } = req;
+    console.log(infoId);
 
     if (grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
