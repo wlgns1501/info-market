@@ -201,6 +201,9 @@ module.exports = {
 
     if (Number(req.query.lastId) === 0) {
       const recentInfo = await infoDb.recentInfo();
+      if (!recentInfo) {
+        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+      }
       cursor = recentInfo.id;
     } else {
       cursor = Number(req.query.lastId);
@@ -236,16 +239,20 @@ module.exports = {
 
     let like;
 
+    if (Number(req.query.lastId) === 0) {
+      const recentInfo = await infoDb.recentInfo();
+      if (!recentInfo) {
+        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+      }
+      cursor = recentInfo.id;
+    } else {
+      cursor = Number(req.query.lastId);
+    }
+
     if (like_type === 'true') {
       like = 'desc';
     } else if (like_type === 'false') {
       like = 'asc';
-    }
-
-    if (Number(req.query.lastId) === 0) {
-      cursor = await Info.count();
-    } else {
-      cursor = Number(req.query.lastId);
     }
 
     const paidInfo = await infoDb.findPaidInfo(
