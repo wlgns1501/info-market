@@ -80,6 +80,13 @@ const WritingContainer = styled.div`
   }
 `;
 
+const Btn = styled.button`
+  &.need {
+    display: none;
+    color: red;
+  }
+`;
+
 function Writing() {
   const { id, accToken } = useSelector(selectUserInfo);
   const config = {
@@ -162,10 +169,11 @@ function Writing() {
         )
         .then((res) => {
           setTextValues({
-            title: null,
-            content: null,
+            title: '',
+            content: '',
           });
-          setSelectedFile(null);
+          setSelectedFile('');
+          fileInput.current.value = '';
           if (res.data.infoId) alert('글이 등록되었습니다.');
         })
         .catch((err) => {
@@ -210,7 +218,7 @@ function Writing() {
         rows="1"
         cols="55"
         placeholder="제목"
-        maxlength="100"
+        maxlength="100" //삭제?
         value={textValues.title}
         onChange={(e) =>
           setTextValues({ ...textValues, title: e.target.value })
@@ -232,7 +240,9 @@ function Writing() {
           onChange={handleInputChange}
           ref={fileInput}
         />
-        <button onClick={handleCancel}>파일 취소</button>
+        <Btn className={!selectedFile && 'need'} onClick={handleCancel}>
+          파일 취소
+        </Btn>
       </div>
       <div className="submit">
         <span

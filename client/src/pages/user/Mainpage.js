@@ -64,7 +64,7 @@ function Post({ post, order }) {
   const { id: postId, title, nickname, userId } = post;
 
   const handleClick = () => {
-    navigate(`main/search/${postId}`);
+    navigate(`/main/search/${postId}`);
   };
 
   return (
@@ -89,7 +89,6 @@ function List({ posts, className }) {
 }
 
 function Mainpage() {
-  const { posts } = freeBoardData; //임시
   const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
 

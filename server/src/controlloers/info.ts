@@ -1,6 +1,7 @@
 import Info from '../models/info';
 import { Request, Response } from 'express';
 import * as infoDb from '../db/info';
+import * as paymentDb from '../db/payment';
 import * as likeDb from '../db/like';
 
 module.exports = {
@@ -23,6 +24,19 @@ module.exports = {
     }
 
     await infoDb.viewsAdd(info.id, Number(info.totalViews));
+
+    let isPurchased;
+
+    const checkPay = await paymentDb.getUserPayment(
+      Number(infoId),
+      Number(req.userId),
+    );
+
+    if (!checkPay) {
+      isPurchased = false;
+    } else {
+      isPurchased = true;
+    }
 
     return res.status(200).json({
       info,
@@ -173,11 +187,13 @@ module.exports = {
 
     await infoDb.editInfoFile(Number(infoId), req.body.file);
   },
+
   getFreeInfo: async (req: Request, res: Response) => {
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
     let like;
+    console.log(req.query.lastId);
 
     if (!req.query.lastId) {
       cursor = await Info.count();
@@ -207,6 +223,7 @@ module.exports = {
       message: `${pages} 번 페이지 게시물들을 불러왔습니다.`,
     });
   },
+
   getPaidInfo: async (req: Request, res: Response) => {
     let { pages, limit, like_type } = req.query;
     const activate = true;

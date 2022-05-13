@@ -16,6 +16,7 @@ export async function getInfo(infoId: number) {
       'createdAt',
       'targetPoint',
       'type',
+      'file',
       'totalViews',
       'totalLikes',
     ],
@@ -53,6 +54,8 @@ export async function getInfos() {
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -83,6 +86,8 @@ export async function AdminGetInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -114,6 +119,8 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'updatedAt',
       'targetPoint',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {

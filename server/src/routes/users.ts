@@ -9,5 +9,9 @@ router.get('/info', auth.me, usersControllers.usersWriteInfo);
 router.get('/info/order', auth.me, usersControllers.usersOrderInfo);
 router.get('/info/refund', auth.me, usersControllers.usersRefundInfo);
 router.post('/:userId/img', auth.me, usersControllers.postImg);
+router.post('/nickname', usersControllers.checkNickname);
+router.get('/:userId/point', auth.me, usersControllers.paidPoint);
+router.post('/email', usersControllers.checkEmail);
+router.get('/:userId/pointRefund', auth.me, usersControllers.getRefundPoint);
 
 module.exports = router;
