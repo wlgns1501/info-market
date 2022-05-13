@@ -313,7 +313,7 @@ export async function findFreeInfo(
       },
     ],
     where: {
-      id: { [Op.gt]: cursor },
+      id: { [Op.lte]: cursor },
 
       type: 'Free',
     },
@@ -352,9 +352,15 @@ export async function findPaidInfo(
       },
     ],
     where: {
-      id: { [Op.gt]: cursor },
+      id: { [Op.lte]: cursor },
       activate,
       type: 'Paid',
     },
+  });
+}
+
+export async function recentInfo() {
+  return await Info.findOne({
+    order: [['createdAt', 'desc']],
   });
 }
