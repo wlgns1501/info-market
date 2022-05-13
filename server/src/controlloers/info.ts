@@ -17,7 +17,6 @@ module.exports = {
       Number(info?.dataValues.userId),
       Number(infoId),
     );
-    console.log(like);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
