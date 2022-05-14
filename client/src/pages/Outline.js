@@ -8,8 +8,8 @@ const EntireContainer = styled.div`
   * {
     box-sizing: border-box;
     word-break: keep-all;
-    /* font-family: 'Helvetica', 'Arial', sans-serif; */
     font-family: 'Elice Bold';
+    font-family: '순천B';
   }
 `;
 
@@ -17,6 +17,8 @@ const BodyContainer = styled.div`
   * {
     margin: 0;
     font-family: 'Elice Regular';
+    font-family: '다이어리';
+    font-family: '순천R';
   }
 `;
 
