@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../images/logo.png';
 import styled from 'styled-components';
 
 const FooterContainer = styled.div`
@@ -8,6 +7,10 @@ const FooterContainer = styled.div`
   color: white;
   align-items: center;
   padding: 20px 30px;
+
+  > ul {
+    list-style: none;
+  }
 `;
 
 const Footer = () => {
@@ -22,7 +25,6 @@ const Footer = () => {
         Copyright &copy; <span>{thisYear()}</span>
       </p>
       <ul className="footer-info">
-        <li>TeamLeader&nbsp;:&nbsp;오상민</li>
         <li>Back-End&nbsp;:&nbsp;오상민</li>
         <li>Back-End&nbsp;:&nbsp;유지훈</li>
         <li>Front-End&nbsp;:&nbsp;최윤선</li>
