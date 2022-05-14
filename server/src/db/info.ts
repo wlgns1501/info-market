@@ -27,7 +27,7 @@ export async function getInfo(infoId: number) {
       },
       {
         model: Reply,
-        attributes: ['content', 'createdAt'],
+        attributes: ['id', 'userid', 'content', 'createdAt'],
         include: [
           {
             model: User,
