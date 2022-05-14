@@ -47,9 +47,8 @@ function Setting() {
               dispatch(updatePostState({ infoEditMode: true, isOpen: false }))
             }
           >
-            제목/내용 수정
+            수정
           </li>
-          <li>첨부파일 변경</li>
           <li
             onClick={() =>
               dispatch(

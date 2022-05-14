@@ -32,6 +32,7 @@ function Post() {
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}`, getConfig)
       .then((res) => {
         const { info } = res.data;
+        console.log('게시물 상세: ', info);
         dispatch(
           updatePostState({
             ...info,
@@ -39,7 +40,6 @@ function Post() {
             reviews: [...info.Replies],
           }),
         );
-        //조회수는 애초에 get 요청 보내질 때 서버에서 조회수 1 더하고 응답하는 걸로...
       })
       .catch((err) => {
         alert('게시물을 불러올 수 없습니다.');

@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
 import { faMoneyCheckDollar } from '@fortawesome/free-solid-svg-icons';
-import chargedPointData from '../../mockdata/chargedPointData';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserInfo } from '../../store/slices/userInfo';
+import axios from 'axios';
 
 const EntireContainer = styled.div`
   border: 3px solid green;
@@ -62,13 +64,13 @@ const UlContainer = styled.ul`
 `;
 
 function Item({ data }) {
-  const { amount, createdAt } = data;
+  const { point, createdAt } = data;
   return (
     <li className="item">
       <p className="createdAt">{createdAt}</p>
       <p className="detail">
         <FontAwesomeIcon id="coins" icon={faMoneyCheckDollar} size="2x" />
-        <span>+ {amount} P</span>
+        <span>+ {point} P</span>
       </p>
     </li>
   );
@@ -78,8 +80,17 @@ function ChargedPointList() {
   const [current, setCurrent] = useState(1);
   const LIMIT = 5;
   const offset = current * LIMIT - LIMIT;
-  const { pointList, totalCount } = chargedPointData;
-  const totalPage = Math.ceil(totalCount / LIMIT);
+  const [pointList, setPointList] = useState([]);
+  const totalCount = pointList.length;
+  const totalPage = Math.ceil(totalCount / LIMIT) || 1;
+  const { id: userId, accToken } = useSelector(selectUserInfo);
+
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
   const prevBtnClick = (e) => {
     e.preventDefault();
@@ -89,6 +100,24 @@ function ChargedPointList() {
     e.preventDefault();
     setCurrent(current + 1);
   };
+
+  useEffect(() => {
+    console.log('포인트 충전 내역');
+    axios
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/${userId}/point`,
+        getConfig,
+      )
+      .then((res) => {
+        console.log(res.data);
+        const { paidPoint } = res.data;
+        if (paidPoint) {
+          setPointList([...pointList, ...paidPoint]);
+        }
+      })
+      .catch((err) => err.response?.message && alert(err.response.message));
+  }, []);
+
   return (
     <EntireContainer>
       <UlContainer>

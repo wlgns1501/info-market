@@ -91,6 +91,14 @@ function UserInfoChange() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
   const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
   const [inputVal, setInputVal] = useState({
@@ -249,36 +257,28 @@ function UserInfoChange() {
     if (inputVal.nickname === nickname) {
       setErrorMsg({
         ...errorMsg,
-        nickname: '사용 중인 닉네임입니다.',
+        nickname: '현재 사용 중인 닉네임입니다.',
       });
     } else {
-      //api 완성되면 이 부분은 지움.
-      setInputVal({ ...inputVal, nickNameAuthentication: true });
-      setErrorMsg({ ...errorMsg, nickname: '' });
-      //api 완성되면 아래 코드 적용
-      // axios
-      //   .get(
-      //     `${process.env.REACT_APP_SERVER_DEV_URL}/check/${inputVal.nickname}`,
-      //     {
-      //       Authorization: `Bearer ${accToken}`,
-      //     },
-      //   )
-      //   .then((res) => {
-      //     const { message } = res.data;
-      //     if (message && message === 'ok') {
-      //       setInputVal({ ...inputVal, nickNameAuthentication: true });
-      //       setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
-      //     } else {
-      //       setErrorMsg({
-      //         ...errorMsg,
-      //         nickname: '중복된 닉네임이 있습니다.',
-      //       });
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     alert('서버 에러 발생! 다시 시도해주세요.');
-      //     setInputVal({ ...inputVal, nickname: '' });
-      //   });
+      axios
+        .post(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`,
+          {
+            nickname: inputVal.nickname,
+          },
+          postConfig,
+        )
+        .then((res) => {
+          setInputVal({ ...inputVal, nickNameAuthentication: true });
+          setErrorMsg({ ...errorMsg, nickname: '' });
+        })
+        .catch((err) => {
+          setErrorMsg({
+            ...errorMsg,
+            nickname: err.response?.message || '닉네임 변경 불가',
+          });
+          setInputVal({ ...inputVal, nickname: '' });
+        });
     }
   };
 

@@ -150,7 +150,7 @@ function FreeBoard() {
   const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalCnt, setTotalCnt] = useState(null);
+  const [totalCnt, setTotalCnt] = useState(0);
   const [order, setOrder] = useState('최신순');
   const LIMIT = 6;
   const elm = useRef(null);
@@ -171,15 +171,16 @@ function FreeBoard() {
   };
 
   useEffect(() => {
+    if (totalCnt && list.length >= totalCnt) return;
     const params = {
       info_type: 'Free',
       pages: page,
       limit: LIMIT,
       like_type: order === '인기순',
-      lastId: list.pop()?.id,
+      lastId: list[list.length - 1]?.id || 0,
     };
-
-    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free`;
+    // /info/free/list
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free/list`;
 
     axios
       .get(infoURL, {
@@ -216,15 +217,16 @@ function FreeBoard() {
         <div>
           <span className="latest_best">
             <input
+              id="latest"
               className="latest"
               type="radio"
               name="info_order"
               value="최신순"
               checked={order === '최신순'}
-              style={{ marginLeft: '0' }}
+              style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
-            최신순
+            <label for="latest">최신순</label>
             <input
               className="best"
               type="radio"

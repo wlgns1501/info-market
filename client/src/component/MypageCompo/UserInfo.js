@@ -278,26 +278,20 @@ function UserInfo() {
     myBucket
       .putObject(params, (err, data) => {
         //서버로 profileImg 값 보내주기.(일단 임시로 작성)
-        // axios
-        //   .post(
-        //     `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
-        //     { profileImg: fileName },
-        //     postConfig,
-        //   )
-        //   .then((res) => {
-        //     dispatch(
-        //       updateState({
-        //         profileImg: fileName,
-        //       }),
-        //     );
-        //   })
-        //   .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
-        //아래 코드는 서버랑 연동되면 삭제
-        dispatch(
-          updateState({
-            profileImg: fileName,
-          }),
-        );
+        axios
+          .post(
+            `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}/img`,
+            { profileImg: fileName },
+            postConfig,
+          )
+          .then((res) => {
+            dispatch(
+              updateState({
+                profileImg: fileName,
+              }),
+            );
+          })
+          .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
       })
       .on('httpUploadProgress', (evt) => {
         dispatch(

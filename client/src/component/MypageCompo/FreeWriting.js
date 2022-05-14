@@ -80,6 +80,13 @@ const WritingContainer = styled.div`
   }
 `;
 
+const Btn = styled.button`
+  &.need {
+    display: none;
+    color: red;
+  }
+`;
+
 function Writing() {
   const { id, accToken } = useSelector(selectUserInfo);
   const config = {
@@ -110,21 +117,24 @@ function Writing() {
   //업로드 버튼 클릭(파일 없이)
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { title, content } = textValues;
     axios
       .post(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
         {
           type: 'Free',
           targetPoint: 0,
-          ...textValues,
+          title,
+          content,
+          file: '',
         },
         config,
       )
       .then((res) => {
         if (res.data.infoId) alert('글이 등록되었습니다.');
         setTextValues({
-          title: null,
-          content: null,
+          title: '',
+          content: '',
         });
       })
       .catch((err) => {
@@ -156,19 +166,36 @@ function Writing() {
             type: 'Free',
             targetPoint: 0,
             ...textValues,
-            fileURL: fileName,
+            file: fileName,
           },
           config,
         )
         .then((res) => {
-          if (res.data.infoId) alert('글이 등록되었습니다.');
           setTextValues({
-            title: null,
-            content: null,
+            title: '',
+            content: '',
           });
-          setSelectedFile(null);
+          setSelectedFile('');
+          fileInput.current.value = '';
+          if (res.data.infoId) alert('글이 등록되었습니다.');
         })
-        .catch((err) => alert('파일업로드 주소가 서버에 반영 안 됨.'));
+        .catch((err) => {
+          deleteFile(fileName);
+          alert('파일업로드 주소가 서버에 반영 안 됨.');
+        });
+    });
+  };
+
+  //파일 삭제
+  const deleteFile = (fileName) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
+
+    myBucket.deleteObject(params, (err, data) => {
+      if (data) console.log('s3파일 삭제');
+      if (err) console.log('s3파일 삭제 실패');
     });
   };
 
@@ -194,7 +221,7 @@ function Writing() {
         rows="1"
         cols="55"
         placeholder="제목"
-        maxlength="100"
+        maxlength="100" //삭제?
         value={textValues.title}
         onChange={(e) =>
           setTextValues({ ...textValues, title: e.target.value })
@@ -203,9 +230,7 @@ function Writing() {
       <textarea
         name="content"
         id="content"
-        // rows="10"
-        // cols="55"
-        placeholder="내용"
+        placeholder="공유할 정보에 대한 간단한 설명을 적어주세요."
         value={textValues.content}
         onChange={(e) =>
           setTextValues({ ...textValues, content: e.target.value })
@@ -218,7 +243,9 @@ function Writing() {
           onChange={handleInputChange}
           ref={fileInput}
         />
-        <button onClick={handleCancel}>파일 취소</button>
+        <Btn className={!selectedFile && 'need'} onClick={handleCancel}>
+          파일 취소
+        </Btn>
       </div>
       <div className="submit">
         <span

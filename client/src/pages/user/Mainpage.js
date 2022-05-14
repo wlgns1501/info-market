@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
-import freeBoardData from '../../mockdata/freeBoardData';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
@@ -64,7 +63,7 @@ function Post({ post, order }) {
   const { id: postId, title, nickname, userId } = post;
 
   const handleClick = () => {
-    navigate(`main/search/${postId}`);
+    navigate(`/main/search/${postId}`);
   };
 
   return (
@@ -89,7 +88,6 @@ function List({ posts, className }) {
 }
 
 function Mainpage() {
-  const { posts } = freeBoardData; //임시
   const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
 

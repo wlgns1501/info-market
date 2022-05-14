@@ -36,13 +36,22 @@ function Header() {
           </NavLink>
         </div>
         <ul className={isOpen ? 'header-menu open' : 'header-menu'}>
-          <NavLink to="/main">
+          <NavLink
+            to="/main"
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
             <li>메인페이지</li>
           </NavLink>
-          <NavLink to="/freeboard">
+          <NavLink
+            to="/freeboard"
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
             <li>무료 정보 게시판</li>
           </NavLink>
-          <NavLink to="/paidboard">
+          <NavLink
+            to="/paidboard"
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
             <li>유료 정보 게시판</li>
           </NavLink>
         </ul>

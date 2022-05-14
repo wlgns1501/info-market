@@ -8,7 +8,7 @@ class Point extends Model {
     id: number;
     userId: number;
     point: number;
-    status: string;
+    state: string;
     imp_uid: string;
     merchant_uid: string;
     payment_method_type: string;
@@ -81,6 +81,12 @@ export const associate = (db: dbType) => {
   db.Point.belongsTo(db.User, {
     foreignKey: 'userId',
     targetKey: 'id',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  });
+  db.Point.hasMany(db.PointRefund, {
+    foreignKey: 'pointId',
+    sourceKey: 'id',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });

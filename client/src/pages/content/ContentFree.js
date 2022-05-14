@@ -10,6 +10,8 @@ import {
   selectSelectedPost,
   addLike,
   cancelLike,
+  cancelModify,
+  deleteFile,
 } from '../../store/slices/selectedPost';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,6 +33,16 @@ const SettingBox = styled.span`
 
 const RemoveBox = styled.div``;
 
+const ContentBox = styled.textarea`
+  width: 80%;
+  height: 500px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: solid 2px #1e90ff;
+  border-radius: 5px;
+  font-size: 1rem;
+`;
+
 function RemoveInfoConfirm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -45,12 +57,16 @@ function RemoveInfoConfirm() {
   };
 
   const handleInfoDelete = () => {
+    //게시글 첨부파일도 삭제해야 함!!
     axios
       .delete(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
         getConfig,
       )
-      .then((res) => alert(res.data.message))
+      .then((res) => {
+        dispatch(deleteFile());
+        alert(res.data.message);
+      })
       .catch((err) => alert(err.response.message));
 
     dispatch(updatePostState({ removeInfo: false }));
@@ -76,6 +92,7 @@ function ContentFree() {
   const dispatch = useDispatch();
   const {
     id: infoId,
+    userId,
     title,
     nickname,
     content,
@@ -89,13 +106,15 @@ function ContentFree() {
     isOpen,
     removeInfo,
     infoEditMode,
-    titleChangeValue,
-    contentChangeValue,
-    fileChangeValue,
+    titleChange,
+    contentChange,
+    fileChange,
     modifyTextStep,
     modyfiedFileName,
   } = useSelector(selectSelectedPost);
-  const { isLogin, accToken } = useSelector(selectUserInfo);
+  const { id, isLogin, accToken } = useSelector(selectUserInfo);
+  const [localTitle, setLocalTitle] = useState(title);
+  const [localContent, setLocalContent] = useState(content);
 
   const getConfig = {
     headers: {
@@ -105,13 +124,35 @@ function ContentFree() {
   };
 
   const likeClick = () => {
-    //이미 추천한 게시글이면,
+    //자신의 게시물이면 좋아요 못 누름.
+    if (id === userId)
+      return alert('자신의 게시물에는 좋아요를 누를 수 없습니다.');
     if (like) {
-      dispatch(cancelLike());
+      //좋아요 취소.
+      axios
+        .delete(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}/like`,
+          getConfig,
+        )
+        .then((res) => {
+          dispatch(cancelLike());
+          dispatch(updatePostState({ like: !like }));
+        })
+        .catch((err) => alert('좋아요 취소 반영 안 됨.'));
     } else {
-      dispatch(addLike());
+      // 좋아요 누름.
+      axios
+        .put(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}/like`,
+          '',
+          getConfig,
+        )
+        .then((res) => {
+          dispatch(addLike());
+          dispatch(updatePostState({ like: !like }));
+        })
+        .catch((err) => alert('좋아요 반영 안 됨.'));
     }
-    dispatch(updatePostState({ like: !like }));
   };
 
   //텍스트 수정 처리
@@ -121,8 +162,8 @@ function ContentFree() {
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
         {
-          title: titleChangeValue,
-          content: contentChangeValue,
+          title: localTitle,
+          content: localContent,
           file: modyfiedFileName,
         },
         getConfig,
@@ -130,8 +171,8 @@ function ContentFree() {
       .then((res) => {
         dispatch(
           updatePostState({
-            title: titleChangeValue,
-            content: contentChangeValue,
+            title: localTitle,
+            content: localContent,
             fileURL: modyfiedFileName,
           }),
         );
@@ -139,25 +180,16 @@ function ContentFree() {
       .catch((err) => {
         if (err.response?.message) alert(err.response.message);
       });
-    dispatch(
-      updatePostState({
-        infoEditMode: false,
-        titleChangeValue: null,
-        contentChangeValue: null,
-        fileChangeValue: null,
-        modifyTextStep: false,
-        modyfiedFileName: null,
-        modifyFileStep: false, //혹시나 해서 추가
-      }),
-    );
+
+    dispatch(cancelModify());
   }, [modifyTextStep]);
 
   //텍스트, 파일 수정 단계를 분리시켜주는 코드
   const handleModifyReady = () => {
-    if (!titleChangeValue && !contentChangeValue && !fileChangeValue)
+    if (!titleChange && !contentChange && !fileChange)
       return dispatch(updatePostState({ infoEditMode: false }));
 
-    if (fileChangeValue)
+    if (fileChange)
       return dispatch(
         updatePostState({
           modifyFileStep: true,
@@ -172,7 +204,7 @@ function ContentFree() {
   };
 
   return (
-    <div>
+    <div className="content-container">
       {removeInfo && (
         <Modal
           handleBtnClick={() =>
@@ -182,20 +214,20 @@ function ContentFree() {
           role="remove"
         />
       )}
-      <strong>무료글 상세보기</strong>
-      <p>무료컨텐츠 상세 페이지 입니다</p>
       <div className="container">
         {infoEditMode ? (
-          <input
-            onChange={(e) =>
-              dispatch(updatePostState({ titleChangeValue: e.target.value }))
-            }
-            type="text"
-          >
-            {title}
-          </input>
+          <textarea
+            cols="30"
+            rows="1"
+            style={{ height: '2rem' }}
+            onChange={(e) => {
+              setLocalTitle(e.target.value);
+              dispatch(updatePostState({ titleChange: true }));
+            }}
+            value={localTitle}
+          />
         ) : (
-          <div className="title">{title}</div>
+          <div className="title">{localTitle}</div>
         )}
         <SettingBox className={`setting ${isLogin || 'logined'}`}>
           <FontAwesomeIcon
@@ -226,19 +258,19 @@ function ContentFree() {
           <textarea
             cols="30"
             rows="50"
-            onChange={(e) =>
-              dispatch(updatePostState({ contentChangeValue: e.target.value }))
-            }
-          >
-            {content}
-          </textarea>
+            onChange={(e) => {
+              setLocalContent(e.target.value);
+              dispatch(updatePostState({ contentChange: true }));
+            }}
+            value={localContent}
+          />
         ) : (
-          <div className="body">{content}</div>
+          <ContentBox readOnly className="body" value={localContent} />
         )}
-        <div className="like download" style={{ height: '50px' }}>
-          <span onClick={likeClick}>
-            {like ? '♥' : '♡'} {totalLikes}
-          </span>
+        <span className="like-btn" onClick={likeClick}>
+          {like ? '♥' : '♡'} {totalLikes}
+        </span>
+        <div className="like-download" style={{ height: '50px' }}>
           {/* 아래 첨부파일은 회원만 다운 가능 */}
           {infoEditMode ? (
             <FileChange />
@@ -246,7 +278,7 @@ function ContentFree() {
             <a
               href={
                 isLogin
-                  ? `https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`
+                  ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
                   : '#'
               }
             >
@@ -255,17 +287,14 @@ function ContentFree() {
                 style={{ fontSize: '1.5rem' }}
                 onClick={() => !isLogin && alert('회원만 가능한 서비스입니다.')}
               />
+              다운로드
             </a>
           )}
           {infoEditMode && (
             <button onClick={handleModifyReady}>수정 완료</button>
           )}
           {infoEditMode && (
-            <button
-              onClick={() => dispatch(updatePostState({ infoEditMode: false }))}
-            >
-              취소
-            </button>
+            <button onClick={() => dispatch(cancelModify())}>취소</button>
           )}
         </div>
         <Comment />

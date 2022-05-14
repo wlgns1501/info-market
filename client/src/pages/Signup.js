@@ -4,6 +4,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { updateState } from '../store/slices/userInfo.js';
+import '../css/Signup.css';
 
 const Msg = styled.div`
   color: red;
@@ -228,92 +229,123 @@ function Signup() {
   };
   return (
     <div className="signup">
-      <div className="signup-input">
-        <h1>회원가입</h1>
-        <div>모든 항목은 필수 입니다</div>
-        <div className="radio-btn">
-          <input
-            type="radio"
-            name="role"
-            value="일반"
-            checked={role === '일반'}
-            onChange={handleRoleCheck}
-          />
-          일반
-          <input
-            type="radio"
-            name="role"
-            value="관리자"
-            checked={role === '관리자'}
-            onChange={handleRoleCheck}
-          />
-          관리자
+      <div className="signup-form-container shadow">
+        <div className="signup-form-left-side">
+          <h1>Info-Market</h1>
+          <p>
+            블라블라블라 블라블라 대충 회원가입 어서오세요 회원가입하세요
+            어서오세요 회원가입하세요 어서오세요 회원가입하세요 어서오세요
+            회원가입하세요 어서오세요 회원가입하세요{' '}
+          </p>
+          <div className="radio-btn">
+            <input
+              type="radio"
+              name="role"
+              value="일반"
+              checked={role === '일반'}
+              onChange={handleRoleCheck}
+            />
+            일반
+            <input
+              type="radio"
+              name="role"
+              value="관리자"
+              checked={role === '관리자'}
+              onChange={handleRoleCheck}
+            />
+            관리자
+          </div>
         </div>
-        <div>
-          <input
-            type="email"
-            className="signup-id"
-            placeholder="아이디(email)"
-            onChange={handleInputValue('email')}
-          />
-          <button onClick={handleEmailCheck}>인증</button>
-          <Msg className={checked.emailCk ? 'email-msg checked' : 'email-msg'}>
-            {message.emailMsg}
-          </Msg>
-        </div>
-        <div>
-          <input
-            type="password"
-            className="signup-password"
-            placeholder="비밀번호"
-            onChange={handlePwdCheck}
-          />
-          <Msg className="password-msg">{message.passwordMsg}</Msg>
-          <input
-            type="password"
-            className="signup-rePassword"
-            placeholder="비밀번호 재확인"
-            onChange={handlePwdReCheck}
-          />
-          <Msg className="rePassword-msg">{message.rePasswordMsg}</Msg>
-        </div>
-        <div>
-          <input
-            type="tel"
-            className="signup-phone"
-            placeholder="010-0000-0000"
-            onChange={handleInputValue('phone')}
-            disabled={role === '관리자'}
-          />
-          <button onClick={handlePhoneCheck} disabled={role === '관리자'}>
-            인증번호받기
-          </button>
-          <Msg className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}>
-            {message.phoneMsg}
-          </Msg>
-        </div>
-        <div>
-          <input
-            type="text"
-            className="signup-name"
-            placeholder="닉네임"
-            onChange={handleInputValue('nickname')}
-            disabled={role === '관리자'}
-          />
-          <button onClick={handleNicknameCheck} disabled={role === '관리자'}>
-            중복검사
-          </button>
-          <Msg className={checked.emailCk ? 'checked' : ''}>
-            {message.nicknameMsg}
-          </Msg>
-        </div>
-        <div className="signup-button">
-          <button type="submit" onClick={handleSignup}>
-            회원가입하기
-          </button>
+        <div className="signup-form-right-side">
+          <div className="signup-top-wrap">
+            <span>모든 항목은 필수 입니다</span>
+          </div>
+          <div className="signup-input-container">
+            <div className="signup-btn-wrap">
+              <input
+                type="email"
+                className="signup-input-wrap input-id"
+                placeholder="아이디(email)"
+                onChange={handleInputValue('email')}
+              />
+              <button className="signup-btn" onClick={handleEmailCheck}>
+                인증
+              </button>
+              <Msg
+                className={checked.emailCk ? 'email-msg checked' : 'email-msg'}
+              >
+                {message.emailMsg}
+              </Msg>
+            </div>
+            <div>
+              <input
+                type="password"
+                className="signup-input-wrap input-password"
+                placeholder="비밀번호"
+                onChange={handlePwdCheck}
+              />
+              <Msg className="password-msg">{message.passwordMsg}</Msg>
+              <input
+                type="password"
+                className="signup-input-wrap input-rePassword"
+                placeholder="비밀번호 재확인"
+                onChange={handlePwdReCheck}
+              />
+              <Msg className="rePassword-msg">{message.rePasswordMsg}</Msg>
+            </div>
+            <div className="signup-btn-wrap">
+              <input
+                type="tel"
+                className="signup-input-wrap input-phone"
+                placeholder="010-0000-0000"
+                onChange={handleInputValue('phone')}
+                disabled={role === '관리자'}
+              />
+              <button
+                className="signup-btn"
+                onClick={handlePhoneCheck}
+                disabled={role === '관리자'}
+              >
+                인증번호받기
+              </button>
+              <Msg
+                className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}
+              >
+                {message.phoneMsg}
+              </Msg>
+            </div>
+            <div className="signup-btn-wrap">
+              <input
+                type="text"
+                className="signup-input-wrap input-name"
+                placeholder="닉네임"
+                onChange={handleInputValue('nickname')}
+                disabled={role === '관리자'}
+              />
+              <button
+                className="signup-btn"
+                onClick={handleNicknameCheck}
+                disabled={role === '관리자'}
+              >
+                중복검사
+              </button>
+              <Msg className={checked.emailCk ? 'checked' : ''}>
+                {message.nicknameMsg}
+              </Msg>
+            </div>
+            <div className="signup-btn-wrap">
+              <button
+                className="signup-btn"
+                type="submit"
+                onClick={handleSignup}
+              >
+                회원가입
+              </button>
+              <Msg className="alert-box">{message.result}</Msg>
+            </div>
+          </div>
         </div>
       </div>
-      <Msg className="alert-box">{message.result}</Msg>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+// import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -6,8 +7,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 const indexRouter = require('./routes/index');
 import { sequelize } from './models';
-import passport from 'passport';
-const passportConfig = require('./passport/index');
+// import passport from 'passport';
+// const passportConfig = require('./passport/index');
 
 dotenv.config();
 

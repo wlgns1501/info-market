@@ -16,6 +16,7 @@ export async function getInfo(infoId: number) {
       'createdAt',
       'targetPoint',
       'type',
+      'file',
       'totalViews',
       'totalLikes',
     ],
@@ -26,7 +27,7 @@ export async function getInfo(infoId: number) {
       },
       {
         model: Reply,
-        attributes: ['content', 'createdAt'],
+        attributes: ['id', 'userid', 'content', 'createdAt'],
         include: [
           {
             model: User,
@@ -53,6 +54,8 @@ export async function getInfos() {
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -83,6 +86,8 @@ export async function AdminGetInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -114,6 +119,8 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'updatedAt',
       'targetPoint',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -306,7 +313,7 @@ export async function findFreeInfo(
       },
     ],
     where: {
-      id: { [Op.gt]: cursor },
+      id: { [Op.lte]: cursor },
 
       type: 'Free',
     },
@@ -345,9 +352,15 @@ export async function findPaidInfo(
       },
     ],
     where: {
-      id: { [Op.gt]: cursor },
+      id: { [Op.lte]: cursor },
       activate,
       type: 'Paid',
     },
+  });
+}
+
+export async function recentInfo() {
+  return await Info.findOne({
+    order: [['createdAt', 'desc']],
   });
 }

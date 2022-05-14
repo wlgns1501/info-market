@@ -1,4 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
+import AWS from 'aws-sdk';
+import { v1, v3, v4, v5 } from 'uuid';
+
+const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
+const REGION = process.env.REACT_APP_AWS_DEFAULT_REGION;
+const S3_BUCKET = process.env.REACT_APP_AWS_BUCKET;
+
+AWS.config.update({
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_ACCESS_KEY,
+});
+
+const myBucket = new AWS.S3({
+  params: { Bucket: S3_BUCKET },
+  region: REGION,
+});
 
 const initialState = {
   id: null,
@@ -12,16 +29,16 @@ const initialState = {
   userId: null,
   createdAt: null,
   updatedAt: null,
-  reviews: [], //[{id, nickname, userId, content, createdAt}, {}, {}, {}...]
+  reviews: [], //[{id, nickname, content, createdAt}, {}, {}, {}...]
   like: false,
   isPurchased: false,
   fileURL: null,
   isOpen: false,
   removeInfo: false,
   infoEditMode: false,
-  titleChangeValue: null,
-  contentChangeValue: null,
-  fileChangeValue: null,
+  titleChange: false,
+  contentChange: false,
+  fileChange: false,
   modifyFileStep: false,
   modifyTextStep: false,
   modyfiedFileName: null,
@@ -65,19 +82,26 @@ export const selectedPostSlice = createSlice({
         else return R;
       });
     },
-    // updateSearch: (state, action) => {
-    //   state.searchOptions = {
-    //     ...state.searchOptions,
-    //     ...action.payload,
-    //   };
-    //   console.log(state.searchOptions);
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // incrementByAmount: (state, action) => {
-    //   state.value += action.payload;
-    // },
+    cancelModify: (state) => {
+      state.infoEditMode = false;
+      state.titleChange = false;
+      state.contentChange = false;
+      state.fileChange = false;
+      state.modifyTextStep = false;
+      state.modyfiedFileName = null;
+      state.modifyFileStep = false;
+    },
+    deleteFile: (state) => {
+      const params = {
+        Bucket: S3_BUCKET,
+        Key: state.fileURL,
+      };
+
+      myBucket.deleteObject(params, (err, data) => {
+        if (data) console.log('기존 파일 삭제 성공');
+        if (err) console.log('기존 파일 삭제 실패');
+      });
+    },
   },
 });
 
@@ -89,6 +113,8 @@ export const {
   addComment,
   deleteComment,
   modifyComment,
+  cancelModify,
+  deleteFile,
 } = selectedPostSlice.actions;
 export default selectedPostSlice.reducer;
 export const selectSelectedPost = (state) => state.selectedPost;

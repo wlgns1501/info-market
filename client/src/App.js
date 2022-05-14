@@ -1,10 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+import Outline from './pages/Outline';
 import Login from './pages/Login';
 import Tos from './pages/Tos';
 import Signup from './pages/Signup';
-import Header from './component/Header';
-import Footer from './component/Footer';
 import Home from './pages/user/Home';
 import SideBar from './component/MypageCompo/SideBar';
 import FreeWriting from './component/MypageCompo/FreeWriting';
@@ -27,9 +26,8 @@ import ContentFree from './pages/content/ContentFree';
 function App() {
   return (
     <BrowserRouter>
-      <Header />
       <Routes>
-        <Route path="/">
+        <Route path="/" element={<Outline />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="tos" element={<Tos />} />
@@ -63,7 +61,6 @@ function App() {
           <Route path="*" element={<NotFoundPage />} /> */}
         </Route>
       </Routes>
-      <Footer />
     </BrowserRouter>
   );
 }
