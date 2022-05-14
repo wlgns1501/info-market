@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
+import freeBoardData from '../../mockdata/freeBoardData';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';

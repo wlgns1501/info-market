@@ -88,7 +88,7 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
+    <div style={{ height: '60vh' }} className="login-container">
       <div className="login-input">
         <div className="radio-btn">
           <input

@@ -64,6 +64,9 @@ function Home() {
           로그인하기
         </button>
       </div>
+      <div style={{ height: '500px' }}>aaaaaaaaaaaaa</div>
+      <div style={{ height: '500px' }}>bbbbbbbbbbbb</div>
+      <div style={{ height: '300px' }}>cccccccccccccc</div>
     </div>
   );
 }
