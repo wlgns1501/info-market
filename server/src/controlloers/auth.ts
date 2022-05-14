@@ -46,7 +46,7 @@ module.exports = {
       // console.log('해당 유저 X');
       return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
-    const { id, point, grade } = userInfo;
+    const { id, point, grade, phone, nickname } = userInfo;
 
     // npm문서에서 bcrypt 관련 내용 찾아보기
     const verification: string = await bcrypt
@@ -75,6 +75,8 @@ module.exports = {
         id,
         point,
         grade,
+        nickname,
+        phone,
         accToken: accToken,
         message: '로그인에 성공 했습니다.',
       });
