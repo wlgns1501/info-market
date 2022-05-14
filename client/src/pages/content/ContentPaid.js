@@ -19,6 +19,7 @@ import Modal from '../../modals/Modal-1';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
+import '../../css/Content.css';
 
 const EntireContainer = styled.div`
   > div.modal div.content {
@@ -82,75 +83,78 @@ function ContentPaid() {
 
   return (
     <EntireContainer>
-      {preStep && (
-        <Modal
-          handleBtnClick={() => setPreStep(false)}
-          content={<PayWithPoints handleClick={() => setPreStep(false)} />}
-        />
-      )}
-      {modalOpen && (
-        <Modal
-          role="payment"
-          handleBtnClick={() =>
-            dispatch(
-              updatePointState({
-                modalOpen: false,
-              }),
-            )
-          }
-          content={<ChargeBox />}
-        />
-      )}
-      <strong>유료글 상세보기</strong>
-      <p>유료컨텐츠 상세 페이지 입니다</p>
-      <div className="container">
-        <div className="title">{title}</div>
-        <div className="info">
-          <dl>
-            <dt>작성자</dt>
-            <dd>{nickname}</dd>
-          </dl>
-          <dl>
-            <dt>작성일자</dt>
-            <dd>{createdAt}</dd>
-          </dl>
-          <dl>
-            <dt>조회수</dt>
-            <dd>{totalViews}</dd>
-          </dl>
-          <dl>
-            <dt>추천수</dt>
-            <dd>{totalLikes}</dd>
-          </dl>
-          <dl>
-            <dt>포인트</dt>
-            <dd>{targetPoint}</dd>
-          </dl>
-        </div>
-        <div className="body">{content}</div>
-        <div className="like download" style={{ height: '50px' }}>
-          <span onClick={likeClick}>
-            {like ? '♥' : '♡'} {totalLikes}
-          </span>
-          {/* 아래 첨부파일은 회원만 다운 가능 */}
-          <a
-            // ref={download}
-            href={
-              isPurchased || userInfoId === writer || grade === 'admin'
-                ? `https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`
-                : '#'
+      <div className="content-container">
+        {preStep && (
+          <Modal
+            handleBtnClick={() => setPreStep(false)}
+            content={<PayWithPoints handleClick={() => setPreStep(false)} />}
+          />
+        )}
+        {modalOpen && (
+          <Modal
+            role="payment"
+            handleBtnClick={() =>
+              dispatch(
+                updatePointState({
+                  modalOpen: false,
+                }),
+              )
             }
-          >
-            <FontAwesomeIcon
-              icon={faFileArrowDown}
-              style={{ fontSize: '1.5rem' }}
-              onClick={() => !isLogin && alert('회원만 가능한 서비스입니다.')}
-            />
-          </a>
-          {isPurchased && <span>구매한 이력이 있는 게시물입니다.</span>}
-          <button onClick={handleConfirm}>결제하기</button>
+            content={<ChargeBox />}
+          />
+        )}
+        <div className="container">
+          <div className="title">{title}</div>
+          <div className="info">
+            <dl>
+              <dt>작성자</dt>
+              <dd>{nickname}</dd>
+            </dl>
+            <dl>
+              <dt>작성일자</dt>
+              <dd>{createdAt}</dd>
+            </dl>
+            <dl>
+              <dt>조회수</dt>
+              <dd>{totalViews}</dd>
+            </dl>
+            <dl>
+              <dt>추천수</dt>
+              <dd>{totalLikes}</dd>
+            </dl>
+            <dl>
+              <dt>포인트</dt>
+              <dd>{targetPoint}</dd>
+            </dl>
+          </div>
+          <div className="body">{content}</div>
+          <div className="like-btn" onClick={likeClick}>
+            {like ? '♥' : '♡'} {totalLikes}
+          </div>
+          <div className="like-download" style={{ height: '50px' }}>
+            {/* 아래 첨부파일은 회원만 다운 가능 */}
+            <a
+              // ref={download}
+              href={
+                isPurchased || userInfoId === writer || grade === 'admin'
+                  ? `https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`
+                  : '#'
+              }
+            >
+              <FontAwesomeIcon
+                icon={faFileArrowDown}
+                style={{ fontSize: '1.5rem' }}
+                onClick={() => !isLogin && alert('회원만 가능한 서비스입니다.')}
+              />{' '}
+              다운로드
+            </a>
+            {isPurchased && <span>구매한 이력이 있는 게시물입니다.</span>}
+            <button className="paid-btn" onClick={handleConfirm}>
+              결제하기
+            </button>
+          </div>
+          <Comment />
         </div>
-        <Comment />
       </div>
     </EntireContainer>
   );

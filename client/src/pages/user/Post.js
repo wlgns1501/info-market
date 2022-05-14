@@ -32,6 +32,7 @@ function Post() {
       .get(`${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}`, getConfig)
       .then((res) => {
         const { info } = res.data;
+        console.log('게시물 상세: ', info);
         dispatch(
           updatePostState({
             ...info,

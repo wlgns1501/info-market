@@ -117,21 +117,24 @@ function Writing() {
   //업로드 버튼 클릭(파일 없이)
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { title, content } = textValues;
     axios
       .post(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
         {
           type: 'Free',
           targetPoint: 0,
-          ...textValues,
+          title,
+          content,
+          file: '',
         },
         config,
       )
       .then((res) => {
         if (res.data.infoId) alert('글이 등록되었습니다.');
         setTextValues({
-          title: null,
-          content: null,
+          title: '',
+          content: '',
         });
       })
       .catch((err) => {
@@ -227,7 +230,7 @@ function Writing() {
       <textarea
         name="content"
         id="content"
-        placeholder="첨부파일에 대한 설명을 적어주세요."
+        placeholder="공유할 정보에 대한 간단한 설명을 적어주세요."
         value={textValues.content}
         onChange={(e) =>
           setTextValues({ ...textValues, content: e.target.value })
