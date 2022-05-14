@@ -4,8 +4,8 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import UserMenu from './UserMenu';
+import styled from 'styled-components';
 
 function Header() {
   // const test = useSelector((state) => state);
