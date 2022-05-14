@@ -7,7 +7,7 @@ const likeControllers = require('../controlloers/like');
 const auth = require('../middlewares/auth');
 
 // 게시물 info.js
-router.get('/:infoId', auth.me, infoControllers.getInfo);
+router.get('/:infoId', infoControllers.getInfo);
 router.post('/', auth.me, infoControllers.writeInfo);
 router.delete('/:infoId', auth.me, infoControllers.removeInfo);
 router.put('/:infoId', auth.me, infoControllers.putInfo);
