@@ -4,8 +4,12 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import UserMenu from './UserMenu';
+import styled from 'styled-components';
+
+const Li = styled.li`
+  font-size: 1.2rem;
+`;
 
 function Header() {
   // const test = useSelector((state) => state);
@@ -31,7 +35,7 @@ function Header() {
               src={logo}
               alt="logo "
               className="header-logo"
-              style={{ minWidth: '150px' }}
+              style={{ minWidth: '200px' }}
             />
           </NavLink>
         </div>
@@ -40,19 +44,19 @@ function Header() {
             to="/main"
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
-            <li>메인페이지</li>
+            <Li>메인페이지</Li>
           </NavLink>
           <NavLink
             to="/freeboard"
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
-            <li>무료 정보 게시판</li>
+            <Li>무료 정보 게시판</Li>
           </NavLink>
           <NavLink
             to="/paidboard"
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
-            <li>유료 정보 게시판</li>
+            <Li>유료 정보 게시판</Li>
           </NavLink>
         </ul>
         <ul className="header-info">

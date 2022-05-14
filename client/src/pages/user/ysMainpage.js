@@ -1,69 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import Search from '../../component/Search';
 import styled from 'styled-components';
+import freeBoardData from '../../mockdata/freeBoardData';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import searchBack from '../../images/searchBack.jpg';
 
 const EntireContainer = styled.div`
-  border: 0;
-  height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, minmax(100px, auto));
-
+  margin: auto auto;
+  width: 120vh;
+  height: 80vh;
+  border: 5px solid red;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   > div.top {
-    border: 0;
-    grid-column: 1 / 9;
-    grid-row: 1 / 9;
-    background-image: url(${searchBack});
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, minmax(100px, auto));
-
+    width: 100%;
+    border: 2px solid orange;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: palegreen; */
     > div.bar {
-      grid-column: 6 / 10;
-      grid-row: 2;
-      align-items: end;
-      border: 0;
-      > form {
-        border: 0;
-        background-color: white;
-        opacity: 0.8;
-        padding: 10px 20px;
-      }
+      width: 80%;
     }
   }
 `;
 
 const UlContainer = styled.ul`
   list-style: none;
-  margin: 0;
   padding: 0;
-  border: 15px solid white;
-  border-radius: 10px;
-  grid-column: 6 / 10;
-  grid-row: 2 / 10;
-  opacity: 0.9;
-  border-top: 0;
+  border: 2px solid blue;
+  margin: 0;
+  width: 45%;
+  margin-top: -30px;
   &.first {
+    margin-right: 5%;
+    border: 3px solid yellow;
   }
   > li {
+    border: 1px solid black;
+    display: flex;
     > p {
       &.title {
-        /* width: 90%; */
+        width: 90%;
         overflow: hidden;
       }
       &.writer {
-        /* text-align: center;
+        text-align: center;
         width: 10%;
         border-left: 2px solid gray;
-        margin-left: 10px; */
+        margin-left: 10px;
       }
     }
   }
@@ -128,8 +118,8 @@ function Mainpage() {
       <EntireContainer>
         <div className="top">
           <Search />
-          <List posts={list} />
         </div>
+        <List posts={list} />
       </EntireContainer>
     </>
   );

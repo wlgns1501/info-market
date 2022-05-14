@@ -94,13 +94,24 @@ function UserMenu() {
           <li className="login-btn">
             <Link
               to="/login"
-              style={{ textDecoration: 'none', color: 'black' }}
+              style={{
+                textDecoration: 'none',
+                color: 'black',
+                fontSize: '1.2rem',
+              }}
             >
               로그인
             </Link>
           </li>
           <li className="signup-btn">
-            <Link to="/tos" style={{ textDecoration: 'none', color: 'black' }}>
+            <Link
+              to="/tos"
+              style={{
+                textDecoration: 'none',
+                color: 'black',
+                fontSize: '1.2rem',
+              }}
+            >
               회원가입
             </Link>
           </li>

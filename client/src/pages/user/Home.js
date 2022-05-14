@@ -57,13 +57,20 @@ function Home() {
         </div>
       </div>
       <div className="btn-wrap">
-        <button className="nonmember-btn" onClick={handleNonMember}>
+        <button
+          className="nonmember-btn"
+          onClick={handleNonMember}
+          style={{ fontFamily: 'Elice Bold' }}
+        >
           비회원으로 계속하기
         </button>
         <button className="nonmember-btn" onClick={handleLogin}>
           로그인하기
         </button>
       </div>
+      <div style={{ height: '500px' }}>aaaaaaaaaaaaa</div>
+      <div style={{ height: '500px' }}>bbbbbbbbbbbb</div>
+      <div style={{ height: '300px' }}>cccccccccccccc</div>
     </div>
   );
 }

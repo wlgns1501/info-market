@@ -61,7 +61,6 @@ function Setting() {
           >
             삭제
           </li>
-          <li>비공개 전환</li>
         </>
       ) : (
         <li>신고하기</li>

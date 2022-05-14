@@ -1,4 +1,4 @@
-* {
+/* * {
   box-sizing: border-box;
   word-break: keep-all;
 }
@@ -9,6 +9,7 @@ html {
 
 body {
   margin: 0;
+  height: 100%;
 }
 
 .App {
@@ -39,13 +40,4 @@ body {
 
 .App-link {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+} */
