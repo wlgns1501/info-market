@@ -13,11 +13,6 @@ module.exports = {
     }
 
     const info = await infoDb.getInfo(Number(infoId));
-    const like = await likeDb.findUser(
-      Number(info?.dataValues.userId),
-      Number(infoId),
-    );
-    console.log(like);
 
     if (!info) {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
@@ -25,24 +20,30 @@ module.exports = {
 
     await infoDb.viewsAdd(info.id, Number(info.totalViews));
 
-    let isPurchased;
+    if (req.userId) {
+      let isPurchased;
 
-    const checkPay = await paymentDb.getUserPayment(
-      Number(infoId),
-      Number(req.userId),
-    );
+      const checkPay = await paymentDb.getUserPayment(
+        Number(infoId),
+        Number(req.userId),
+      );
 
-    if (!checkPay) {
-      isPurchased = false;
-    } else {
-      isPurchased = true;
+      if (!checkPay) {
+        isPurchased = false;
+      } else {
+        isPurchased = true;
+      }
+
+      const like = await likeDb.findUser(Number(req.userId), Number(infoId));
+
+      return res.status(200).json({
+        info,
+        like: like ? true : false,
+        message: '게시물을 가져왔습니다.',
+      });
     }
 
-    return res.status(200).json({
-      info,
-      like: like ? true : false,
-      message: '게시물을 가져왔습니다.',
-    });
+    return res.status(200).json({ info, message: '게시물을 가져왔습니다.' });
   },
   writeInfo: async (req: Request, res: Response) => {
     const { title, content, targetPoint, type } = req.body;
@@ -189,14 +190,21 @@ module.exports = {
   },
 
   getFreeInfo: async (req: Request, res: Response) => {
+    // 없으면 undefined가 온다.
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
     let like;
-    console.log(req.query.lastId);
+    // console.log(pages);
 
-    if (!req.query.lastId) {
-      cursor = await Info.count();
+    // console.log(req.query.lastId);
+
+    if (Number(req.query.lastId) === 0) {
+      const recentInfo = await infoDb.recentInfo();
+      if (!recentInfo) {
+        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+      }
+      cursor = recentInfo.id;
     } else {
       cursor = Number(req.query.lastId);
     }
@@ -231,19 +239,23 @@ module.exports = {
 
     let like;
 
+    if (Number(req.query.lastId) === 0) {
+      const recentInfo = await infoDb.recentInfo();
+      if (!recentInfo) {
+        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
+      }
+      cursor = recentInfo.id;
+    } else {
+      cursor = Number(req.query.lastId);
+    }
+
     if (like_type === 'true') {
       like = 'desc';
     } else if (like_type === 'false') {
       like = 'asc';
     }
 
-    if (!req.query.lastId) {
-      cursor = await Info.count();
-    } else {
-      cursor = Number(req.query.lastId);
-    }
-
-    const freeInfo = await infoDb.findPaidInfo(
+    const paidInfo = await infoDb.findPaidInfo(
       Number(pages),
       Number(limit),
       like,
@@ -251,12 +263,12 @@ module.exports = {
       Number(cursor),
     );
 
-    if (freeInfo.count === 0) {
+    if (paidInfo.count === 0) {
       return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
     }
 
     return res.status(200).json({
-      info: freeInfo,
+      info: paidInfo,
       message: `${pages} 번 페이지 게시물들을 불러왔습니다.`,
     });
   },

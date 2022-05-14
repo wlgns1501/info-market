@@ -232,3 +232,6 @@ module.exports = {
       .json({ result: responses, message: '환불 하는데 성공하였습니다.' });
   },
 };
+
+// 10000원 -> 10000원 paid
+// 5000원 -> 5000원 partRefund
