@@ -28,8 +28,11 @@ export const InputContainer = styled.div`
       box-shadow: ${boxShadow};
     }
     > select {
-      font-size: 1rem;
+      font-size: 1.2rem;
+      /* padding: 7px 5px; */
       flex: 1;
+      border-radius: 5px;
+      height: 30px;
     }
     > span {
       border: 1px solid purple;
@@ -40,8 +43,10 @@ export const InputContainer = styled.div`
       justify-content: center;
       align-items: center;
       > input {
-        font-size: 1rem;
+        font-size: 1.3rem;
         flex: 1;
+        padding: 5px;
+        border: 0;
       }
       > #delete-button {
         font-size: 1.3rem;
