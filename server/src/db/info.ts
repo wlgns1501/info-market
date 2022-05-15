@@ -364,7 +364,7 @@ export async function findPaidInfo(
   });
 }
 
-export async function recentInfo(pages: number, limit: number) {
+export async function recentInfo(pages: number, limit: number, type: string) {
   return await Info.findAndCountAll({
     order: [['createdAt', 'desc']],
     limit,
@@ -388,5 +388,8 @@ export async function recentInfo(pages: number, limit: number) {
         attributes: [],
       },
     ],
+    where: {
+      type,
+    },
   });
 }
