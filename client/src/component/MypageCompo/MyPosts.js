@@ -5,35 +5,23 @@ import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
 
 const EntireContainer = styled.div`
-  border: 3px solid green;
+  border-left: 5px solid orange;
+  border-right: 3px solid orange;
+  background-color: white;
   width: 100%;
   height: 70%;
-  > table {
-    border: 3px solid red;
-    width: 100%;
-    height: 70%;
-    border-collapse: collapse;
-    border-spacing: 0;
-    table-layout: fixed;
-    text-align: center;
-  }
-  > div#paging {
-    border: 1px dotted red;
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 5px 5px 0;
-    > button {
-      cursor: pointer;
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const PostContainer = styled.tr`
-  border: 3px solid blue;
+  border: 3px solid lightgray;
   > td {
     vertical-align: middle;
     padding: 5px;
-    border: 1px solid #000;
+    border: 3px solid lightgray;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -47,6 +35,41 @@ const PostContainer = styled.tr`
     &.updatedAt {
       white-space: normal;
       text-overflow: clip;
+    }
+  }
+`;
+
+const NoFound = styled.div`
+  font-family: '순천B';
+  font-size: 30px;
+  color: gray;
+`;
+
+const Wrapper = styled.div`
+  /* border: 3px solid red; */
+  height: 100%;
+  > table {
+    width: 100%;
+    height: 70%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    text-align: center;
+    > thead {
+      background-color: lightgray;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      padding: 10px;
+    }
+  }
+  > div#paging {
+    /* border: 1px dotted red; */
+    padding: 2%;
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 5px 5px 0;
+    > button {
+      cursor: pointer;
     }
   }
 `;
@@ -67,7 +90,7 @@ function Post({ post }) {
   const handleClick = (e) => {
     e.preventDefault();
     //게시글 이동 창.
-    window.open(`/main/postList/${id}`, '_blank');
+    window.open(`/main/search/${id}`, '_blank');
   };
 
   return (
@@ -132,6 +155,7 @@ function MyPosts() {
       )
       .then((res) => {
         const { rows, count } = res.data.info;
+        console.log(rows);
         if (rows && rows.length > 0) setPostList([...postList, ...rows]);
         if (count && page === 1) setTotalCnt(Number(count));
       })
@@ -141,9 +165,23 @@ function MyPosts() {
   return (
     <EntireContainer>
       {postList.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>작성한 게시물이 없습니다.</p>
+        <NoFound>작성한 게시물이 없습니다!</NoFound>
       ) : (
-        <>
+        <Wrapper>
+          <div id="paging">
+            <button disabled={Number(page) === 1} onClick={prevBtnClick}>
+              이전
+            </button>
+            <span>
+              {page} / {totalPage}
+            </span>
+            <button
+              onClick={nextBtnClick}
+              disabled={Number(page) === Number(totalPage)}
+            >
+              다음
+            </button>
+          </div>
           <table>
             <colgroup>
               <col id="id" width="5%" />
@@ -156,8 +194,8 @@ function MyPosts() {
               <col id="updatedAt" width="13%" />
             </colgroup>
             <thead>
-              <tr key="">
-                <th>번호</th>
+              <tr>
+                <th style={{ padding: '8px' }}>번호</th>
                 <th>종류</th>
                 <th>상태</th>
                 <th>제목</th>
@@ -173,21 +211,7 @@ function MyPosts() {
               ))}
             </tbody>
           </table>
-          <div id="paging">
-            <button disabled={Number(page) === 1} onClick={prevBtnClick}>
-              이전
-            </button>
-            <span>
-              {page} / {totalPage}
-            </span>
-            <button
-              onClick={nextBtnClick}
-              disabled={Number(page) === Number(totalPage)}
-            >
-              다음
-            </button>
-          </div>
-        </>
+        </Wrapper>
       )}
     </EntireContainer>
   );

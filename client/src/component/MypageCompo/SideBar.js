@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 
 const EntireContainer = styled.div`
-  border: 5px solid red;
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -23,23 +22,24 @@ const EntireContainer = styled.div`
       min-width: 100%;
     }
     height: 100%;
-    border: 3px solid black;
+    /* border: 3px solid black; */
     > section {
-      border: 4px solid green;
-      border-radius: 0 7px 7px 0;
+      /* border: 4px solid green; */
+      /* border-radius: 0 7px 7px 0; */
       flex: 1 0 20%;
       display: flex;
       flex-direction: column;
       /* min-width: 20%; */
       padding: 1%;
-      background-color: #fba103;
+      background-color: orange;
       > .nav-link {
+        font-weight: bold;
         text-align: center;
-        padding: 1%;
+        padding: 3% 1%;
         border-radius: 5px;
         color: white;
         text-decoration: none;
-        margin-bottom: 5%;
+        margin-bottom: 10%;
         &:hover {
           background-color: white;
           color: #ff5733;
@@ -52,7 +52,8 @@ const EntireContainer = styled.div`
     }
 
     > div.userInfo {
-      border: 4px solid pink;
+      background-color: orange;
+      border-top-right-radius: 5px;
       min-width: 80%;
       /* padding: 2%; */
       flex: 1 1 80%;

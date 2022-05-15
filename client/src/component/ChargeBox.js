@@ -11,11 +11,11 @@ import Payment from './Payment';
 import axios from 'axios';
 
 const ChargeBoxContainer = styled.div`
-  /* border: 3px solid black; */
+  height: 250px;
   background-color: #f3f702;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   padding: 10px;
   border-radius: 10px;
@@ -35,6 +35,8 @@ const ChargeBoxContainer = styled.div`
     background-color: #30302d;
     color: white;
     border-radius: 5px;
+  }
+  > p.standard {
   }
 `;
 
@@ -136,7 +138,9 @@ export default function ChargeBox() {
           )
         }
       />
-      <p style={{ color: 'red' }}>3000원 이상부터 가능합니다.</p>
+      <p className="standard" style={{ color: 'red' }}>
+        3000원 이상부터 가능합니다.
+      </p>
       <Payment />
     </ChargeBoxContainer>
   );

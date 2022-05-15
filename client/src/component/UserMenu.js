@@ -22,6 +22,7 @@ const EntireContainer = styled.li`
     }
   }
   > ul.popup {
+    z-index: 1000;
     background-color: #fff;
     position: absolute;
     top: calc(100% + 25px);

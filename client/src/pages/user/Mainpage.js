@@ -6,6 +6,9 @@ import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import searchBack from '../../images/searchBack.jpg';
+import gold from '../../images/gold.png';
+import second from '../../images/second.png';
+import third from '../../images/third.png';
 
 const EntireContainer = styled.div`
   border: 0;
@@ -36,6 +39,8 @@ const EntireContainer = styled.div`
         background-color: white;
         opacity: 0.8;
         padding: 10px 20px;
+        box-shadow: 7px 5px 2px black;
+        margin-bottom: 7px;
       }
     }
   }
@@ -48,22 +53,64 @@ const UlContainer = styled.ul`
   border: 15px solid white;
   border-radius: 10px;
   grid-column: 6 / 10;
-  grid-row: 2 / 10;
+  grid-row: 2 / 9;
   opacity: 0.9;
   border-top: 0;
-  &.first {
-  }
+  display: grid;
+  grid-template-columns: repeat(1, minmax(100%, auto));
+  grid-template-rows: repeat(20, minmax(100px, auto));
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 10px 0px;
+  min-width: 600px;
   > li {
-    > p {
-      &.title {
-        /* width: 90%; */
-        overflow: hidden;
+    border: 0;
+    background-color: whitesmoke;
+    opacity: 0.9;
+    padding: 2%;
+    &#top10_title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: black;
+      line-height: 1.5rem;
+      vertical-align: center;
+      padding-top: 5%;
+    }
+
+    &.top10_post {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+  > div#ad {
+    min-height: 500px;
+    font-weight: bolder;
+    font-family: '순천B';
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @media screen and (max-width: 1410px) {
+      flex-direction: column;
+    }
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
+    > span {
+      font-size: 40px;
+      &.first {
+        margin-right: 8px;
+        @media screen and (max-width: 1410px) {
+          margin-right: 0px;
+          margin-bottom: 20px;
+        }
       }
-      &.writer {
-        /* text-align: center;
-        width: 10%;
-        border-left: 2px solid gray;
-        margin-left: 10px; */
+      @media screen and (max-width: 1000px) {
+        font-size: 35px;
+      }
+      @media screen and (max-width: 600px) {
+        font-size: 30px;
       }
     }
   }
@@ -78,11 +125,14 @@ function Post({ post, order }) {
   };
 
   return (
-    <li>
-      <span>{order}</span>
-      <p className="title" onClick={handleClick}>
+    <li className="top10_post">
+      {order === 1 && <img src={gold} />}
+      {order === 2 && <img src={second} />}
+      {order === 3 && <img src={third} />}
+      <p style={{ overflow: 'hidden' }} className="title" onClick={handleClick}>
         {title}
       </p>
+
       <p className="writer">{nickname}</p>
     </li>
   );
@@ -91,9 +141,14 @@ function Post({ post, order }) {
 function List({ posts, className }) {
   return (
     <UlContainer className={className}>
+      <li id="top10_title">Top 10 인기 정보글</li>
       {posts.map((post, idx) => (
         <Post key={post.id} post={post} order={idx + 1} />
       ))}
+      <div id="ad">
+        <span className="first">당신이 가진 정보가</span>
+        <span>돈이 됩니다!</span>
+      </div>
     </UlContainer>
   );
 }
