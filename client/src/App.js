@@ -20,8 +20,6 @@ import FreeBoard from './pages/content/contentBoard/FreeBoard';
 import PaidBoard from './pages/content/contentBoard/PaidBoard';
 import PostList from './pages/user/PostList';
 import Post from './pages/user/Post';
-import ContentPaid from './pages/content/ContentPaid';
-import ContentFree from './pages/content/ContentFree';
 
 function App() {
   return (
@@ -39,9 +37,6 @@ function App() {
               <Route path=":postId" element={<Post />} />
             </Route>
           </Route>
-          {/* 아래 두개는 나중에 삭제, UI 확인용 */}
-          <Route path="contentfree" element={<ContentFree />} />
-          <Route path="contentpaid" element={<ContentPaid />} />
           {/* 유료게시글, 무료게시글 */}
           <Route path="freeboard" element={<FreeBoard />} />
           <Route path="paidboard" element={<PaidBoard />} />

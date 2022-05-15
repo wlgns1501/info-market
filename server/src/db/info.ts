@@ -121,6 +121,7 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'type',
       'totalViews',
       'totalLikes',
+      'activate',
     ],
     include: [
       {
@@ -305,6 +306,8 @@ export async function findFreeInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -313,7 +316,7 @@ export async function findFreeInfo(
       },
     ],
     where: {
-      id: { [Op.lte]: cursor },
+      id: { [Op.lt]: cursor },
 
       type: 'Free',
     },
@@ -344,6 +347,8 @@ export async function findPaidInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -352,15 +357,39 @@ export async function findPaidInfo(
       },
     ],
     where: {
-      id: { [Op.lte]: cursor },
+      id: { [Op.lt]: cursor },
       activate,
       type: 'Paid',
     },
   });
 }
 
-export async function recentInfo() {
-  return await Info.findOne({
+export async function recentInfo(pages: number, limit: number, type: string) {
+  return await Info.findAndCountAll({
     order: [['createdAt', 'desc']],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      type,
+    },
   });
 }
