@@ -200,7 +200,11 @@ module.exports = {
     // console.log(req.query.lastId);
 
     if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo(Number(pages), Number(limit));
+      const recentInfo = await infoDb.recentInfo(
+        Number(pages),
+        Number(limit),
+        'Free',
+      );
       if (!recentInfo) {
         return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
       }
@@ -242,7 +246,11 @@ module.exports = {
     let like;
 
     if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo(Number(pages), Number(limit));
+      const recentInfo = await infoDb.recentInfo(
+        Number(pages),
+        Number(limit),
+        'Paid',
+      );
       if (!recentInfo) {
         return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
       }
