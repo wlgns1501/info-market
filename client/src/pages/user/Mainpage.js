@@ -5,43 +5,44 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import searchBack from '../../images/searchBack.jpg';
 import gold from '../../images/gold.png';
 import second from '../../images/second.png';
 import third from '../../images/third.png';
+import main from '../../images/main.jpeg';
+import bulb from '../../images/bulb.jpeg';
 
 const EntireContainer = styled.div`
   border: 0;
-  height: 100vh;
+  height: 90vh;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, minmax(100px, auto));
 
   > div.top {
     border: 0;
-    grid-column: 1 / 9;
-    grid-row: 1 / 9;
-    background-image: url(${searchBack});
+    grid-column: 1 / 5;
+    grid-row: 1 / 8;
+    background-image: url(${main});
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, minmax(100px, auto));
+  }
 
-    > div.bar {
-      grid-column: 6 / 10;
-      grid-row: 2;
-      align-items: end;
+  > div.bar {
+    grid-column: 5 / 9;
+    grid-row: 2;
+    align-items: end;
+    border: 0;
+    width: 90%;
+    > form {
       border: 0;
-      > form {
-        border: 0;
-        background-color: white;
-        opacity: 0.8;
-        padding: 10px 20px;
-        box-shadow: 7px 5px 2px black;
-        margin-bottom: 7px;
-      }
+      background-color: #ccccba;
+      opacity: 0.7;
+      padding: 15px 25px;
+      box-shadow: 7px 5px 2px #a5a690;
+      margin-bottom: 15px;
+      z-index: 100;
     }
   }
 `;
@@ -50,11 +51,12 @@ const UlContainer = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-  border: 15px solid white;
+  border: 15px solid #ccccba;
   border-radius: 10px;
-  grid-column: 6 / 10;
-  grid-row: 2 / 9;
-  opacity: 0.9;
+  width: 90%;
+  grid-column: 5 / 9;
+  grid-row: 2 / 8;
+  opacity: 0.8;
   border-top: 0;
   display: grid;
   grid-template-columns: repeat(1, minmax(100%, auto));
@@ -66,7 +68,6 @@ const UlContainer = styled.ul`
   > li {
     border: 0;
     background-color: whitesmoke;
-    opacity: 0.9;
     padding: 2%;
     &#top10_title {
       font-size: 1.5rem;
@@ -75,44 +76,22 @@ const UlContainer = styled.ul`
       line-height: 1.5rem;
       vertical-align: center;
       padding-top: 5%;
+      background-color: white;
     }
 
     &.top10_post {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 5px 7px 3px lightgray;
+      margin-bottom: 10px;
     }
   }
-  > div#ad {
-    min-height: 500px;
-    font-weight: bolder;
-    font-family: '순천B';
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    @media screen and (max-width: 1410px) {
-      flex-direction: column;
-    }
-    @media screen and (max-width: 600px) {
-      display: none;
-    }
-    > span {
-      font-size: 40px;
-      &.first {
-        margin-right: 8px;
-        @media screen and (max-width: 1410px) {
-          margin-right: 0px;
-          margin-bottom: 20px;
-        }
-      }
-      @media screen and (max-width: 1000px) {
-        font-size: 35px;
-      }
-      @media screen and (max-width: 600px) {
-        font-size: 30px;
-      }
-    }
+  > div img#ad {
+    margin-top: 15px;
+    grid-column: 1;
+    grid-row: 2 / 6;
+    width: 100%;
   }
 `;
 
@@ -145,9 +124,8 @@ function List({ posts, className }) {
       {posts.map((post, idx) => (
         <Post key={post.id} post={post} order={idx + 1} />
       ))}
-      <div id="ad">
-        <span className="first">당신이 가진 정보가</span>
-        <span>돈이 됩니다!</span>
+      <div>
+        <img id="ad" src={bulb} />
       </div>
     </UlContainer>
   );
@@ -181,10 +159,9 @@ function Mainpage() {
   return (
     <>
       <EntireContainer>
-        <div className="top">
-          <Search />
-          <List posts={list} />
-        </div>
+        <div className="top" />
+        <Search />
+        <List posts={list} />
       </EntireContainer>
     </>
   );

@@ -10,14 +10,14 @@ import { selectUserInfo } from '../../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 
 const OrderContainer = styled.div`
-  background-color: #e68feb;
+  background-color: #ccc7a9;
+  opacity: 0.9;
   width: 100%;
   padding: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border-radius: 8px; */
-  box-shadow: 3px 3px 3px #e3e6e4;
+  /* box-shadow: 3px 5px 4px #75746d; */
   > div {
     /* border: 3px solid red; */
     width: 50%;
@@ -31,9 +31,9 @@ const OrderContainer = styled.div`
         /* width: 250px; */
         /* padding: 3% 2%; */
         /* margin-left: -5px; */
-        width: 30%;
+        width: 20%;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         > input {
           display: none;
@@ -50,22 +50,26 @@ const OrderContainer = styled.div`
         font-size: 1rem;
         /* border: 1px solid red; */
         height: 100%;
-        padding: 0 3%;
+        /* padding: 0 3%; */
         display: flex;
+        width: 50%;
         align-items: center;
+        justify-content: center;
         border-radius: 5px;
       }
       > label.clicked {
-        background-color: purple;
+        background-color: #69675c;
+        box-shadow: 3px 5px 4px #3b3a37;
         color: white;
         font-size: 1rem;
       }
     }
   }
 `;
+
 const EntireContainer = styled.div`
   display: flex;
-  background-color: #faf9f5;
+  /* background-color: #faf9f5; */
   flex-direction: column;
   align-items: center;
   height: 800px;
@@ -75,7 +79,7 @@ const EntireContainer = styled.div`
     margin: 0;
     list-style: none;
     padding: 0;
-    width: 55%;
+    width: 50%;
     height: 1200px;
     padding: 1%;
     > li.post {
@@ -217,7 +221,6 @@ function FreeBoard() {
       })
       .then((res) => {
         const { rows, count } = res.data.info;
-        console.log('@@@', rows);
         if (rows) setList([...list, ...rows]);
         if (count && page === 1) {
           setTotalCnt(count);
@@ -251,7 +254,6 @@ function FreeBoard() {
               name="info_order"
               value="최신순"
               checked={order === '최신순'}
-              style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
             <label for="latest" className={order === '최신순' && 'clicked'}>
@@ -264,7 +266,6 @@ function FreeBoard() {
               name="info_order"
               value="인기순"
               checked={order === '인기순'}
-              style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
             <label for="best" className={order === '인기순' && 'clicked'}>

@@ -14,17 +14,23 @@ const PageContainer = styled.ul`
   list-style: none;
   padding: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
   > li:not(:last-child) {
     /* margin-right: 10px; */
   }
   > li {
     cursor: pointer;
+    /* border: 2px solid white; */
+    border-radius: 3px;
+    font-size: 1.3rem;
     &.page {
       padding: 2px 5px;
       &:hover,
       &.selected {
-        color: #4bab13;
-        border: 2px solid #4bab13;
+        color: white;
+        /* border: 2px solid #4bab13; */
+        background-color: #4bab13;
         border-radius: 3px;
       }
     }
@@ -52,7 +58,7 @@ function Pagination() {
   }, [page]);
 
   return (
-    <PageContainer>
+    <PageContainer className="paging">
       {page > 1 && (
         <li className="prev" onClick={() => dispatch(prev())}>
           {'<<'}

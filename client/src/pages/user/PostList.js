@@ -11,15 +11,105 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
+import 전구 from '../../images/전구.jpeg';
 
 const EntireContainer = styled.div`
-  > ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
+  height: 180vh;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(15, minmax(50px, auto));
+  > div.bar {
+    border: 0;
+    grid-column: 4 / 10;
+    grid-row: 2;
+    > form {
+      border: 0;
+      background-color: whitesmoke;
+      /* opacity: 0.7; */
+      padding: 15px 25px;
+      box-shadow: 5px 3px 3px lightgray;
+      margin-bottom: 15px;
+      z-index: 1000;
+    }
+  }
+  > ul.paging {
+    grid-column: 4 / 10;
+    grid-row: 13;
+    justify-self: center;
+    align-self: center;
   }
 `;
-const PostContainer = styled.li``;
+
+const Background = styled.div`
+  background-image: url(${전구});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  &.left {
+    width: 150px;
+    height: 90%;
+    grid-column: 2 / 13;
+    grid-row: 1 / 7;
+  }
+  &.right {
+    width: 150px;
+    height: 90%;
+    grid-column: 11 / 13;
+    grid-row: 1 / 7;
+  }
+`;
+
+const UlContainer = styled.ul`
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  grid-column: 4 / 10;
+  grid-row: 3 / 14;
+  /* background-color: white; */
+`;
+
+const PostContainer = styled.li`
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  width: 100%;
+  padding: 2% 3%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  &:not(:last-child) {
+    margin-bottom: 2%;
+  }
+  > div.writer_createdAt {
+    display: flex;
+    justify-content: space-between;
+  }
+  > p.title {
+    border: 1px solid lightgray;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding-left: 5px;
+    box-shadow: -2px 3px 2px lightgray;
+  }
+  > div.total_Likes_Views {
+    display: flex;
+    justify-content: space-between;
+  }
+`;
+
+const Price = styled.span`
+  margin-right: 20px;
+  border: 3px solid #c4ac21;
+  border-radius: 5px;
+  padding: 2px;
+  font-weight: bolder;
+  color: white;
+  background-color: #c4ac21;
+`;
 
 function Post({ post }) {
   const navigate = useNavigate();
@@ -63,11 +153,7 @@ function Post({ post }) {
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
         </span>
         <span className="totalViews">
-          {type === 'Paid' && (
-            <span style={{ marginRight: '20px', border: '3px solid gold' }}>
-              {targetPoint} P
-            </span>
-          )}
+          {type === 'Paid' && <Price>{targetPoint} P</Price>}
           <FontAwesomeIcon icon={faEye} /> {totalViews}
         </span>
       </div>
@@ -96,12 +182,10 @@ function PostList() {
     withCredentials: true,
   };
 
-  const LIMIT = 10;
+  const LIMIT = 8;
   const offset = page * LIMIT - LIMIT;
 
   useEffect(() => {
-    //아래 코드는 그때 그때 다시 받지 않게 함.
-    if (list.length > offset) return;
     const select1 = search_type || 'title';
     const select2 = info_type || 'All';
 
@@ -120,7 +204,6 @@ function PostList() {
       })
       .then((res) => {
         const { count, rows } = res.data.info;
-        console.log('검색 결과', res.data);
         if (count && page === 1) {
           const totalPage = Math.ceil(Number(count) / LIMIT);
           const totalMark = Math.ceil(totalPage / 10);
@@ -143,13 +226,15 @@ function PostList() {
 
   return (
     <EntireContainer>
+      <Background className="left" />
+      <Background className="right" />
       <Search />
-      <ul className="postList">
-        {list.slice(offset, offset + LIMIT).map((post) => {
+      <UlContainer className="postList">
+        {list.map((post) => {
           return <Post key={post.id} post={post} />;
         })}
         {list.length === 0 && <li>해당하는 정보가 없습니다.</li>}
-      </ul>
+      </UlContainer>
       <Pagination />
     </EntireContainer>
   );
