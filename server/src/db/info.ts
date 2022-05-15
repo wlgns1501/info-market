@@ -306,6 +306,8 @@ export async function findFreeInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -345,6 +347,8 @@ export async function findPaidInfo(
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -375,6 +379,8 @@ export async function recentInfo(pages: number, limit: number) {
       'targetPoint',
       'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
