@@ -390,6 +390,7 @@ export async function recentInfo(pages: number, limit: number, type: string) {
     ],
     where: {
       type,
+      activate: true,
     },
   });
 }
