@@ -16,21 +16,49 @@ const OrderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   box-shadow: 3px 3px 3px #e3e6e4;
   > div {
-    /* border: 2px solid red; */
+    /* border: 3px solid red; */
     width: 50%;
+    height: 50px;
     display: flex;
     justify-content: space-between;
     > span {
+      /* border: 2px solid blue; */
+      font-family: '순천B';
       &.latest_best {
-        margin-left: -5px;
-        > input.best {
-          margin-left: 20px;
+        /* width: 250px; */
+        /* padding: 3% 2%; */
+        /* margin-left: -5px; */
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        > input {
+          display: none;
         }
       }
+
       &.count {
+        display: flex;
+        align-items: center;
+      }
+
+      > label {
+        font-family: '순천B';
+        font-size: 1rem;
+        /* border: 1px solid red; */
+        height: 100%;
+        padding: 0 3%;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+      }
+      > label.clicked {
+        background-color: purple;
+        color: white;
+        font-size: 1rem;
       }
     }
   }
@@ -40,7 +68,7 @@ const EntireContainer = styled.div`
   background-color: #faf9f5;
   flex-direction: column;
   align-items: center;
-  min-height: 75vh;
+  height: 800px;
   overflow-y: scroll;
   > ul.postList {
     /* border: 3px solid red; */
@@ -48,7 +76,7 @@ const EntireContainer = styled.div`
     list-style: none;
     padding: 0;
     width: 55%;
-    height: 600px;
+    height: 1200px;
     padding: 1%;
     > li.post {
       border: 1px solid black;
@@ -152,7 +180,7 @@ function FreeBoard() {
   const [page, setPage] = useState(1);
   const [totalCnt, setTotalCnt] = useState(0);
   const [order, setOrder] = useState('최신순');
-  const LIMIT = 6;
+  const LIMIT = 10;
   const elm = useRef(null);
 
   //서버 통신 헤더: post용, get용
@@ -189,7 +217,7 @@ function FreeBoard() {
       })
       .then((res) => {
         const { rows, count } = res.data.info;
-
+        console.log('@@@', rows);
         if (rows) setList([...list, ...rows]);
         if (count && page === 1) {
           setTotalCnt(count);
@@ -226,16 +254,22 @@ function FreeBoard() {
               style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
-            <label for="latest">최신순</label>
+            <label for="latest" className={order === '최신순' && 'clicked'}>
+              최신순
+            </label>
             <input
+              id="best"
               className="best"
               type="radio"
               name="info_order"
               value="인기순"
               checked={order === '인기순'}
+              style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
-            인기순
+            <label for="best" className={order === '인기순' && 'clicked'}>
+              인기순
+            </label>
           </span>
           <span className="count">총 게시물 수 : {totalCnt || 0}</span>
         </div>

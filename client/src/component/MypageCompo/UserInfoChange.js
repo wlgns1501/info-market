@@ -12,11 +12,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const EntireContainer = styled.div`
-  border: 5px solid red;
+  /* border: 5px solid red; */
   height: 57%;
   display: flex;
   > div.first {
-    border: 1px solid black;
+    border-left: 5px solid orange;
+    border-right: 1px solid lightgray;
+    background-color: white;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -34,19 +36,22 @@ const EntireContainer = styled.div`
     }
   }
   > form.second {
-    border: 1px solid gold;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+    border-right: 5px solid orange;
     flex: 2;
     display: flex;
     flex-direction: column;
     > div.modifying-box {
-      border: 3px solid green;
+      /* border: 3px solid green; */
       flex: 9;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       > div.input-box {
-        border: 1px solid red;
+        /* border: 1px solid red; */
         margin-bottom: 10px;
         > input {
           font-size: 1rem;
@@ -71,8 +76,9 @@ const EntireContainer = styled.div`
       }
     }
     > div.confirm {
-      padding: 2%;
-      border: 3px solid black;
+      /* border: 3px solid black; */
+      border-top: 1px solid lightgray;
+      padding-top: 15px;
       flex: 1;
       display: flex;
       justify-content: flex-end;

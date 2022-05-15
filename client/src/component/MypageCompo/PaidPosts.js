@@ -7,7 +7,9 @@ import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
 
 const EntireContainer = styled.div`
-  border: 3px solid black;
+  border-left: 5px solid orange;
+  border-right: 5px solid orange;
+  background-color: white;
   height: 60%;
   > ul.posts {
     border: 3px solid pink;
@@ -69,23 +71,6 @@ const EntireContainer = styled.div`
   }
 `;
 
-// function ValidBtn() {
-//   return (
-//     <span className="btn">
-//       <button>구매 확정</button>
-//       <button>환불 요청</button>
-//     </span>
-//   );
-// }
-
-// function InValidBtn() {
-//   return (
-//     <span className="btn">
-//       <button>구매 완료</button>
-//     </span>
-//   );
-// }
-
 //타이틀 버튼 틀릭하면 해당 포스트로 이동
 function Post({ post }) {
   const { id, title, content, fileURL, point, like, writer, createdAt } = post;
@@ -94,7 +79,7 @@ function Post({ post }) {
   const handleClick = (e) => {
     e.preventDefault();
     //게시글 이동 창.
-    window.open(`/main/postList/${id}`, '_blank');
+    window.open(`/main/search/${id}`, '_blank');
   };
 
   return (

@@ -3,10 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
+import { useNavigate } from 'react-router-dom';
 import AWS from 'aws-sdk';
 import { v1, v3, v4, v5 } from 'uuid';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
 const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
@@ -24,11 +23,13 @@ const myBucket = new AWS.S3({
 });
 
 const WritingContainer = styled.div`
-  border: 3px solid skyblue;
+  border: 3px solid orange;
+  background-color: white;
   height: 80%;
   width: 100%;
+  border-radius: 10px;
   > form {
-    border: 3px solid yellow;
+    /* border: 3px solid yellow; */
     height: 100%;
     width: 99%;
     display: flex;
@@ -38,22 +39,25 @@ const WritingContainer = styled.div`
     > textarea {
       font-size: 1rem;
       width: 95%;
+      padding: 1%;
       &#title {
         margin-top: 2%;
         margin-bottom: 2%;
         height: 2rem;
+        resize: none;
+        overflow: hidden;
       }
       &#content {
         flex-grow: 1;
       }
     }
     > div.submit {
-      /* margin: 2% 2% 1% auto; */
+      margin-bottom: 10px;
       display: flex;
       width: 95%;
       justify-content: flex-end;
       align-items: center;
-      border: 1px solid green;
+      /* border: 1px solid green; */
       > span.msg {
         display: none;
         &.alert {
@@ -87,6 +91,12 @@ const Btn = styled.button`
   }
 `;
 
+const FileBox = styled.div`
+  /* border: 2px solid red; */
+  width: 95%;
+  margin: 10px 0;
+`;
+
 function Writing() {
   const { id, accToken } = useSelector(selectUserInfo);
   const config = {
@@ -108,11 +118,6 @@ function Writing() {
 
   //업로드할 파일 입력값
   const [selectedFile, setSelectedFile] = useState(null);
-
-  //확인용... 나중에 삭제하기
-  useEffect(() => {
-    console.log(textValues, selectedFile);
-  }, [textValues, selectedFile]);
 
   //업로드 버튼 클릭(파일 없이)
   const handleSubmit = (e) => {
@@ -236,7 +241,7 @@ function Writing() {
           setTextValues({ ...textValues, content: e.target.value })
         }
       ></textarea>
-      <div className="file-upload">
+      <FileBox className="file-upload">
         <input
           type="file"
           // accept="image/*, .pdf, .hwp, application/vnd.ms-excel, text/plain, text/html"
@@ -246,7 +251,7 @@ function Writing() {
         <Btn className={!selectedFile && 'need'} onClick={handleCancel}>
           파일 취소
         </Btn>
-      </div>
+      </FileBox>
       <div className="submit">
         <span
           className={
@@ -268,6 +273,13 @@ function Writing() {
 }
 
 function FreeWriting() {
+  const { isLogin } = useSelector(selectUserInfo);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLogin) return navigate('/main');
+  }, []);
+
   return (
     <WritingContainer>
       <Writing />
