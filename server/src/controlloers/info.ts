@@ -200,11 +200,13 @@ module.exports = {
     // console.log(req.query.lastId);
 
     if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo();
+      const recentInfo = await infoDb.recentInfo(Number(pages), Number(limit));
       if (!recentInfo) {
         return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
       }
-      cursor = recentInfo.id;
+      return res
+        .status(200)
+        .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
     } else {
       cursor = Number(req.query.lastId);
     }
@@ -240,11 +242,13 @@ module.exports = {
     let like;
 
     if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo();
+      const recentInfo = await infoDb.recentInfo(Number(pages), Number(limit));
       if (!recentInfo) {
         return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
       }
-      cursor = recentInfo.id;
+      return res
+        .status(200)
+        .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
     } else {
       cursor = Number(req.query.lastId);
     }
