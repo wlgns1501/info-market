@@ -15,7 +15,7 @@ const PopUpBox = styled.ul`
   background-color: #fff;
   position: absolute;
   top: calc(100% + 5px);
-  /* right: -20px; */
+  right: -20px;
   z-index: 10000;
   border: 1px solid #ebebeb;
   box-shadow: var(--box-shadow);

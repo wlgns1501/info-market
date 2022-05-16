@@ -69,6 +69,9 @@ const LoginFormLeft = styled.div`
     text-align: left;
     opacity: 0.8;
   }
+  > div.radio-btn {
+    margin-top: 25px;
+  }
 `;
 
 const LoginFormRight = styled.div`
@@ -270,7 +273,9 @@ function Login() {
                 checked={role === '일반'}
                 onChange={handleRoleCheck}
               />
-              <label for="user">일반</label>
+              <label for="user" style={{ marginRight: '15px' }}>
+                일반
+              </label>
               <input
                 id="admin"
                 type="radio"

@@ -31,29 +31,27 @@ function Header() {
             onClick={handleBar}
           />
           <NavLink to="/">
-            <img
-              src={logo}
-              alt="logo "
-              className="header-logo"
-              style={{ minWidth: '200px' }}
-            />
+            <img src={logo} alt="logo " className="header-logo" />
           </NavLink>
         </div>
         <ul className={isOpen ? 'header-menu open' : 'header-menu'}>
           <NavLink
             to="/main"
+            className={({ isActive }) => isActive && 'activated'}
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
             <Li>메인페이지</Li>
           </NavLink>
           <NavLink
             to="/freeboard"
+            className={({ isActive }) => isActive && 'activated'}
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
             <Li>무료 정보 게시판</Li>
           </NavLink>
           <NavLink
             to="/paidboard"
+            className={({ isActive }) => isActive && 'activated'}
             style={{ color: 'inherit', textDecoration: 'inherit' }}
           >
             <Li>유료 정보 게시판</Li>

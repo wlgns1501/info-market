@@ -107,6 +107,8 @@ const UlContainer = styled.ul`
           border-bottom: 2px solid gray;
           cursor: pointer;
           box-shadow: 0px 1px 2px gray;
+          text-overflow: ellipsis;
+          white-space: nowrap;
           overflow: hidden;
         }
       }

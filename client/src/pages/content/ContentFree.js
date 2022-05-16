@@ -22,6 +22,7 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
+import File from '../../images/file.png';
 
 const EntireContainer = styled.div`
   * {
@@ -91,13 +92,31 @@ const Container = styled.div`
 `;
 
 const Like = styled.div`
+  /* margin-top: 15px;
   display: flex;
   justify-content: center;
-  font-size: 30px;
+  font-size: 30px; */
+  /* margin-right: 30px; */
+  font-size: 1.5rem;
 `;
+// css 수정사항 - float 설정
 const LikeDownload = styled.div`
+  /* float: right;
   display: flex;
-  justify-content: center;
+  justify-content: center; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+`;
+
+const Btns = styled.span`
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+  > button {
+    font-size: 1rem;
+  }
 `;
 
 const SettingBox = styled.span`
@@ -308,9 +327,15 @@ function ContentFree() {
         <Container>
           {infoEditMode ? (
             <textarea
-              cols="50"
+              // cols="50"
               rows="1"
-              style={{ height: '2rem' }}
+              style={{
+                height: '2rem',
+                overflow: 'auto',
+                width: '100%',
+                fontSize: '1rem',
+                lineHeight: '1rem',
+              }}
               onChange={(e) => {
                 setLocalTitle(e.target.value);
                 dispatch(updatePostState({ titleChange: true }));
@@ -320,13 +345,6 @@ function ContentFree() {
           ) : (
             <div className="title">{localTitle}</div>
           )}
-          <SettingBox className={`setting ${isLogin || 'logined'}`}>
-            <FontAwesomeIcon
-              icon={isOpen ? faCircleMinus : faGear}
-              onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
-            />
-            {isOpen && <Setting />}
-          </SettingBox>
           <div className="info">
             <dl>
               <dt>작성자</dt>
@@ -344,11 +362,25 @@ function ContentFree() {
               <dt>추천수</dt>
               <dd>{totalLikes}</dd>
             </dl>
+            <dl style={{ float: 'right' }}>
+              <SettingBox className={`setting ${isLogin || 'logined'}`}>
+                <FontAwesomeIcon
+                  icon={isOpen ? faCircleMinus : faGear}
+                  onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+                />
+                {isOpen && <Setting />}
+              </SettingBox>
+            </dl>
           </div>
           {infoEditMode ? (
             <textarea
-              cols="30"
-              rows="50"
+              // cols="30"
+              rows="20"
+              style={{
+                width: '100%',
+                fontSize: '1.2rem',
+                lineHeight: '1.5em',
+              }}
               onChange={(e) => {
                 setLocalContent(e.target.value);
                 dispatch(updatePostState({ contentChange: true }));
@@ -358,10 +390,13 @@ function ContentFree() {
           ) : (
             <ContentBox readOnly className="body" value={localContent} />
           )}
-          <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
-            {like ? '♥' : '♡'} {totalLikes}
-          </Like>
-          <LikeDownload style={{ height: '50px' }}>
+
+          <LikeDownload>
+            {infoEditMode || (
+              <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
+                {like ? '♥' : '♡'} {totalLikes}
+              </Like>
+            )}
             {/* 아래 첨부파일은 회원만 다운 가능 */}
             {infoEditMode ? (
               <FileChange />
@@ -375,25 +410,32 @@ function ContentFree() {
                       : '#'
                   }
                 >
-                  <FontAwesomeIcon
-                    icon={faFileArrowDown}
+                  {/* <FontAwesomeIcon
+                    icon={File}
                     style={{ fontSize: '1.5rem' }}
                     onClick={() =>
                       !isLogin && alert('회원만 가능한 서비스입니다.')
                     }
+                  /> */}
+                  <img
+                    style={{ width: '2rem', cursor: 'pointer' }}
+                    src={File}
+                    alt="파일"
+                    onClick={() =>
+                      !isLogin && alert('회원만 가능한 서비스입니다.')
+                    }
                   />
-                  다운로드
                 </a>
               )
             )}
             {infoEditMode && (
-              <button onClick={handleModifyReady}>수정 완료</button>
-            )}
-            {infoEditMode && (
-              <button onClick={() => dispatch(cancelModify())}>취소</button>
+              <Btns>
+                <button onClick={() => dispatch(cancelModify())}>취소</button>
+                <button onClick={handleModifyReady}>수정 완료</button>
+              </Btns>
             )}
           </LikeDownload>
-          <Comment />
+          {!infoEditMode && <Comment />}
         </Container>
       </ContentContainer>
     </EntireContainer>

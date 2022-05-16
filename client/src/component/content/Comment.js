@@ -11,17 +11,70 @@ import {
 import axios from 'axios';
 import '../../css/Comment.css';
 
-const RegisterBox = styled.div``;
+const RegisterBox = styled.div`
+  display: flex;
+  border: 1px solid lightgray;
+  justify-content: space-between;
+  align-items: center;
+  > textarea {
+    width: 80%;
+  }
+  > button {
+    width: 10%;
+    height: 30px;
+    color: white;
+    border: 0;
+    border-radius: 4px;
+    background: linear-gradient(162deg, #757677 0%, #888e97 70%, #a5a8ad 70%);
+    margin-right: 15px;
+  }
+`;
+
+// css 수정사항 - 댓글리스트 패딩 및 마진 설정
+const CommentWrapper = styled.div`
+  /* border: 3px solid pink; */
+  font-family: '순천R';
+  font-size: 0.9rem;
+  padding: 5px;
+  > div.rv-content {
+    border: 2px solid lightgray;
+    padding: 2%;
+  }
+`;
 
 const UserInfoWrapper = styled.div`
+  /* border: 1px solid red; */
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #eeeeee;
+  /* margin: auto; */
 `;
 
-const Button = styled.button`
+const RightBtns = styled.div`
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  > p.date {
+    margin-left: 20px;
+  }
+`;
+
+// css 수정사항 - 수정, 삭제 버튼분할
+// UserInfoWrapper 에 margin : auto, button1(수정) 에 margin-left : auto 설정
+const Button1 = styled.button`
   border: 0;
-  height: 20px;
+  /* height: 20px; */
+  background: none;
+  display: none;
+  margin-left: auto;
+  &.authorized {
+    display: inline-block;
+  }
+`;
+
+const Button2 = styled.button`
+  border: 0;
+  /* height: 20px; */
   background: none;
   display: none;
   &.authorized {
@@ -29,12 +82,7 @@ const Button = styled.button`
   }
 `;
 
-const CommentWrapper = styled.div`
-  border: 1px solid black;
-  p {
-    margin: 0;
-  }
-`;
+const CommentText = styled.textarea``;
 
 function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   const dispatch = useDispatch();
@@ -101,44 +149,49 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   return (
     <CommentWrapper>
       <UserInfoWrapper>
-        <p>작성자 : {review.User.nickname}</p>
-        <p>작성일자 : {review.createdAt}</p>
-        <Button
-          className={
-            (Number(review.userid) === Number(userInfo.id) ||
-              userInfo.grade === 'admin') &&
-            'authorized'
-          }
-          onClick={() => remove(review.id)}
-        >
-          삭제
-        </Button>
-        {editMode ? (
-          <button
-            className="modify-confirm"
-            onClick={() => chagneContent(review.id)}
-          >
-            수정 완료
-          </button>
-        ) : (
-          <Button
-            className={
-              Number(review.userid) === Number(userInfo.id)
-                ? 'modify-btn authorized'
-                : 'modify-btn'
-            }
-            onClick={() => setEditMode(true)}
-          >
-            수정
-          </Button>
-        )}
+        {/* 수정과 버튼 태그 변경 및 순서 변경. 작성일자 아래로 내림 */}
+        <p>{review.User.nickname}</p>
+        <RightBtns>
+          {editMode ? (
+            <button
+              className="modify-confirm"
+              onClick={() => chagneContent(review.id)}
+            >
+              수정 완료
+            </button>
+          ) : (
+            <Button1
+              className={
+                Number(review.userid) === Number(userInfo.id)
+                  ? 'modify-btn authorized'
+                  : 'modify-btn'
+              }
+              onClick={() => setEditMode(true)}
+            >
+              수정
+            </Button1>
+          )}
+          {editMode || (
+            <Button2
+              className={
+                (Number(review.userid) === Number(userInfo.id) ||
+                  userInfo.grade === 'admin') &&
+                'authorized'
+              }
+              onClick={() => remove(review.id)}
+            >
+              삭제
+            </Button2>
+          )}
+          <p className="date">작성일자 : {review.createdAt}</p>
+        </RightBtns>
       </UserInfoWrapper>
       {editMode ? (
         <div>
-          <textarea
+          <CommentText
             className="comment-text"
             cols="30"
-            rows="10"
+            rows="20"
             ref={textEl}
             value={modifyVal}
             onChange={handleTextChange}
@@ -147,7 +200,7 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
           <button onClick={modifyCancel}>취소</button>
         </div>
       ) : (
-        <div>
+        <div className="rv-content">
           <pre>{review.content}</pre>
         </div>
       )}
@@ -155,6 +208,7 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   );
 }
 
+///////////////////////////////////////////
 function Comment() {
   const dispatch = useDispatch();
   const { id: infoId, reviews } = useSelector(selectSelectedPost);

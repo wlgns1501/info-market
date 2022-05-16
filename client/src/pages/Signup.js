@@ -355,7 +355,7 @@ function Signup() {
             <h1>Info-Market</h1>
             <p>회원가입 페이지 입니다</p>
             <p>모든 항목을 입력 해 주세요</p>
-            <div>
+            <div style={{ marginTop: '25px' }}>
               <input
                 id="user"
                 type="radio"
@@ -364,7 +364,9 @@ function Signup() {
                 checked={role === '일반'}
                 onChange={handleRoleCheck}
               />
-              <label for="user">일반</label>
+              <label for="user" style={{ marginRight: '15px' }}>
+                일반
+              </label>
               <input
                 id="admin"
                 type="radio"

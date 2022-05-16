@@ -90,12 +90,12 @@ const EntireContainer = styled.div`
         margin-bottom: 15px;
       }
       > div.writer_createdAt {
-        border: 1px dotted black;
+        /* border: 1px dotted black; */
         padding: 5px;
         display: flex;
         justify-content: space-between;
         > span {
-          border: 2px dotted purple;
+          /* border: 2px dotted purple; */
           &.writer {
             > span.icon {
               margin-right: 10px;
@@ -106,7 +106,8 @@ const EntireContainer = styled.div`
         }
       }
       > p.title {
-        border: 1px dotted black;
+        border: 1px solid lightgray;
+        box-shadow: 2px 2px 2px lightgray;
         margin: 0;
         padding: 5px;
         margin-top: 3px;
@@ -118,12 +119,12 @@ const EntireContainer = styled.div`
         width: 100%;
       }
       > div.total_Likes_Views {
-        border: 1px dotted black;
+        /* border: 1px dotted black; */
         padding: 5px;
         display: flex;
         justify-content: space-between;
         > span {
-          border: 1px dotted orange;
+          /* border: 1px dotted orange; */
           &.totalLikes {
           }
         }

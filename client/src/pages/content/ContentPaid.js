@@ -28,6 +28,7 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
+import File from '../../images/file.png';
 
 const EntireContainer = styled.div`
   * {
@@ -104,17 +105,41 @@ const Container = styled.div`
 `;
 
 const Like = styled.div`
-  display: flex;
-  justify-content: center;
-  font-size: 30px;
+  font-size: 1.5rem;
 `;
+
 const LikeDownload = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  > button.paid-btn {
+    padding: 7px;
+  }
+`;
+
+const LeftBtns = styled.span`
+  display: flex;
+  min-width: 50%;
+  justify-content: space-between;
+  align-items: center;
+  > span.purchased {
+    color: red;
+  }
+`;
+
+const Btns = styled.span`
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+  > button {
+    font-size: 1rem;
+  }
 `;
 
 const SettingBox = styled.span`
   position: relative;
+  bottom: 15px;
   &.logined {
     display: none;
   }
@@ -374,9 +399,15 @@ function ContentPaid() {
           {/* title 편집 모드 */}
           {infoEditMode ? (
             <textarea
-              cols="50"
+              // cols="50"
               rows="1"
-              style={{ height: '2rem' }}
+              style={{
+                height: '2rem',
+                overflow: 'auto',
+                width: '100%',
+                fontSize: '1rem',
+                lineHeight: '1rem',
+              }}
               onChange={(e) => {
                 setLocalTitle(e.target.value);
                 dispatch(updatePostState({ titleChange: true }));
@@ -386,15 +417,6 @@ function ContentPaid() {
           ) : (
             <div className="title">{localTitle}</div>
           )}
-          <SettingBox className={`setting ${isLogin || 'logined'}`}>
-            {/* 설정 버튼 */}
-            <FontAwesomeIcon
-              icon={isOpen ? faCircleMinus : faGear}
-              onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
-            />
-            {/* 설정버튼 클릭--> 메뉴나옴  */}
-            {isOpen && <Setting />}
-          </SettingBox>
           <div className="info">
             <dl>
               <dt>작성자</dt>
@@ -416,12 +438,28 @@ function ContentPaid() {
               <dt>포인트</dt>
               <dd>{targetPoint}</dd>
             </dl>
+            <dl style={{ float: 'right' }}>
+              <SettingBox className={`setting ${isLogin || 'logined'}`}>
+                {/* 설정 버튼 */}
+                <FontAwesomeIcon
+                  icon={isOpen ? faCircleMinus : faGear}
+                  onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+                />
+                {/* 설정버튼 클릭--> 메뉴나옴  */}
+                {isOpen && <Setting />}
+              </SettingBox>
+            </dl>
           </div>
           {/* content 편집 모드 */}
           {infoEditMode ? (
             <textarea
-              cols="30"
-              rows="50"
+              // cols="30"
+              rows="20"
+              style={{
+                width: '100%',
+                fontSize: '1.2rem',
+                lineHeight: '1.5em',
+              }}
               onChange={(e) => {
                 setLocalContent(e.target.value);
                 dispatch(updatePostState({ contentChange: true }));
@@ -431,51 +469,63 @@ function ContentPaid() {
           ) : (
             <ContentBox readOnly className="body" value={localContent} />
           )}
-          {/* 좋아요 버튼 클릭 */}
-          <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
-            {like ? '♥' : '♡'} {totalLikes}
-          </Like>
-          {/* 다운로드 링크*/}
-          <LikeDownload style={{ height: '50px' }}>
-            {/* 첨부파일 편집모드 */}
-            {infoEditMode ? (
-              <FileChange />
-            ) : (
-              // 첨부파일이 있어야 다운로드 링크가 뜸
-              fileURL && (
-                <a
-                  href={
-                    isPurchased || id === userId || grade === 'admin'
-                      ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
-                      : '#'
-                  }
-                >
-                  <FontAwesomeIcon
-                    icon={faFileArrowDown}
-                    style={{ fontSize: '1.5rem' }}
-                    onClick={() =>
-                      !isLogin && alert('회원만 가능한 서비스입니다.')
+
+          {/* 좋아요, 구매이력 설명, 다운로드, 결제하기 묶기 */}
+          <LikeDownload>
+            <LeftBtns>
+              {/* 좋아요 버튼 클릭 */}
+              {infoEditMode || (
+                <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
+                  {like ? '♥' : '♡'} {totalLikes}
+                </Like>
+              )}
+
+              {/* 첨부파일 편집모드 */}
+              {infoEditMode ? (
+                <FileChange />
+              ) : (
+                // 첨부파일이 있어야 다운로드 링크가 뜸
+                fileURL && (
+                  <a
+                    href={
+                      isPurchased || id === userId || grade === 'admin'
+                        ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                        : '#'
                     }
-                  />
-                  다운로드
-                </a>
-              )
-            )}
+                  >
+                    <img
+                      style={{ width: '2rem', cursor: 'pointer' }}
+                      src={File}
+                      alt="파일"
+                      onClick={() =>
+                        !isLogin && alert('회원만 가능한 서비스입니다.')
+                      }
+                    />
+                  </a>
+                )
+              )}
+              {/* 결제한 이력이 있을 때만 나타나는 문구 */}
+              {isPurchased && !infoEditMode && (
+                <span className="purchased">
+                  구매한 이력이 있는 게시물입니다.
+                </span>
+              )}
+            </LeftBtns>
             {/* 편집모드에만 나타나는 버튼  */}
             {infoEditMode && (
-              <button onClick={handleModifyReady}>수정 완료</button>
+              <Btns>
+                <button onClick={handleModifyReady}>수정 완료</button>
+                <button onClick={() => dispatch(cancelModify())}>취소</button>
+              </Btns>
             )}
-            {infoEditMode && (
-              <button onClick={() => dispatch(cancelModify())}>취소</button>
-            )}
-            {/* 결제한 이력이 있을 때만 나타나는 문구 */}
-            {isPurchased && <span>구매한 이력이 있는 게시물입니다.</span>}
             {/* 결제버튼 */}
-            <button className="paid-btn" onClick={handleConfirm}>
-              결제하기
-            </button>
+            {infoEditMode || (
+              <button className="paid-btn" onClick={handleConfirm}>
+                결제하기
+              </button>
+            )}
           </LikeDownload>
-          <Comment />
+          {infoEditMode || <Comment />}
         </Container>
       </ContentContainer>
     </EntireContainer>
