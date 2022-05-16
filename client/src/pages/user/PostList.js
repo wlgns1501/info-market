@@ -22,6 +22,8 @@ const EntireContainer = styled.div`
     border: 0;
     grid-column: 4 / 10;
     grid-row: 2;
+    justify-self: center;
+    width: 100%;
     > form {
       border: 0;
       background-color: whitesmoke;
@@ -45,10 +47,11 @@ const Background = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  justify-self: center;
   &.left {
     width: 150px;
     height: 90%;
-    grid-column: 2 / 13;
+    grid-column: 1 / 3;
     grid-row: 1 / 7;
   }
   &.right {
@@ -68,6 +71,7 @@ const UlContainer = styled.ul`
   width: 100%;
   grid-column: 4 / 10;
   grid-row: 3 / 14;
+  justify-self: center;
   /* background-color: white; */
 `;
 
