@@ -15,7 +15,7 @@ function Post() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { postId } = useParams();
-  const { accToken } = useSelector(selectUserInfo);
+  const { accToken, id } = useSelector(selectUserInfo);
   const { type } = useSelector(selectSelectedPost);
 
   const getConfig = {
@@ -27,17 +27,22 @@ function Post() {
 
   useEffect(() => {
     //혹시나 해서 초기화 함. 근데 오류나면 지우기.
-    dispatch(clearPostState());
+    // dispatch(clearPostState());
     axios
-      .get(`${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}`, getConfig)
+      .get(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info/${postId}?userId=${id}`,
+        getConfig,
+      )
       .then((res) => {
-        const { info } = res.data;
+        const { info, like, isPurchased } = res.data;
         console.log('게시물 상세: ', info);
         dispatch(
           updatePostState({
             ...info,
             fileURL: info.file,
             reviews: [...info.Replies],
+            like,
+            isPurchased,
           }),
         );
       })

@@ -33,6 +33,7 @@ const EntireContainer = styled.div`
     grid-column: 5 / 9;
     grid-row: 2;
     align-items: end;
+    justify-self: center;
     border: 0;
     width: 90%;
     > form {
@@ -56,6 +57,7 @@ const UlContainer = styled.ul`
   width: 90%;
   grid-column: 5 / 9;
   grid-row: 2 / 8;
+  justify-self: center;
   opacity: 0.8;
   border-top: 0;
   display: grid;

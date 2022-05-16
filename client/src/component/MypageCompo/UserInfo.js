@@ -11,6 +11,8 @@ import {
   updatePointState,
   initPayment,
 } from '../../store/slices/point';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import ChargeBox from '../ChargeBox';
 import AWS from 'aws-sdk';
 import { v1, v3, v4, v5 } from 'uuid';
@@ -184,6 +186,22 @@ const EntireContainer = styled.div`
   }
 `;
 
+const Preview = styled.div`
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  > div.btns {
+    > button {
+      padding: 5px 2px;
+      &:nth-child(1) {
+        margin-right: 10px;
+      }
+    }
+  }
+`;
+
 function UserInfo() {
   const dispatch = useDispatch();
   const {
@@ -226,9 +244,10 @@ function UserInfo() {
       )
       .then((res) => {
         const { user } = res.data;
+        console.log('user: ', user);
         if (user) {
           delete user.password;
-          dispatch(updateState({ ...user }));
+          dispatch(updateState({ ...user, profileImg: user.img }));
         }
       })
       .catch((err) => {
@@ -275,21 +294,6 @@ function UserInfo() {
       deleteImg(temp);
     }
     saveImg(selectedFile, 'image');
-  };
-
-  //s3에 있는 파일 삭제
-  const deleteImg = (fileName, callback) => {
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: fileName,
-    };
-
-    const cb = (err, data) => {
-      if (data) alert('삭제 성공');
-      if (err) alert('실패 실패');
-    };
-
-    myBucket.deleteObject(params, callback || cb);
   };
 
   //s3에 파일 전송.
@@ -358,14 +362,23 @@ function UserInfo() {
     fileInput.current.value = '';
   };
 
+  //s3에 있는 파일 삭제
+  const deleteImg = (fileName, callback) => {
+    const params = {
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    };
+
+    const cb = (err, data) => {
+      if (data) alert('삭제 성공');
+      if (err) alert('삭제 실패');
+    };
+
+    myBucket.deleteObject(params, callback || cb);
+  };
+
   //기본 이미지로 변경 버튼 클릭
   const resetImg = () => {
-    //아래코드는 일단 임시(나중에 삭제)
-    dispatch(
-      updateState({
-        profileImg: null,
-      }),
-    );
     //s3 이미지 삭제후, 서버에 반영하고 난 후 아래코드 작동.
     const deleteDB = () => {
       axios
@@ -375,6 +388,7 @@ function UserInfo() {
           postConfig,
         )
         .then((res) => {
+          fileInput.current.value = '';
           dispatch(
             updateState({
               profileImg: null,
@@ -407,7 +421,7 @@ function UserInfo() {
         <Modal
           role="previewImg"
           content={
-            <div>
+            <Preview>
               <img
                 src={previewImg}
                 style={{
@@ -415,14 +429,16 @@ function UserInfo() {
                 }}
                 alt="preview-img"
               />
-              <button onClick={handleChangeImg} disabled={showAlert}>
-                프로필 변경하기
-              </button>
-              <button disabled={showAlert} onClick={handleCancleClick}>
-                취소
-              </button>
-              {showAlert && <p>업로드 진행률: {progress} %</p>}
-            </div>
+              <div className="btns">
+                <button onClick={handleChangeImg} disabled={showAlert}>
+                  프로필 변경하기
+                </button>
+                <button disabled={showAlert} onClick={handleCancleClick}>
+                  취소
+                </button>
+              </div>
+              {/* {!showAlert && <p>업로드 진행률: {progress} %</p>} */}
+            </Preview>
           }
           handleBtnClick={handleCancleClick}
         />
@@ -452,8 +468,11 @@ function UserInfo() {
               }}
               onClick={profileBtnClick}
             />
+            {/* 프로필 초기화 */}
             {profileImg && (
-              <button onClick={resetImg}>기본 이미지로 변경</button>
+              <span style={{ cursor: 'pointer' }}>
+                <FontAwesomeIcon onClick={resetImg} icon={faRotateLeft} />
+              </span>
             )}
           </div>
           <div style={{ whiteSpace: 'nowrap' }}>{nickname}</div>

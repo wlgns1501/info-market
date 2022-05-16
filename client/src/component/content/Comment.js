@@ -76,15 +76,16 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   };
 
   // 코멘트 삭제
-  const remove = (replyId) => {
+  const remove = (ID) => {
     axios
       .delete(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}/reply/${replyId}`,
+        `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}/reply/${ID}`,
         getConfig,
       )
       .then((res) => {
-        const { reply } = res.data;
-        if (Number(replyId) === Number(reply.id)) {
+        const { replyId } = res.data;
+
+        if (Number(replyId) === Number(ID)) {
           dispatch(deleteComment({ replyId }));
         }
       })
@@ -104,7 +105,7 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
         <p>작성일자 : {review.createdAt}</p>
         <Button
           className={
-            (Number(review.userId) === Number(userInfo.id) ||
+            (Number(review.userid) === Number(userInfo.id) ||
               userInfo.grade === 'admin') &&
             'authorized'
           }
@@ -122,7 +123,7 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
         ) : (
           <Button
             className={
-              Number(review.userId) === Number(userInfo.id)
+              Number(review.userid) === Number(userInfo.id)
                 ? 'modify-btn authorized'
                 : 'modify-btn'
             }
@@ -195,13 +196,16 @@ function Comment() {
         let time = day[1].split('.')[0];
         createdAt = `${day[0]} ${time}`;
 
+        const { nickname, id: userid } = userInfo;
         dispatch(
           addComment({
-            id: replyId,
-            nickname: userInfo.nickname,
-            userId: userInfo.id,
-            content: input,
-            createdAt,
+            reply: {
+              id: replyId,
+              userid,
+              content: input,
+              createdAt,
+              User: { nickname },
+            },
           }),
         );
         setInput('');

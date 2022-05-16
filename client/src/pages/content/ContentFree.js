@@ -22,7 +22,6 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
-import searchBack from '../../images/searchBack.jpg';
 
 const EntireContainer = styled.div`
   * {
@@ -35,29 +34,11 @@ const EntireContainer = styled.div`
 
 const ContentContainer = styled.div`
   width: 100vw;
-  height: 100%;
+  /* height: 100vh; */
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  /* position: relative;
-  z-index: 1;
-  /* background-image: url(${searchBack});
-  background-size: cover; */
-  /* > ::before {
-    width: 100%;
-    height: 100%;
-    content: "";
-    background-image: url(${searchBack});
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    opacity: 0.5;
-  } */
 `;
 const Container = styled.div`
   width: 800px;
@@ -244,7 +225,10 @@ function ContentFree() {
           dispatch(addLike());
           dispatch(updatePostState({ like: !like }));
         })
-        .catch((err) => alert('좋아요 반영 안 됨.'));
+        .catch(
+          (err) =>
+            err.response.data?.message && alert(err.response.data.message),
+        );
     }
   };
 
@@ -361,7 +345,7 @@ function ContentFree() {
           ) : (
             <ContentBox readOnly className="body" value={localContent} />
           )}
-          <Like onClick={likeClick}>
+          <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
             {like ? '♥' : '♡'} {totalLikes}
           </Like>
           <LikeDownload style={{ height: '50px' }}>
@@ -369,22 +353,25 @@ function ContentFree() {
             {infoEditMode ? (
               <FileChange />
             ) : (
-              <a
-                href={
-                  isLogin
-                    ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
-                    : '#'
-                }
-              >
-                <FontAwesomeIcon
-                  icon={faFileArrowDown}
-                  style={{ fontSize: '1.5rem' }}
-                  onClick={() =>
-                    !isLogin && alert('회원만 가능한 서비스입니다.')
+              //css 끝나면 !fileURL --> fileURL로 바꾸기
+              !fileURL && (
+                <a
+                  href={
+                    isLogin
+                      ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                      : '#'
                   }
-                />
-                다운로드
-              </a>
+                >
+                  <FontAwesomeIcon
+                    icon={faFileArrowDown}
+                    style={{ fontSize: '1.5rem' }}
+                    onClick={() =>
+                      !isLogin && alert('회원만 가능한 서비스입니다.')
+                    }
+                  />
+                  다운로드
+                </a>
+              )
             )}
             {infoEditMode && (
               <button onClick={handleModifyReady}>수정 완료</button>
