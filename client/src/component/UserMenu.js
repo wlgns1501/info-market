@@ -98,7 +98,7 @@ function UserMenu() {
               style={{
                 textDecoration: 'none',
                 color: 'black',
-                fontSize: '1.2rem',
+                fontSize: '1rem',
               }}
             >
               로그인
@@ -110,7 +110,7 @@ function UserMenu() {
               style={{
                 textDecoration: 'none',
                 color: 'black',
-                fontSize: '1.2rem',
+                fontSize: '1rem',
               }}
             >
               회원가입

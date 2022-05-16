@@ -5,6 +5,7 @@ import Img3 from '../../images/img3.jpg';
 import '../../css/Home.css';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import homeLast from '../../images/homeLast.jpeg';
 
 function Home() {
   const navigate = useNavigate();
@@ -177,7 +178,7 @@ function Home() {
         <img src={Img3} />
       </FeatureContainer2>
       <FeatureContainer>
-        <img src={Img1} />
+        <img src={homeLast} />
         <div className="section">
           <div className="heading">알고만 있는 정보, 아깝지 않으세요?</div>
           <div className="sub">유용한 정보를 판매하고,</div>
