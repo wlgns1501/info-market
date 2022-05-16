@@ -244,7 +244,10 @@ function ContentFree() {
           dispatch(addLike());
           dispatch(updatePostState({ like: !like }));
         })
-        .catch((err) => alert('좋아요 반영 안 됨.'));
+        .catch(
+          (err) =>
+            err.response.data?.message && alert(err.response.data.message),
+        );
     }
   };
 
@@ -361,7 +364,7 @@ function ContentFree() {
           ) : (
             <ContentBox readOnly className="body" value={localContent} />
           )}
-          <Like onClick={likeClick}>
+          <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
             {like ? '♥' : '♡'} {totalLikes}
           </Like>
           <LikeDownload style={{ height: '50px' }}>
@@ -369,22 +372,24 @@ function ContentFree() {
             {infoEditMode ? (
               <FileChange />
             ) : (
-              <a
-                href={
-                  isLogin
-                    ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
-                    : '#'
-                }
-              >
-                <FontAwesomeIcon
-                  icon={faFileArrowDown}
-                  style={{ fontSize: '1.5rem' }}
-                  onClick={() =>
-                    !isLogin && alert('회원만 가능한 서비스입니다.')
+              fileURL && (
+                <a
+                  href={
+                    isLogin
+                      ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                      : '#'
                   }
-                />
-                다운로드
-              </a>
+                >
+                  <FontAwesomeIcon
+                    icon={faFileArrowDown}
+                    style={{ fontSize: '1.5rem' }}
+                    onClick={() =>
+                      !isLogin && alert('회원만 가능한 서비스입니다.')
+                    }
+                  />
+                  다운로드
+                </a>
+              )
             )}
             {infoEditMode && (
               <button onClick={handleModifyReady}>수정 완료</button>

@@ -67,7 +67,8 @@ export const selectedPostSlice = createSlice({
       state.totalLikes -= 1;
     },
     addComment: (state, action) => {
-      state.reviews = [action.payload, ...state.reviews];
+      const { reply } = action.payload;
+      state.reviews = [reply, ...state.reviews];
     },
     deleteComment: (state, action) => {
       const { replyId } = action.payload;
