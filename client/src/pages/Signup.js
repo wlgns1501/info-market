@@ -2,11 +2,125 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateState } from '../store/slices/userInfo.js';
-import '../css/Signup.css';
+import { selectUserInfo } from '../store/slices/userInfo';
+
+const EntireContainer = styled.div`
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Elice Bold';
+    font-family: '순천B';
+  }
+`;
+
+const SignupContainer = styled.div`
+  width: 100vw;
+  height: 80vh;
+  background: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: 27px 43px 43px -26px rgba(89, 89, 89, 0.39);
+  -moz-box-shadow: 27px 43px 43px -26px rgba(89, 89, 89, 0.39);
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 00 1px 3px rgba(0, 0, 0, 0.88);
+`;
+
+const SignupFormContainer = styled.div`
+  background: #f5f5f5;
+  width: 950px;
+  height: 700px;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 10px black;
+  border-radius: 10px;
+`;
+
+const SignupFormLeft = styled.div`
+  width: 50%;
+  border-radius: 10px 0px 0px 10px;
+  padding: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-image: radial-gradient(
+    ellipse farthest-corner at 0 140%,
+    #757677 0%,
+    #888e97 70%,
+    #a5a8ad 70%
+  );
+  > h1 {
+    color: white;
+    width: 100%;
+    text-align: left;
+    opacity: 0.9;
+  }
+  > p {
+    padding-top: 50px;
+    font-size: 20px;
+    text-align: left;
+    opacity: 0.8;
+  }
+`;
+
+const SignupFormRight = styled.div`
+  width: 50%;
+  border-radius: 0px 10px 10px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  background: rgb(255, 255, 255);
+`;
+
+const SignupTopWrap = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  > span {
+    color: gray;
+    font-size: 17px;
+    padding-right: 20px;
+  }
+`;
+
+const SignupInputContainer = styled.div`
+  padding-top: 30px;
+  width: 300px;
+`;
+
+const SignupBtnWrap = styled.div`
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  > .signup-btn {
+    width: 90%;
+    height: 35px;
+    color: white;
+    border: 0;
+    border-radius: 4px;
+    background: linear-gradient(162deg, #757677 0%, #888e97 70%, #a5a8ad 70%);
+  }
+  > input {
+    margin: 3px;
+    background: none;
+    line-height: 45px;
+    padding-left: 10px;
+    width: 267px;
+  }
+  > input::focus {
+    outline: none;
+  }
+`;
 
 const Msg = styled.div`
+  width: 90%;
   color: red;
   &.checked {
     color: blue;
@@ -16,6 +130,7 @@ const Msg = styled.div`
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isLogin } = useSelector(selectUserInfo);
 
   const [role, setRole] = useState('일반');
   const [userInfo, setUserInfo] = useState({
@@ -38,6 +153,10 @@ function Signup() {
     nicknameMsg: null,
     result: null,
   });
+
+  useEffect(() => {
+    if (isLogin) navigate('/main');
+  }, []);
 
   //라디오 버튼 체크
   const handleRoleCheck = (e) => {
@@ -228,125 +347,125 @@ function Signup() {
     }
   };
   return (
-    <div className="signup">
-      <div className="signup-form-container shadow">
-        <div className="signup-form-left-side">
-          <h1>Info-Market</h1>
-          <p>
-            블라블라블라 블라블라 대충 회원가입 어서오세요 회원가입하세요
-            어서오세요 회원가입하세요 어서오세요 회원가입하세요 어서오세요
-            회원가입하세요 어서오세요 회원가입하세요{' '}
-          </p>
-          <div className="radio-btn">
-            <input
-              type="radio"
-              name="role"
-              value="일반"
-              checked={role === '일반'}
-              onChange={handleRoleCheck}
-            />
-            일반
-            <input
-              type="radio"
-              name="role"
-              value="관리자"
-              checked={role === '관리자'}
-              onChange={handleRoleCheck}
-            />
-            관리자
-          </div>
-        </div>
-        <div className="signup-form-right-side">
-          <div className="signup-top-wrap">
-            <span>모든 항목은 필수 입니다</span>
-          </div>
-          <div className="signup-input-container">
-            <div className="signup-btn-wrap">
-              <input
-                type="email"
-                className="signup-input-wrap input-id"
-                placeholder="아이디(email)"
-                onChange={handleInputValue('email')}
-              />
-              <button className="signup-btn" onClick={handleEmailCheck}>
-                인증
-              </button>
-              <Msg
-                className={checked.emailCk ? 'email-msg checked' : 'email-msg'}
-              >
-                {message.emailMsg}
-              </Msg>
-            </div>
+    <EntireContainer>
+      <SignupContainer>
+        <SignupFormContainer>
+          <SignupFormLeft>
+            <h1>Info-Market</h1>
+            <p>회원가입 페이지 입니다</p>
+            <p>모든 항목을 입력 해 주세요</p>
             <div>
               <input
-                type="password"
-                className="signup-input-wrap input-password"
-                placeholder="비밀번호"
-                onChange={handlePwdCheck}
+                id="user"
+                type="radio"
+                name="role"
+                value="일반"
+                checked={role === '일반'}
+                onChange={handleRoleCheck}
               />
-              <Msg className="password-msg">{message.passwordMsg}</Msg>
+              <label for="user">일반</label>
               <input
-                type="password"
-                className="signup-input-wrap input-rePassword"
-                placeholder="비밀번호 재확인"
-                onChange={handlePwdReCheck}
+                id="admin"
+                type="radio"
+                name="role"
+                value="관리자"
+                checked={role === '관리자'}
+                onChange={handleRoleCheck}
               />
-              <Msg className="rePassword-msg">{message.rePasswordMsg}</Msg>
+              <label for="admin">관리자</label>
             </div>
-            <div className="signup-btn-wrap">
-              <input
-                type="tel"
-                className="signup-input-wrap input-phone"
-                placeholder="010-0000-0000"
-                onChange={handleInputValue('phone')}
-                disabled={role === '관리자'}
-              />
-              <button
-                className="signup-btn"
-                onClick={handlePhoneCheck}
-                disabled={role === '관리자'}
-              >
-                인증번호받기
-              </button>
-              <Msg
-                className={checked.phoneCk ? 'phone-msg checked' : 'phone-msg'}
-              >
-                {message.phoneMsg}
-              </Msg>
-            </div>
-            <div className="signup-btn-wrap">
-              <input
-                type="text"
-                className="signup-input-wrap input-name"
-                placeholder="닉네임"
-                onChange={handleInputValue('nickname')}
-                disabled={role === '관리자'}
-              />
-              <button
-                className="signup-btn"
-                onClick={handleNicknameCheck}
-                disabled={role === '관리자'}
-              >
-                중복검사
-              </button>
-              <Msg className={checked.emailCk ? 'checked' : ''}>
-                {message.nicknameMsg}
-              </Msg>
-            </div>
-            <div className="signup-btn-wrap">
-              <button
-                className="signup-btn"
-                type="submit"
-                onClick={handleSignup}
-              >
-                회원가입
-              </button>
-              <Msg className="alert-box">{message.result}</Msg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </SignupFormLeft>
+          <SignupFormRight>
+            <SignupTopWrap>
+              <span>모든 항목은 필수 입니다</span>
+            </SignupTopWrap>
+            <SignupInputContainer>
+              <SignupBtnWrap>
+                <input
+                  type="email"
+                  placeholder="아이디(email)"
+                  onChange={handleInputValue('email')}
+                />
+                <button className="signup-btn" onClick={handleEmailCheck}>
+                  인증
+                </button>
+                <Msg
+                  className={
+                    checked.emailCk ? 'email-msg checked' : 'email-msg'
+                  }
+                >
+                  {message.emailMsg}
+                </Msg>
+              </SignupBtnWrap>
+              <SignupBtnWrap>
+                <input
+                  type="password"
+                  placeholder="비밀번호"
+                  onChange={handlePwdCheck}
+                />
+                <Msg className="password-msg">{message.passwordMsg}</Msg>
+                <input
+                  type="password"
+                  placeholder="비밀번호 재확인"
+                  onChange={handlePwdReCheck}
+                />
+                <Msg className="rePassword-msg">{message.rePasswordMsg}</Msg>
+              </SignupBtnWrap>
+              <SignupBtnWrap>
+                <input
+                  type="tel"
+                  placeholder="010-0000-0000"
+                  onChange={handleInputValue('phone')}
+                  disabled={role === '관리자'}
+                />
+                <button
+                  className="signup-btn"
+                  onClick={handlePhoneCheck}
+                  disabled={role === '관리자'}
+                >
+                  인증번호받기
+                </button>
+                <Msg
+                  className={
+                    checked.phoneCk ? 'phone-msg checked' : 'phone-msg'
+                  }
+                >
+                  {message.phoneMsg}
+                </Msg>
+              </SignupBtnWrap>
+              <SignupBtnWrap>
+                <input
+                  type="text"
+                  placeholder="닉네임"
+                  onChange={handleInputValue('nickname')}
+                  disabled={role === '관리자'}
+                />
+                <button
+                  className="signup-btn"
+                  onClick={handleNicknameCheck}
+                  disabled={role === '관리자'}
+                >
+                  중복검사
+                </button>
+                <Msg className={checked.emailCk ? 'checked' : ''}>
+                  {message.nicknameMsg}
+                </Msg>
+              </SignupBtnWrap>
+              <SignupBtnWrap>
+                <button
+                  className="signup-btn"
+                  type="submit"
+                  onClick={handleSignup}
+                >
+                  회원가입
+                </button>
+                <Msg className="alert-box">{message.result}</Msg>
+              </SignupBtnWrap>
+            </SignupInputContainer>
+          </SignupFormRight>
+        </SignupFormContainer>
+      </SignupContainer>
+    </EntireContainer>
   );
 }
 export default Signup;

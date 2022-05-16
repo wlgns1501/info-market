@@ -86,7 +86,7 @@ const Payment = (effect, deps) => {
           alert('결제 성공');
         })
         .catch((err) => {
-          if (err.response.message) alert(err.response.message);
+          if (err.response?.message) alert(err.response.message);
         });
     } else {
       dispatch(initPayment());
