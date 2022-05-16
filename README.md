@@ -19,7 +19,13 @@
 ### Front
 임시 공백
 ### Back
-임시 공백
+* TypeScript
+* express
+* node
+* JWT
+* Sequelize
+* Mysql
+* Import
 
 ## 임시
 🏠[info-market](http://나중에)
