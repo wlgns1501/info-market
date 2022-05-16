@@ -17,14 +17,23 @@
 
 ## 🛠️ Development
 ### Front
-임시 공백
+* JavaScript
+* React
+* React Router
+* Redux
+* Redux Toolkit
+* Styled-components
+* axios
+
 ### Back
-* TypeScript
-* express
-* node
-* JWT
-* Sequelize
-* Mysql
+* TypeScript - v4.6.4
+* express - v4.17.3
+* node - v16.14.0
+* jsonwebtoken - v8.5.1
+* bcrypt - v5.0.1
+* Sequelize - 6.19.0
+* Mysql - v8.0.28
+* axios - v0.27.0
 * Import
 
 ## 임시
