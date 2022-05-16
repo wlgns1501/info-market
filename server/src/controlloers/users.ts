@@ -146,9 +146,6 @@ module.exports = {
   postImg: async (req: Request, res: Response) => {
     const { profileImg } = req.body;
     const { userId } = req;
-    if (!profileImg) {
-      return res.status(400).json({ message: '이미지 파일이 없습니다.' });
-    }
 
     await userDb.postImg(profileImg, Number(userId));
     return res
