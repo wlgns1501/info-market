@@ -21,7 +21,8 @@ const EntireContainer = styled.div`
 
 const PageContainer = styled.div`
   width: 100vw;
-  height: 80vh;
+  /* 고침 */
+  height: 90vh;
   background: lightgray;
   display: flex;
   justify-content: center;

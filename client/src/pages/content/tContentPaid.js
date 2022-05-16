@@ -135,7 +135,6 @@ function ContentPaid() {
           <div className="like-download" style={{ height: '50px' }}>
             {/* 아래 첨부파일은 회원만 다운 가능 */}
             <a
-              // ref={download}
               href={
                 isPurchased || userInfoId === writer || grade === 'admin'
                   ? `https://info-market-upload.s3.ap-northeast-2.amazonaws.com/${fileURL}`
