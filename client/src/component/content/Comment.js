@@ -17,9 +17,22 @@ const UserInfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #eeeeee;
+  margin: auto ;
+`;
+// css 수정사항 - 수정, 삭제 버튼분할
+// UserInfoWrapper 에 margin : auto, button1(수정) 에 margin-left : auto 설정
+const Button1 = styled.button`
+  border: 0;
+  height: 20px;
+  background: none;
+  display: none;
+  margin-left: auto;
+  &.authorized {
+    display: inline-block;
+  }
 `;
 
-const Button = styled.button`
+const Button2 = styled.button`
   border: 0;
   height: 20px;
   background: none;
@@ -29,10 +42,13 @@ const Button = styled.button`
   }
 `;
 
+// css 수정사항 - 댓글리스트 패딩 및 마진 설정
 const CommentWrapper = styled.div`
   border: 1px solid black;
+    margin: 10px;
+    padding : 20px 20px;
   p {
-    margin: 0;
+    margin: 10px;
   }
 `;
 
@@ -101,18 +117,8 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
   return (
     <CommentWrapper>
       <UserInfoWrapper>
+        {/* 수정과 버튼 태그 변경 및 순서 변경. 작성일자 아래로 내림 */}
         <p>작성자 : {review.User.nickname}</p>
-        <p>작성일자 : {review.createdAt}</p>
-        <Button
-          className={
-            (Number(review.userid) === Number(userInfo.id) ||
-              userInfo.grade === 'admin') &&
-            'authorized'
-          }
-          onClick={() => remove(review.id)}
-        >
-          삭제
-        </Button>
         {editMode ? (
           <button
             className="modify-confirm"
@@ -121,7 +127,7 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
             수정 완료
           </button>
         ) : (
-          <Button
+          <Button1
             className={
               Number(review.userid) === Number(userInfo.id)
                 ? 'modify-btn authorized'
@@ -130,15 +136,26 @@ function Review({ review, userInfo, infoId, postConfig, getConfig }) {
             onClick={() => setEditMode(true)}
           >
             수정
-          </Button>
+          </Button1>
         )}
+        <Button2
+          className={
+            (Number(review.userid) === Number(userInfo.id) ||
+              userInfo.grade === 'admin') &&
+            'authorized'
+          }
+          onClick={() => remove(review.id)}
+        >
+          삭제
+        </Button2>
+        <p>작성일자 : {review.createdAt}</p>
       </UserInfoWrapper>
       {editMode ? (
         <div>
           <textarea
             className="comment-text"
             cols="30"
-            rows="10"
+            rows="20"
             ref={textEl}
             value={modifyVal}
             onChange={handleTextChange}

@@ -22,6 +22,7 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
+import File from '../../images/file.png'
 
 const EntireContainer = styled.div`
   * {
@@ -91,11 +92,14 @@ const Container = styled.div`
 `;
 
 const Like = styled.div`
+  margin-top: 15px;
   display: flex;
   justify-content: center;
   font-size: 30px;
-`;
+  `;
+// css 수정사항 - float 설정
 const LikeDownload = styled.div`
+  float: right;
   display: flex;
   justify-content: center;
 `;
@@ -116,6 +120,7 @@ const ContentBox = styled.textarea`
   box-sizing: border-box;
   font-size: 1rem;
 `;
+
 
 function RemoveInfoConfirm() {
   const navigate = useNavigate();
@@ -307,13 +312,6 @@ function ContentFree() {
           ) : (
             <div className="title">{localTitle}</div>
           )}
-          <SettingBox className={`setting ${isLogin || 'logined'}`}>
-            <FontAwesomeIcon
-              icon={isOpen ? faCircleMinus : faGear}
-              onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
-            />
-            {isOpen && <Setting />}
-          </SettingBox>
           <div className="info">
             <dl>
               <dt>작성자</dt>
@@ -331,55 +329,69 @@ function ContentFree() {
               <dt>추천수</dt>
               <dd>{totalLikes}</dd>
             </dl>
+            {/* css 수정사항 - 설정부분 아래로 내린후, float : right  */}
+            <dl style={{ float: 'right' }}>
+              <SettingBox className={`setting ${isLogin || 'logined'}`}>
+                <FontAwesomeIcon
+                  icon={isOpen ? faCircleMinus : faGear}
+                  onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+                />
+                {isOpen && <Setting />}
+              </SettingBox>
+            </dl>
           </div>
-          {infoEditMode ? (
-            <textarea
-              cols="30"
-              rows="50"
-              onChange={(e) => {
-                setLocalContent(e.target.value);
-                dispatch(updatePostState({ contentChange: true }));
-              }}
-              value={localContent}
-            />
-          ) : (
-            <ContentBox readOnly className="body" value={localContent} />
-          )}
-          <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
-            {like ? '♥' : '♡'} {totalLikes}
-          </Like>
-          <LikeDownload style={{ height: '50px' }}>
-            {/* 아래 첨부파일은 회원만 다운 가능 */}
+          {/* css 수정사항 - 댓글작성부터 하트, 다운로드, 텍스트박스까지 새로운 div로 묶어줌 */}
+          <div style={{ padding: '30px' }}>
             {infoEditMode ? (
-              <FileChange />
+              <textarea
+                cols="30"
+                rows="50"
+                onChange={(e) => {
+                  setLocalContent(e.target.value);
+                  dispatch(updatePostState({ contentChange: true }));
+                }}
+                value={localContent}
+              />
             ) : (
-              //css 끝나면 !fileURL --> fileURL로 바꾸기
-              !fileURL && (
-                <a
-                  href={
-                    isLogin
-                      ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
-                      : '#'
-                  }
-                >
-                  <FontAwesomeIcon
-                    icon={faFileArrowDown}
-                    style={{ fontSize: '1.5rem' }}
-                    onClick={() =>
-                      !isLogin && alert('회원만 가능한 서비스입니다.')
+              <ContentBox readOnly className="body" value={localContent} />
+            )}
+            <Like onClick={likeClick} style={{ cursor: 'pointer' }}>
+              {like ? '♥' : '♡'} {totalLikes}
+            </Like>
+            {/* 다운로드 우측으로 float : right 설정  */}
+            <LikeDownload style={{ height: '50px', float: 'right' }}>
+              {/* 아래 첨부파일은 회원만 다운 가능 */}
+              {infoEditMode ? (
+                <FileChange />
+              ) : (
+                //css 끝나면 !fileURL --> fileURL로 바꾸기
+                !fileURL && (
+                  <a
+                    href={
+                      isLogin
+                        ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                        : '#'
                     }
-                  />
-                  다운로드
-                </a>
-              )
-            )}
-            {infoEditMode && (
-              <button onClick={handleModifyReady}>수정 완료</button>
-            )}
-            {infoEditMode && (
-              <button onClick={() => dispatch(cancelModify())}>취소</button>
-            )}
-          </LikeDownload>
+                  >
+                    <img
+                      src={File}
+                      style={{ height: '30px' }}
+                      onClick={() =>
+                        !isLogin && alert('회원만 가능한 서비스입니다.')
+                      }
+                    />
+                    다운로드
+                  </a>
+                )
+              )}
+              {infoEditMode && (
+                <button onClick={handleModifyReady}>수정 완료</button>
+              )}
+              {infoEditMode && (
+                <button onClick={() => dispatch(cancelModify())}>취소</button>
+              )}
+            </LikeDownload>
+          </div>
           <Comment />
         </Container>
       </ContentContainer>

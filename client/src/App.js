@@ -20,6 +20,7 @@ import FreeBoard from './pages/content/contentBoard/FreeBoard';
 import PaidBoard from './pages/content/contentBoard/PaidBoard';
 import PostList from './pages/user/PostList';
 import Post from './pages/user/Post';
+import ContentPaid from './pages/content/ContentPaid';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             </Route>
           </Route>
           {/* 유료게시글, 무료게시글 */}
+          <Route path="contentpaid" element={<ContentPaid />} />
           <Route path="freeboard" element={<FreeBoard />} />
           <Route path="paidboard" element={<PaidBoard />} />
           <Route path="mypage" element={<SideBar />}>

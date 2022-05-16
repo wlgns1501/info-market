@@ -157,9 +157,8 @@ function Writing() {
   const handleSubmitWithFile = (e) => {
     e.preventDefault();
     //loading indicator 사용하기
-    const fileName = `file/${v4().toString().replaceAll('-', '')}.${
-      selectedFile.type.split('/')[1]
-    }`;
+    const fileName = `file/${v4().toString().replaceAll('-', '')}.${selectedFile.type.split('/')[1]
+      }`;
 
     const params = {
       ACL: 'public-read-write',
