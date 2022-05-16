@@ -86,6 +86,7 @@ export async function getPayments(
       'tid',
       'userId',
       'infoId',
+      'createdAt',
     ],
     include: [
       {
