@@ -222,8 +222,8 @@ function UserInfo() {
       )
       .then((res) => {
         const { user } = res.data;
+        console.log('user: ', user)
         if (user) {
-          console.log('user: ', user)
           delete user.password;
           dispatch(updateState({ ...user }));
         }
