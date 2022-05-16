@@ -69,22 +69,19 @@ module.exports = {
       });
 
     const imp_token: string = response.data.response.access_token;
+    console.log(imp_token);
 
-    const complete_url: string = `https://api.iamport.kr/payments/${req.body.imp_uid}`;
+    const complete_url: string = `https://api.iamport.kr/payments/${pointCharge.imp_uid}`;
 
-    const getPaymentData = await axios
-      .get(complete_url, {
-        headers: {
-          Authorization: imp_token,
-        },
-      })
-      .catch((err: Error) => {
-        return res
-          .status(400)
-          .json({ message: '결제 정보를 조회하는데 실패하였습니다.' });
-      });
+    const getPaymentData = await axios({
+      url: complete_url,
+      method: 'get',
+      headers: { Authorization: imp_token },
+    }).catch((err) => {
+      console.log(err);
+    });
 
-    const paymentData = getPaymentData.data.response;
+    const paymentData = getPaymentData.req.body;
 
     const order = await pointDb.findUserChargePoint(
       Number(userId),
@@ -103,6 +100,7 @@ module.exports = {
           break;
         case 'paid':
           userPoint += amount;
+          // console.log(userPoint);
           await userDb.editUserPoint(Number(userId), userPoint);
           return res
             .status(200)

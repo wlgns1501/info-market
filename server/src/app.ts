@@ -25,7 +25,10 @@ sequelize
 
 const corsOption = {
   // origin: 'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com',
-  origin: 'http://info-market-client.s3-website.ap-northeast-2.amazonaws.com',
+  origin: [
+    'http://info-market-client.s3-website.ap-northeast-2.amazonaws.com',
+    'http://localhost:3000',
+  ],
   // optionsSuccessStatus: 200,
   credentials: true, // allow the Access-Control-Allow-Credentials
   // withcredentials: true, // allow the Access-Control-Allow-Credentials
