@@ -20,12 +20,12 @@ module.exports = {
 
     await infoDb.viewsAdd(info.id, Number(info.totalViews));
 
-    if (req.userId) {
+    if (req.query.userId) {
       let isPurchased;
 
       const checkPay = await paymentDb.getUserPayment(
         Number(infoId),
-        Number(req.userId),
+        Number(req.query.userId),
       );
 
       if (!checkPay) {
@@ -34,11 +34,15 @@ module.exports = {
         isPurchased = true;
       }
 
-      const like = await likeDb.findUser(Number(req.userId), Number(infoId));
+      const like = await likeDb.findUser(
+        Number(req.query.userId),
+        Number(infoId),
+      );
 
       return res.status(200).json({
         info,
         like: like ? true : false,
+        isPurchased,
         message: '게시물을 가져왔습니다.',
       });
     }
