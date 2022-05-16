@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import QueryString from 'qs';
+import { reset } from '../store/slices/search';
 
 const boxShadow = '0 4px 6px rgb(32 33 36 / 28%)';
 // const activeBorderRadius = '1rem 1rem 0 0';
@@ -102,6 +103,7 @@ function SelectBox({ items, className, selectVal, handleSelect }) {
 
 export default function Search({ single }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const [localIpVal, setLocalIpVal] = useState('');
@@ -137,8 +139,10 @@ export default function Search({ single }) {
 
   const searchClick = (e) => {
     e.preventDefault();
+    console.log('클릭');
+    console.log(localIpVal);
     if (!localIpVal) return alert('검색어가 없습니다.');
-
+    dispatch(reset());
     navigate(
       `/main/search?search_type=${localSelec1}&info_type=${localSelec2}&input_value=${localIpVal}`,
     );

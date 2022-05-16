@@ -10,45 +10,77 @@ import { selectUserInfo } from '../../../store/slices/userInfo';
 import { useNavigate } from 'react-router-dom';
 
 const OrderContainer = styled.div`
-  background-color: #e68feb;
+  background-color: #ccc7a9;
+  opacity: 0.9;
   width: 100%;
   padding: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  box-shadow: 3px 3px 3px #e3e6e4;
+  /* box-shadow: 3px 5px 4px #75746d; */
   > div {
-    /* border: 2px solid red; */
+    /* border: 3px solid red; */
     width: 50%;
+    height: 50px;
     display: flex;
     justify-content: space-between;
     > span {
+      /* border: 2px solid blue; */
+      font-family: '순천B';
       &.latest_best {
-        margin-left: -5px;
-        > input.best {
-          margin-left: 20px;
+        /* width: 250px; */
+        /* padding: 3% 2%; */
+        /* margin-left: -5px; */
+        width: 20%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > input {
+          display: none;
         }
       }
+
       &.count {
+        display: flex;
+        align-items: center;
+      }
+
+      > label {
+        font-family: '순천B';
+        font-size: 1rem;
+        /* border: 1px solid red; */
+        height: 100%;
+        /* padding: 0 3%; */
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+      }
+      > label.clicked {
+        background-color: #69675c;
+        box-shadow: 3px 5px 4px #3b3a37;
+        color: white;
+        font-size: 1rem;
       }
     }
   }
 `;
+
 const EntireContainer = styled.div`
   display: flex;
-  background-color: #faf9f5;
+  /* background-color: #faf9f5; */
   flex-direction: column;
   align-items: center;
-  min-height: 75vh;
+  height: 800px;
   overflow-y: scroll;
   > ul.postList {
     /* border: 3px solid red; */
     margin: 0;
     list-style: none;
     padding: 0;
-    width: 55%;
-    height: 600px;
+    width: 50%;
+    height: 1200px;
     padding: 1%;
     > li.post {
       border: 1px solid black;
@@ -152,7 +184,7 @@ function FreeBoard() {
   const [page, setPage] = useState(1);
   const [totalCnt, setTotalCnt] = useState(0);
   const [order, setOrder] = useState('최신순');
-  const LIMIT = 6;
+  const LIMIT = 10;
   const elm = useRef(null);
 
   //서버 통신 헤더: post용, get용
@@ -189,7 +221,6 @@ function FreeBoard() {
       })
       .then((res) => {
         const { rows, count } = res.data.info;
-
         if (rows) setList([...list, ...rows]);
         if (count && page === 1) {
           setTotalCnt(count);
@@ -223,11 +254,13 @@ function FreeBoard() {
               name="info_order"
               value="최신순"
               checked={order === '최신순'}
-              style={{ marginLeft: '0', opacity: '0' }}
               onChange={handleChange}
             />
-            <label for="latest">최신순</label>
+            <label for="latest" className={order === '최신순' && 'clicked'}>
+              최신순
+            </label>
             <input
+              id="best"
               className="best"
               type="radio"
               name="info_order"
@@ -235,7 +268,9 @@ function FreeBoard() {
               checked={order === '인기순'}
               onChange={handleChange}
             />
-            인기순
+            <label for="best" className={order === '인기순' && 'clicked'}>
+              인기순
+            </label>
           </span>
           <span className="count">총 게시물 수 : {totalCnt || 0}</span>
         </div>

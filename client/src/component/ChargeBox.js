@@ -11,11 +11,11 @@ import Payment from './Payment';
 import axios from 'axios';
 
 const ChargeBoxContainer = styled.div`
-  /* border: 3px solid black; */
+  height: 250px;
   background-color: #f3f702;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   padding: 10px;
   border-radius: 10px;
@@ -36,9 +36,12 @@ const ChargeBoxContainer = styled.div`
     color: white;
     border-radius: 5px;
   }
+  > p.standard {
+  }
 `;
 
 const PayBox = styled.div`
+  height: 150px;
   border: 3px solid black;
   display: flex;
   flex-direction: column;
@@ -48,6 +51,11 @@ const PayBox = styled.div`
   border-radius: 10px;
   > p {
     margin: 0;
+  }
+  > div.btns button {
+    &:nth-child(1) {
+      margin-right: 10px;
+    }
   }
 `;
 
@@ -77,12 +85,9 @@ export function PayWithPoints({ handleClick }) {
           postConfig,
         )
         .then((res) => {
-          const { info } = res.data;
-          if (info) {
-            dispatch(updateState({ point: restPoint }));
-            dispatch(updatePostState({ isPurchased: true }));
-            alert('결제 성공');
-          }
+          dispatch(updateState({ point: restPoint }));
+          dispatch(updatePostState({ isPurchased: true }));
+          alert('결제 성공');
         })
         .catch((err) => alert('결제 실패'));
       //loading indicator end
@@ -108,8 +113,10 @@ export function PayWithPoints({ handleClick }) {
     <PayBox>
       <p>{targetPoint} P가 차감됩니다.</p>
       <p>결제하시겠습니까?</p>
-      <button onClick={yes}>확인</button>
-      <button onClick={handleClick}>취소</button>
+      <div className="btns">
+        <button onClick={yes}>확인</button>
+        <button onClick={handleClick}>취소</button>
+      </div>
     </PayBox>
   );
 }
@@ -136,7 +143,9 @@ export default function ChargeBox() {
           )
         }
       />
-      <p style={{ color: 'red' }}>3000원 이상부터 가능합니다.</p>
+      <p className="standard" style={{ color: 'red' }}>
+        3000원 이상부터 가능합니다.
+      </p>
       <Payment />
     </ChargeBoxContainer>
   );

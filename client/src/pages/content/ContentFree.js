@@ -1,4 +1,3 @@
-import '../../css/Content.css';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -23,6 +22,102 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
+import searchBack from '../../images/searchBack.jpg';
+
+const EntireContainer = styled.div`
+  * {
+    box-sizing: border-box;
+    word-break: keep-all;
+    font-family: 'Elice Bold';
+    font-family: '순천B';
+  }
+`;
+
+const ContentContainer = styled.div`
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* position: relative;
+  z-index: 1;
+  /* background-image: url(${searchBack});
+  background-size: cover; */
+  /* > ::before {
+    width: 100%;
+    height: 100%;
+    content: "";
+    background-image: url(${searchBack});
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0.5;
+  } */
+`;
+const Container = styled.div`
+  width: 800px;
+  border-radius: 10px;
+  border: 2px solid black;
+  background-color: white;
+  > .title {
+    padding: 15px;
+    border-bottom: 1px solid #999;
+  }
+  > .info {
+    padding: 15px;
+    border-bottom: 1px solid #999;
+    > dl {
+      position: relative;
+      display: inline-block;
+      padding: 0 20px;
+      > :first-child {
+        padding-left: 0;
+      }
+      > ::before {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        width: 1px;
+        height: 25px;
+        background: #ddd;
+      }
+      > :first-child::before {
+        display: none;
+      }
+      > dt,
+      dd {
+        display: inline-block;
+      }
+      > dd {
+        margin-left: 10px;
+        color: gray;
+      }
+    }
+  }
+  > .body {
+    display: inline-block;
+    padding: 15px;
+    border-bottom: 1px solid #000;
+    line-height: 160%;
+    font-size: 1.2rem;
+  }
+`;
+
+const Like = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+`;
+const LikeDownload = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const SettingBox = styled.span`
   position: relative;
@@ -34,12 +129,10 @@ const SettingBox = styled.span`
 const RemoveBox = styled.div``;
 
 const ContentBox = styled.textarea`
-  width: 80%;
+  width: 100%;
   height: 500px;
   padding: 10px;
   box-sizing: border-box;
-  border: solid 2px #1e90ff;
-  border-radius: 5px;
   font-size: 1rem;
 `;
 
@@ -204,102 +297,106 @@ function ContentFree() {
   };
 
   return (
-    <div className="content-container">
-      {removeInfo && (
-        <Modal
-          handleBtnClick={() =>
-            dispatch(updatePostState({ removeInfo: false }))
-          }
-          content={<RemoveInfoConfirm />}
-          role="remove"
-        />
-      )}
-      <div className="container">
-        {infoEditMode ? (
-          <textarea
-            cols="30"
-            rows="1"
-            style={{ height: '2rem' }}
-            onChange={(e) => {
-              setLocalTitle(e.target.value);
-              dispatch(updatePostState({ titleChange: true }));
-            }}
-            value={localTitle}
+    <EntireContainer>
+      <ContentContainer>
+        {removeInfo && (
+          <Modal
+            handleBtnClick={() =>
+              dispatch(updatePostState({ removeInfo: false }))
+            }
+            content={<RemoveInfoConfirm />}
+            role="remove"
           />
-        ) : (
-          <div className="title">{localTitle}</div>
         )}
-        <SettingBox className={`setting ${isLogin || 'logined'}`}>
-          <FontAwesomeIcon
-            icon={isOpen ? faCircleMinus : faGear}
-            onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
-          />
-          {isOpen && <Setting />}
-        </SettingBox>
-        <div className="info">
-          <dl>
-            <dt>작성자</dt>
-            <dd>{nickname}</dd>
-          </dl>
-          <dl>
-            <dt>작성일자</dt>
-            <dd>{createdAt}</dd>
-          </dl>
-          <dl>
-            <dt>조회수</dt>
-            <dd>{totalViews}</dd>
-          </dl>
-          <dl>
-            <dt>추천수</dt>
-            <dd>{totalLikes}</dd>
-          </dl>
-        </div>
-        {infoEditMode ? (
-          <textarea
-            cols="30"
-            rows="50"
-            onChange={(e) => {
-              setLocalContent(e.target.value);
-              dispatch(updatePostState({ contentChange: true }));
-            }}
-            value={localContent}
-          />
-        ) : (
-          <ContentBox readOnly className="body" value={localContent} />
-        )}
-        <span className="like-btn" onClick={likeClick}>
-          {like ? '♥' : '♡'} {totalLikes}
-        </span>
-        <div className="like-download" style={{ height: '50px' }}>
-          {/* 아래 첨부파일은 회원만 다운 가능 */}
+        <Container>
           {infoEditMode ? (
-            <FileChange />
+            <textarea
+              cols="50"
+              rows="1"
+              style={{ height: '2rem' }}
+              onChange={(e) => {
+                setLocalTitle(e.target.value);
+                dispatch(updatePostState({ titleChange: true }));
+              }}
+              value={localTitle}
+            />
           ) : (
-            <a
-              href={
-                isLogin
-                  ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
-                  : '#'
-              }
-            >
-              <FontAwesomeIcon
-                icon={faFileArrowDown}
-                style={{ fontSize: '1.5rem' }}
-                onClick={() => !isLogin && alert('회원만 가능한 서비스입니다.')}
-              />
-              다운로드
-            </a>
+            <div className="title">{localTitle}</div>
           )}
-          {infoEditMode && (
-            <button onClick={handleModifyReady}>수정 완료</button>
+          <SettingBox className={`setting ${isLogin || 'logined'}`}>
+            <FontAwesomeIcon
+              icon={isOpen ? faCircleMinus : faGear}
+              onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+            />
+            {isOpen && <Setting />}
+          </SettingBox>
+          <div className="info">
+            <dl>
+              <dt>작성자</dt>
+              <dd>{nickname}</dd>
+            </dl>
+            <dl>
+              <dt>작성일자</dt>
+              <dd>{createdAt}</dd>
+            </dl>
+            <dl>
+              <dt>조회수</dt>
+              <dd>{totalViews}</dd>
+            </dl>
+            <dl>
+              <dt>추천수</dt>
+              <dd>{totalLikes}</dd>
+            </dl>
+          </div>
+          {infoEditMode ? (
+            <textarea
+              cols="30"
+              rows="50"
+              onChange={(e) => {
+                setLocalContent(e.target.value);
+                dispatch(updatePostState({ contentChange: true }));
+              }}
+              value={localContent}
+            />
+          ) : (
+            <ContentBox readOnly className="body" value={localContent} />
           )}
-          {infoEditMode && (
-            <button onClick={() => dispatch(cancelModify())}>취소</button>
-          )}
-        </div>
-        <Comment />
-      </div>
-    </div>
+          <Like onClick={likeClick}>
+            {like ? '♥' : '♡'} {totalLikes}
+          </Like>
+          <LikeDownload style={{ height: '50px' }}>
+            {/* 아래 첨부파일은 회원만 다운 가능 */}
+            {infoEditMode ? (
+              <FileChange />
+            ) : (
+              <a
+                href={
+                  isLogin
+                    ? `https://${process.env.REACT_APP_AWS_BUCKET}.s3.${process.env.REACT_APP_AWS_DEFAULT_REGION}.amazonaws.com/${fileURL}`
+                    : '#'
+                }
+              >
+                <FontAwesomeIcon
+                  icon={faFileArrowDown}
+                  style={{ fontSize: '1.5rem' }}
+                  onClick={() =>
+                    !isLogin && alert('회원만 가능한 서비스입니다.')
+                  }
+                />
+                다운로드
+              </a>
+            )}
+            {infoEditMode && (
+              <button onClick={handleModifyReady}>수정 완료</button>
+            )}
+            {infoEditMode && (
+              <button onClick={() => dispatch(cancelModify())}>취소</button>
+            )}
+          </LikeDownload>
+          <Comment />
+        </Container>
+      </ContentContainer>
+    </EntireContainer>
   );
 }
 

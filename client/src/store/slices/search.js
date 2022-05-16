@@ -33,16 +33,19 @@ export const searchSlice = createSlice({
         if (stateKeys.includes(key)) state[key] = action.payload[key];
       }
     },
-    // searchReset: (state, action) => {
-    //   state = { ...state, ...action.payload };
-    // },
+    reset: (state) => {
+      console.log('동작..');
+      stateKeys.forEach((el) => {
+        state[el] = initialState[el];
+      });
+    },
     // incrementByAmount: (state, action) => {
     //   state.value += action.payload;
     // },
   },
 });
 
-export const { prev, next, markUp, markDowm, updateSearch } =
+export const { prev, next, markUp, markDowm, updateSearch, reset } =
   searchSlice.actions;
 export default searchSlice.reducer;
 export const selectSearch = (state) => state.search;

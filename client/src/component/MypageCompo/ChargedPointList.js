@@ -8,14 +8,16 @@ import { selectUserInfo } from '../../store/slices/userInfo';
 import axios from 'axios';
 
 const EntireContainer = styled.div`
-  border: 3px solid green;
+  border-left: 5px solid orange;
+  border-right: 5px solid orange;
+  background-color: white;
   height: 58%;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   > div#paging {
     text-align: center;
-    border: 1px dotted gray;
+    /* border: 1px dotted gray; */
     font-size: 1rem;
     > button {
       cursor: pointer;
@@ -30,14 +32,13 @@ const EntireContainer = styled.div`
 const UlContainer = styled.ul`
   margin: 0;
   /* margin-top: 2%; */
-  border: 3px solid skyblue;
+  /* border: 3px solid skyblue; */
   height: 90%;
   min-width: 85%;
   list-style: none;
   padding: 2%;
   overflow: auto;
   > li.item {
-    border: 1px solid red;
     margin-bottom: 3%;
     > p {
       border: 1px solid black;
@@ -127,7 +128,7 @@ function ChargedPointList() {
       </UlContainer>
       <div id="paging">
         <button id="prev" onClick={prevBtnClick} disabled={current === 1}>
-          이전
+          {'<<'}
         </button>
         <span>
           {current} / {totalPage}
@@ -137,7 +138,7 @@ function ChargedPointList() {
           onClick={nextBtnClick}
           disabled={current === totalPage}
         >
-          다음
+          {'>>'}
         </button>
       </div>
     </EntireContainer>

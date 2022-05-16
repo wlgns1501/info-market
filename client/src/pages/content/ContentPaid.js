@@ -22,7 +22,7 @@ import styled from 'styled-components';
 import '../../css/Content.css';
 
 const EntireContainer = styled.div`
-  > div.modal div.content {
+  > div.content-container div.modal div.content {
     &.payment {
       /* 모달창 배경색 */
       background-color: #f3f702;
@@ -66,8 +66,9 @@ function ContentPaid() {
 
   const handleConfirm = (e) => {
     e.preventDefault();
-    if (!isLogin) return alert('자신의 게시물은 구매할 수 없습니다.');
-    if (userInfoId === writer) return alert('');
+    if (!isLogin) return alert('로그인 해주세요');
+    if (userInfoId === writer)
+      return alert('자신의 게시물은 구매할 수 없습니다.');
     //포인트 부족 --> 충전)
     if (Number(targetPoint) > Number(point)) {
       dispatch(

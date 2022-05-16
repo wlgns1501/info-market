@@ -6,7 +6,11 @@ import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
-import { selectPoint, updatePointState } from '../../store/slices/point';
+import {
+  selectPoint,
+  updatePointState,
+  initPayment,
+} from '../../store/slices/point';
 import ChargeBox from '../ChargeBox';
 import AWS from 'aws-sdk';
 import { v1, v3, v4, v5 } from 'uuid';
@@ -27,7 +31,7 @@ const myBucket = new AWS.S3({
 });
 
 const EntireContainer = styled.div`
-  border: 5px solid blue;
+  /* border: 5px solid blue; */
   height: 100%;
   @media screen and (max-width: 800px) {
     font-size: 0.9rem;
@@ -55,15 +59,22 @@ const EntireContainer = styled.div`
   > ul#user-Info-container {
     margin-top: 0;
     border: 5px solid orange;
+    border-radius: 5px;
+    font-weight: bold;
     min-height: 25%;
+    background-color: white;
     display: flex;
     list-style: none;
     padding-left: 0;
     align-items: center;
     justify-content: space-around;
     > li {
-      border: 1px dotted black;
+      /* border: 1px dotted black; */
       height: 200px;
+      &:nth-child(2) {
+        border-left: 1px solid lightgray;
+        border-right: 1px solid lightgray;
+      }
       &.profile {
         /* flex: 3; */
         min-width: 35%;
@@ -74,16 +85,23 @@ const EntireContainer = styled.div`
           flex-direction: column;
         }
         > div {
-          border: 3px solid purple;
+          /* border: 3px solid purple; */
           margin: 0 5px 0 5px;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          &#grade {
+            /* border: 3px solid blue; */
+            border-radius: 3px;
+            padding: 3% 2%;
+            background-color: #555c5c;
+            color: white;
+          }
           > figure {
             margin: 0;
             margin-bottom: 8px;
-            border: 1px solid black;
+            /* border: 1px solid black; */
             min-width: 80px;
             min-height: 80px;
             border-radius: 50%;
@@ -103,10 +121,10 @@ const EntireContainer = styled.div`
         display: flex;
         justify-content: center;
         /* align-items: center; */
-        border: 1px solid green;
+        /* border: 1px solid green; */
 
         > div.detail {
-          border: 2px solid black;
+          /* border: 2px solid black; */
           /* flex: 6; */
           width: 85%;
           display: flex;
@@ -114,7 +132,7 @@ const EntireContainer = styled.div`
           justify-content: space-around;
           align-items: stretch;
           > div {
-            border: 1px solid blue;
+            /* border: 1px solid blue; */
             margin: 0;
             /* width: 80%; */
             &#charged {
@@ -124,11 +142,19 @@ const EntireContainer = styled.div`
               /* margin-bottom: 7px; */
             }
             > p {
-              border: 1px solid orange;
+              /* border: 1px solid orange; */
+              &:nth-child(1) {
+                background-color: #fa9c19;
+                border-radius: 5px;
+                padding: 3% 1%;
+                color: white;
+              }
               margin: 0;
               text-align: center;
               &.amount {
-                padding: 3%;
+                padding: 4% 2%;
+                border: 1px solid lightgray;
+                border-radius: 5px;
               }
             }
           }
@@ -136,7 +162,7 @@ const EntireContainer = styled.div`
       }
 
       &.charging-withdrawal {
-        /* flex: 2; */
+        /* border: 1px solid gray; */
         min-width: 30%;
         display: flex;
         flex-direction: column;
@@ -366,13 +392,14 @@ function UserInfo() {
       {modalOpen && (
         <Modal
           role="payment"
-          handleBtnClick={() =>
+          handleBtnClick={() => {
             dispatch(
               updatePointState({
                 modalOpen: false,
               }),
-            )
-          }
+            );
+            dispatch(initPayment());
+          }}
           content={<ChargeBox />}
         />
       )}
@@ -430,7 +457,9 @@ function UserInfo() {
             )}
           </div>
           <div style={{ whiteSpace: 'nowrap' }}>{nickname}</div>
-          <div style={{ whiteSpace: 'nowrap' }}>{grade}</div>
+          <div id="grade" style={{ whiteSpace: 'nowrap' }}>
+            {grade}
+          </div>
         </li>
         <li className="my-points">
           <div className="detail">
