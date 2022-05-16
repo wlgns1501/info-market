@@ -73,12 +73,18 @@ const UlContainer = styled.ul`
     padding: 2%;
     &#top10_title {
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: bolder;
       color: black;
       line-height: 1.5rem;
       vertical-align: center;
       padding-top: 5%;
       background-color: white;
+      color: #403d3d;
+      > span {
+        border-bottom: 5px solid #c90e2a;
+        border-radius: 5px;
+        color: #09429e;
+      }
     }
 
     &.top10_post {
@@ -87,6 +93,29 @@ const UlContainer = styled.ul`
       align-items: center;
       box-shadow: 5px 7px 3px lightgray;
       margin-bottom: 10px;
+      /* opacity: 0.9; */
+      font-weight: bold;
+      font-size: 1.1rem;
+      > span.head {
+        /* border: 1px solid red; */
+        display: flex;
+        align-items: center;
+        width: 90%;
+
+        > p.title {
+          margin-left: 10px;
+          border-bottom: 2px solid gray;
+          cursor: pointer;
+          box-shadow: 0px 1px 2px gray;
+          overflow: hidden;
+        }
+      }
+      > p.writer {
+        font-size: 1rem;
+        color: white;
+        background-color: #6b1170;
+        padding: 3px 1px;
+      }
     }
   }
   > div img#ad {
@@ -107,13 +136,14 @@ function Post({ post, order }) {
 
   return (
     <li className="top10_post">
-      {order === 1 && <img src={gold} />}
-      {order === 2 && <img src={second} />}
-      {order === 3 && <img src={third} />}
-      <p style={{ overflow: 'hidden' }} className="title" onClick={handleClick}>
-        {title}
-      </p>
-
+      <span className="head">
+        {order === 1 && <img src={gold} />}
+        {order === 2 && <img src={second} />}
+        {order === 3 && <img src={third} />}
+        <p className="title" onClick={handleClick}>
+          {title}
+        </p>
+      </span>
       <p className="writer">{nickname}</p>
     </li>
   );
@@ -122,7 +152,9 @@ function Post({ post, order }) {
 function List({ posts, className }) {
   return (
     <UlContainer className={className}>
-      <li id="top10_title">Top 10 인기 정보글</li>
+      <li id="top10_title">
+        Best Info <span>TOP 10</span>
+      </li>
       {posts.map((post, idx) => (
         <Post key={post.id} post={post} order={idx + 1} />
       ))}

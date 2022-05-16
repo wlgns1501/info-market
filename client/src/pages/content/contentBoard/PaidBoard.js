@@ -31,7 +31,7 @@ const OrderContainer = styled.div`
         /* width: 250px; */
         /* padding: 3% 2%; */
         /* margin-left: -5px; */
-        width: 20%;
+        min-width: 30%;
         display: flex;
         justify-content: space-between;
         align-items: center;

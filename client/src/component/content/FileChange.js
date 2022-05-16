@@ -67,6 +67,7 @@ export default function FileChange() {
         modifyTextStep: true,
       }),
     );
+    setSelectedFile('');
   }, [modifyFileStep]);
 
   //파일 업로드 input

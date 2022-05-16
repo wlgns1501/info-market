@@ -218,6 +218,14 @@ function ContentPaid() {
     withCredentials: true,
   };
 
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
   const likeClick = () => {
     //로그인해야 누를 수 있음.
     if (!isLogin) return alert('로그인 해주세요.');
@@ -282,11 +290,13 @@ function ContentPaid() {
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
         {
+          type: 'Paid',
           title: localTitle,
           content: localContent,
           file: modyfiedFileName,
+          targetPoint,
         },
-        getConfig,
+        postConfig,
       )
       .then((res) => {
         dispatch(
@@ -298,7 +308,10 @@ function ContentPaid() {
         );
       })
       .catch((err) => {
-        if (err.response?.message) alert(err.response.message);
+        //실패했으면 브라우저상 변화가 반영이 안되어야 함.
+        setLocalTitle(title);
+        setLocalContent(content);
+        if (err.response.data?.message) alert(err.response.data.message);
       });
 
     dispatch(cancelModify());

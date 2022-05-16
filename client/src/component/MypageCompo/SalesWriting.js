@@ -133,7 +133,7 @@ function Writing() {
       .post(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info`,
         {
-          type: 'Free',
+          type: 'Paid',
           targetPoint: 0,
           title,
           content,

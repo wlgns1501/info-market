@@ -197,6 +197,14 @@ function ContentFree() {
     withCredentials: true,
   };
 
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+
   const likeClick = () => {
     //자신의 게시물이면 좋아요 못 누름.
     if (id === userId)
@@ -239,11 +247,13 @@ function ContentFree() {
       .put(
         `${process.env.REACT_APP_SERVER_DEV_URL}/info/${infoId}`,
         {
+          type: 'Free',
           title: localTitle,
           content: localContent,
           file: modyfiedFileName,
+          targetPoint: 0,
         },
-        getConfig,
+        postConfig,
       )
       .then((res) => {
         dispatch(
@@ -255,7 +265,10 @@ function ContentFree() {
         );
       })
       .catch((err) => {
-        if (err.response?.message) alert(err.response.message);
+        //실패했으면 브라우저상 변화가 반영이 안되어야 함.
+        setLocalTitle(title);
+        setLocalContent(content);
+        if (err.response.data?.message) alert(err.response.data.message);
       });
 
     dispatch(cancelModify());
@@ -354,7 +367,7 @@ function ContentFree() {
               <FileChange />
             ) : (
               //css 끝나면 !fileURL --> fileURL로 바꾸기
-              !fileURL && (
+              fileURL && (
                 <a
                   href={
                     isLogin

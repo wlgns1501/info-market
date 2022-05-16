@@ -44,8 +44,8 @@ const WritingContainer = styled.div`
         margin-top: 2%;
         margin-bottom: 2%;
         height: 2rem;
-        resize: none;
-        overflow: hidden;
+        /* resize: none;
+        overflow: hidden; */
       }
       &#content {
         flex-grow: 1;
@@ -224,7 +224,7 @@ function Writing() {
         name="title"
         id="title"
         rows="1"
-        cols="55"
+        cols="1"
         placeholder="제목"
         maxlength="100" //삭제?
         value={textValues.title}
