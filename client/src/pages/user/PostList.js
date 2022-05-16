@@ -185,7 +185,10 @@ function PostList() {
   const LIMIT = 8;
   const offset = page * LIMIT - LIMIT;
 
+  const [msg, setMsg] = useState('');
+
   useEffect(() => {
+    setMsg('');
     const select1 = search_type || 'title';
     const select2 = info_type || 'All';
 
@@ -219,10 +222,10 @@ function PostList() {
         if (rows) dispatch(updateSearch({ list: [...rows] }));
       })
       .catch((err) => {
-        console.log('###', err);
-        // navigate(-1);
+        let { message } = err.response.data;
+        if (message) setMsg(message);
       });
-  }, [page]);
+  }, [page, search_type, info_type, input_value]);
 
   return (
     <EntireContainer>
@@ -233,7 +236,7 @@ function PostList() {
         {list.map((post) => {
           return <Post key={post.id} post={post} />;
         })}
-        {list.length === 0 && <li>해당하는 정보가 없습니다.</li>}
+        {list.length === 0 && <li>{msg}</li>}
       </UlContainer>
       <Pagination />
     </EntireContainer>

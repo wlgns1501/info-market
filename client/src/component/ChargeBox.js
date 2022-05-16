@@ -85,12 +85,9 @@ export function PayWithPoints({ handleClick }) {
           postConfig,
         )
         .then((res) => {
-          const { message } = res.data;
-          if (message) {
-            dispatch(updateState({ point: restPoint }));
-            dispatch(updatePostState({ isPurchased: true }));
-            alert('결제 성공');
-          }
+          dispatch(updateState({ point: restPoint }));
+          dispatch(updatePostState({ isPurchased: true }));
+          alert('결제 성공');
         })
         .catch((err) => alert('결제 실패'));
       //loading indicator end

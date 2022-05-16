@@ -6,7 +6,11 @@ import user from '../../images/user.png';
 import Modal from '../../modals/Modal-1.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
-import { selectPoint, updatePointState } from '../../store/slices/point';
+import {
+  selectPoint,
+  updatePointState,
+  initPayment,
+} from '../../store/slices/point';
 import ChargeBox from '../ChargeBox';
 import AWS from 'aws-sdk';
 import { v1, v3, v4, v5 } from 'uuid';
@@ -222,7 +226,6 @@ function UserInfo() {
       )
       .then((res) => {
         const { user } = res.data;
-        console.log('user: ', user)
         if (user) {
           delete user.password;
           dispatch(updateState({ ...user }));
@@ -389,13 +392,14 @@ function UserInfo() {
       {modalOpen && (
         <Modal
           role="payment"
-          handleBtnClick={() =>
+          handleBtnClick={() => {
             dispatch(
               updatePointState({
                 modalOpen: false,
               }),
-            )
-          }
+            );
+            dispatch(initPayment());
+          }}
           content={<ChargeBox />}
         />
       )}
