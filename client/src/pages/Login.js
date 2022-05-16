@@ -77,7 +77,7 @@ const LoginFormRight = styled.div`
 
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 100px;
   background: rgb(255, 255, 255);
 `;
 
@@ -236,12 +236,12 @@ function Login() {
     배포 및 사이트 등록이 완료되면, 해당 도메인을 redirect_uri 등록하여 bit.ly 주소를 받을 수 있음
     임시로 타 프로젝트와 연동한 부분
   */
+
   const handleOauth = (oauth) => {
     if (oauth === kakaoOauth) {
-      window.open('https://bit.ly/37DB7qp');
-    }
-    if (oauth === naverOauth) {
-      window.open('https://bit.ly/3rIXmCH');
+      window.open(
+        'https://kauth.kakao.com/oauth/authorize?client_id=e163b3a1d2d8c30089a5b1b572c2b807&redirect_uri=http://localhost:3000/oauth/kakao/callback&response_type=code%27',
+      );
     }
   };
 
@@ -320,13 +320,13 @@ function Login() {
                   >
                     카카오 로그인
                   </button>
-                  <button
+                  {/* <button
                     className="naver-login"
                     // onClick={() => handleOauth(naverOauth)}
                     ref={naverOauth}
                   >
                     네이버 로그인
-                  </button>
+                  </button> */}
                   <button
                     className="login-btn"
                     type="submit"
