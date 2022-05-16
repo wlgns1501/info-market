@@ -22,7 +22,6 @@ import {
 import Setting from '../../component/content/Setting';
 import Modal from '../../modals/Modal-1';
 import FileChange from '../../component/content/FileChange';
-import searchBack from '../../images/searchBack.jpg';
 
 const EntireContainer = styled.div`
   * {
@@ -35,29 +34,11 @@ const EntireContainer = styled.div`
 
 const ContentContainer = styled.div`
   width: 100vw;
-  height: 100%;
+  /* height: 100vh; */
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  /* position: relative;
-  z-index: 1;
-  /* background-image: url(${searchBack});
-  background-size: cover; */
-  /* > ::before {
-    width: 100%;
-    height: 100%;
-    content: "";
-    background-image: url(${searchBack});
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    opacity: 0.5;
-  } */
 `;
 const Container = styled.div`
   width: 800px;
@@ -372,7 +353,8 @@ function ContentFree() {
             {infoEditMode ? (
               <FileChange />
             ) : (
-              fileURL && (
+              //css 끝나면 !fileURL --> fileURL로 바꾸기
+              !fileURL && (
                 <a
                   href={
                     isLogin
