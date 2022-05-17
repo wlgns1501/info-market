@@ -199,31 +199,48 @@ module.exports = {
     let cursor: number;
 
     let like;
-    // console.log(pages);
-
-    // console.log(req.query.lastId);
-
-    if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo(
-        Number(pages),
-        Number(limit),
-        'Free',
-      );
-      if (!recentInfo) {
-        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
-      }
-      return res
-        .status(200)
-        .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
-    } else {
-      cursor = Number(req.query.lastId);
-    }
 
     if (like_type === 'true') {
       like = 'desc';
     } else if (like_type === 'false') {
       like = 'asc';
     }
+
+    if (Number(req.query.lastId) === 0) {
+      if (like_type === 'false') {
+        const recentInfo = await infoDb.recentInfo(
+          Number(pages),
+          Number(limit),
+          'Free',
+        );
+
+        if (!recentInfo) {
+          return res
+            .status(406)
+            .json({ message: '게시물이 존재하지 않습니다.' });
+        }
+        return res
+          .status(200)
+          .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
+      } else {
+        const recentInfo = await infoDb.likeInfo(
+          Number(pages),
+          Number(limit),
+          like,
+          'Free',
+        );
+        if (!recentInfo) {
+          return res
+            .status(406)
+            .json({ message: '게시물이 존재하지 않습니다.' });
+        }
+        return res
+          .status(200)
+          .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
+      }
+    }
+
+    cursor = Number(req.query.lastId);
 
     const freeInfo = await infoDb.findFreeInfo(
       Number(pages),
@@ -249,27 +266,48 @@ module.exports = {
 
     let like;
 
-    if (Number(req.query.lastId) === 0) {
-      const recentInfo = await infoDb.recentInfo(
-        Number(pages),
-        Number(limit),
-        'Paid',
-      );
-      if (!recentInfo) {
-        return res.status(406).json({ message: '게시물이 존재하지 않습니다.' });
-      }
-      return res
-        .status(200)
-        .json({ info: recentInfo, message: '무료 게시물을 가져왔습니다.' });
-    } else {
-      cursor = Number(req.query.lastId);
-    }
-
     if (like_type === 'true') {
       like = 'desc';
     } else if (like_type === 'false') {
       like = 'asc';
     }
+
+    if (Number(req.query.lastId) === 0) {
+      if (Number(req.query.lastId) === 0) {
+        if (like_type === 'false') {
+          const recentInfo = await infoDb.recentInfo(
+            Number(pages),
+            Number(limit),
+            'Paid',
+          );
+
+          if (!recentInfo) {
+            return res
+              .status(406)
+              .json({ message: '게시물이 존재하지 않습니다.' });
+          }
+          return res
+            .status(200)
+            .json({ info: recentInfo, message: '유료 게시물을 가져왔습니다.' });
+        } else {
+          const recentInfo = await infoDb.likeInfo(
+            Number(pages),
+            Number(limit),
+            like,
+            'Paid',
+          );
+          if (!recentInfo) {
+            return res
+              .status(406)
+              .json({ message: '게시물이 존재하지 않습니다.' });
+          }
+          return res
+            .status(200)
+            .json({ info: recentInfo, message: '유료 게시물을 가져왔습니다.' });
+        }
+      }
+    }
+    cursor = Number(req.query.lastId);
 
     const paidInfo = await infoDb.findPaidInfo(
       Number(pages),

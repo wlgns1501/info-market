@@ -394,3 +394,39 @@ export async function recentInfo(pages: number, limit: number, type: string) {
     },
   });
 }
+
+export async function likeInfo(
+  pages: number,
+  limit: number,
+  like: string,
+  type: string,
+) {
+  return await Info.findAndCountAll({
+    order: [['totalLikes', like]],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      type,
+      activate: true,
+    },
+  });
+}

@@ -15,15 +15,12 @@ module.exports = {
   },
   approve: async (req: Request, res: Response) => {
     const imp_key = config.imp.imp_key;
-    // console.log(imp_key);
 
     const imp_secret = config.imp.imp_secret;
     const url: string = 'https://api.iamport.kr/users/getToken';
     const { userId } = req;
-    // const userId: number = 1;
 
     const user = await userDb.findPkUser(Number(userId));
-    // console.log(user);
 
     if (!user) {
       return res.status(403).json({ message: '유저가 존재하지 않습니다.' });
@@ -69,7 +66,6 @@ module.exports = {
       });
 
     const imp_token: string = response.data.response.access_token;
-    console.log(imp_token);
 
     const complete_url: string = `https://api.iamport.kr/payments/${pointCharge.imp_uid}`;
 
@@ -81,7 +77,7 @@ module.exports = {
       console.log(err);
     });
 
-    const paymentData = getPaymentData.req.body;
+    const paymentData = getPaymentData.data.response;
 
     const order = await pointDb.findUserChargePoint(
       Number(userId),
@@ -91,7 +87,6 @@ module.exports = {
     const amountToBePaid = order?.point;
 
     const { amount, status } = paymentData;
-    // console.log(paymentData);
 
     if (amount === amountToBePaid) {
       // await pointDb.findAndUpdate(merchant_uid,  )
@@ -99,8 +94,7 @@ module.exports = {
         case 'ready':
           break;
         case 'paid':
-          userPoint += amount;
-          // console.log(userPoint);
+          userPoint += pointCharge.point;
           await userDb.editUserPoint(Number(userId), userPoint);
           return res
             .status(200)
