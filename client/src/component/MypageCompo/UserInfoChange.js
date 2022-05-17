@@ -346,7 +346,7 @@ function UserInfoChange() {
 
     axios
       .put(
-        `${process.env.REACT_APP_SERVER_DEV_URL}/users/${id}`,
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/userInfo/${id}`,
         resultObj,
         config,
       )
