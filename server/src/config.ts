@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
 export const config = {
@@ -13,5 +13,11 @@ export const config = {
     client_key: process.env.KAKAO_CLIENT_KEY,
     admin_key: process.env.KAKAO_ADMIN_KEY,
     test_cid: process.env.KAKAO_TEST_CID,
+  },
+  imp: {
+    imp_code: process.env.IMP_CODE,
+    imp_key: process.env.IMP_KEY,
+    imp_secret: process.env.IMP_SECRET,
+    imp_cid: process.env.IMP_CID,
   },
 };

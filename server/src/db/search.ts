@@ -16,9 +16,10 @@ export async function searchByTitle(
         [Op.like]: '%' + titles + '%',
       },
       type: info_type,
+      activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -26,10 +27,11 @@ export async function searchByTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -53,9 +55,10 @@ export async function searchByContent(
         [Op.like]: '%' + content + '%',
       },
       type: info_type,
+      activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -63,10 +66,11 @@ export async function searchByContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -88,9 +92,10 @@ export async function searchAllTitle(
       title: {
         [Op.like]: '%' + titles + '%',
       },
+      activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -98,10 +103,11 @@ export async function searchAllTitle(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -123,9 +129,10 @@ export async function searchAllContent(
       content: {
         [Op.like]: '%' + content + '%',
       },
+      activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -133,10 +140,11 @@ export async function searchAllContent(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -157,9 +165,10 @@ export async function searchByNick(
     order: [['createdAt', 'desc']],
     where: {
       type: info_type,
+      activate: true,
     },
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -167,10 +176,11 @@ export async function searchByNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -194,7 +204,10 @@ export async function searchAllNick(
   return await Info.findAndCountAll({
     order: [['createdAt', 'desc']],
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
+    where: {
+      activate: true,
+    },
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -202,10 +215,11 @@ export async function searchAllNick(
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {

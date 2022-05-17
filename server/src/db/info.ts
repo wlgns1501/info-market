@@ -1,9 +1,10 @@
 import { Sequelize, Op, where } from 'sequelize';
 
+import Reply from '../models/reply';
 import Info from '../models/info';
 import User from '../models/user';
 
-export async function getInfo(infoId: string) {
+export async function getInfo(infoId: number) {
   return await Info.findOne({
     where: { id: infoId },
     attributes: [
@@ -13,25 +14,35 @@ export async function getInfo(infoId: string) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
       'targetPoint',
       'type',
+      'file',
       'totalViews',
+      'totalLikes',
     ],
     include: [
       {
         model: User,
         attributes: [],
       },
+      {
+        model: Reply,
+        attributes: ['id', 'userid', 'content', 'createdAt'],
+        include: [
+          {
+            model: User,
+            attributes: ['nickname'],
+          },
+        ],
+      },
     ],
   });
 }
 
-export async function getInfos(pages: number, limit: number) {
-  return await Info.findAndCountAll({
-    order: [['createdAt', 'desc']],
-    limit,
-    offset: (pages - 1) * 10,
+export async function getInfos() {
+  return await Info.findAll({
+    order: [['totalLikes', 'desc']],
+    limit: 10,
     attributes: [
       'id',
       [Sequelize.col('User.nickname'), 'nickname'],
@@ -39,9 +50,12 @@ export async function getInfos(pages: number, limit: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
+      'activate',
       'type',
+      'totalViews',
+      'totalLikes',
     ],
     include: [
       {
@@ -52,11 +66,46 @@ export async function getInfos(pages: number, limit: number) {
   });
 }
 
+export async function AdminGetInfo(
+  pages: number,
+  limit: number,
+  activate: boolean,
+) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    offset: (pages - 1) * limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      activate,
+    },
+  });
+}
+
 export async function getMyInfos(pages: number, limit: number, userId: number) {
   return await Info.findAndCountAll({
     order: [['createdAt', 'desc']],
     limit,
-    offset: (pages - 1) * 10,
+    offset: (pages - 1) * limit,
     where: {
       userId,
     },
@@ -67,9 +116,12 @@ export async function getMyInfos(pages: number, limit: number, userId: number) {
       'content',
       'userId',
       'createdAt',
-      'updateTimestamp',
+      'updatedAt',
       'targetPoint',
       'type',
+      'totalViews',
+      'totalLikes',
+      'activate',
     ],
     include: [
       {
@@ -86,6 +138,8 @@ export async function createInfo(
   targetPoint: number,
   type: string,
   userId: number,
+  activate: boolean,
+  file: string,
 ) {
   return await Info.create({
     title,
@@ -93,10 +147,12 @@ export async function createInfo(
     targetPoint,
     type,
     userId,
+    activate,
+    file,
   });
 }
 
-export async function removeInfo(infoId: string) {
+export async function removeInfo(infoId: number) {
   return await Info.destroy({
     where: { id: infoId },
   });
@@ -106,11 +162,13 @@ export async function BronzeEditInfo(
   infoId: string,
   title: string,
   content: string,
+  file: string,
 ) {
   return await Info.update(
     {
       title,
       content,
+      file,
     },
     { where: { id: infoId } },
   );
@@ -122,6 +180,7 @@ export async function SGEditInfo(
   content: string,
   targetPoint: number,
   type: string,
+  file: string,
 ) {
   return await Info.update(
     {
@@ -129,6 +188,7 @@ export async function SGEditInfo(
       content,
       targetPoint,
       type,
+      file,
     },
     { where: { id: infoId } },
   );
@@ -145,4 +205,228 @@ export async function viewsAdd(infoId: number, views: number) {
       },
     },
   );
+}
+
+export async function LikesAdd(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes + 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function LikesSub(infoId: number, likes: number) {
+  return await Info.update(
+    {
+      totalLikes: likes - 1,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function adminEditInfo(
+  infoId: number,
+  title: string,
+  content: string,
+  targetPoint: number,
+  type: string,
+  activate: boolean,
+) {
+  return await Info.update(
+    {
+      title,
+      content,
+      targetPoint,
+      type,
+      activate,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function activateInfo(activate: boolean, infoId: number) {
+  return await Info.update(
+    {
+      activate,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function editInfoFile(infoId: number, file: string) {
+  return await Info.update(
+    {
+      file,
+    },
+    {
+      where: {
+        id: infoId,
+      },
+    },
+  );
+}
+
+export async function findFreeInfo(
+  pages: number,
+  limit: number,
+  like: string,
+  cursor: number,
+) {
+  return await Info.findAndCountAll({
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like],
+    ],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      id: { [Op.lt]: cursor },
+
+      type: 'Free',
+    },
+  });
+}
+
+export async function findPaidInfo(
+  pages: number,
+  limit: number,
+  like_type: string,
+  activate: boolean,
+  cursor: number,
+) {
+  return await Info.findAndCountAll({
+    order: [
+      ['createdAt', 'desc'],
+      ['totalLikes', like_type],
+    ],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      id: { [Op.lt]: cursor },
+      activate,
+      type: 'Paid',
+    },
+  });
+}
+
+export async function recentInfo(pages: number, limit: number, type: string) {
+  return await Info.findAndCountAll({
+    order: [['createdAt', 'desc']],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      type,
+      activate: true,
+    },
+  });
+}
+
+export async function likeInfo(
+  pages: number,
+  limit: number,
+  like: string,
+  type: string,
+) {
+  return await Info.findAndCountAll({
+    order: [['totalLikes', like]],
+    limit,
+    attributes: [
+      'id',
+      [Sequelize.col('User.nickname'), 'nickname'],
+      'title',
+      'content',
+      'userId',
+      'createdAt',
+      'updatedAt',
+      'targetPoint',
+      'activate',
+      'type',
+      'totalViews',
+      'totalLikes',
+    ],
+    include: [
+      {
+        model: User,
+        attributes: [],
+      },
+    ],
+    where: {
+      type,
+      activate: true,
+    },
+  });
 }

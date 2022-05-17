@@ -30,6 +30,56 @@ export async function findUser(email: string) {
   });
 }
 
+export async function editUserEmail(userId: number, email: string) {
+  return await User.update(
+    {
+      email,
+    },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
+
+export async function editUserNickname(userId: number, nickname: string) {
+  return await User.update(
+    {
+      nickname,
+    },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
+export async function editUserPhone(userId: number, phone: string) {
+  return await User.update(
+    {
+      phone,
+    },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
+export async function editUserPassword(userId: number, hashPw: string) {
+  return await User.update(
+    {
+      password: hashPw,
+    },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
+
 export async function editUserInfo(
   userId: number,
   email: string,
@@ -51,7 +101,6 @@ export async function editUserInfo(
     },
   );
 }
-
 export async function AdminEditUserInfo(
   userId: number,
   email: string,
@@ -86,4 +135,34 @@ export async function findPkUser(userId: number) {
   return await User.findOne({
     where: { id: userId },
   });
+}
+
+export async function editUserPoint(userId: number, point: number) {
+  return await User.update(
+    { point },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
+}
+
+export async function checkNickname(nickname: string) {
+  return await User.findOne({
+    where: {
+      nickname,
+    },
+  });
+}
+
+export async function postImg(img: string, userId: number) {
+  return await User.update(
+    { img },
+    {
+      where: {
+        id: userId,
+      },
+    },
+  );
 }

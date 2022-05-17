@@ -2,31 +2,34 @@ import { BelongsToGetAssociationMixin, DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 import User from './user';
+import Point from './point';
 
-class Point extends Model {
+class PointRefund extends Model {
   public dataValues!: {
     id: number;
     userId: number;
-    point: number;
+    pointId: number;
+    cancel_point: number;
     state: string;
     imp_uid: string;
     merchant_uid: string;
-    payment_method_type: string;
+    reason: string;
   };
 
   public readonly id!: number;
   public userId!: BelongsToGetAssociationMixin<User>;
-  public point!: number;
-  public state!: string;
+  public pointId!: BelongsToGetAssociationMixin<Point>;
+  public cancel_point!: number;
   public readonly imp_uid!: string;
   public readonly merchant_uid!: string;
-  public payment_method_type!: string;
+  public state!: string;
+  public reason!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date;
 }
 
-Point.init(
+PointRefund.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -46,7 +49,15 @@ Point.init(
         key: 'id',
       },
     },
-    point: {
+    pointId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Point',
+        key: 'id',
+      },
+    },
+    cancel_point: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
@@ -58,9 +69,10 @@ Point.init(
     imp_uid: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      unique: true,
     },
-    payment_method_type: {
-      type: DataTypes.STRING(50),
+    reason: {
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
   },
@@ -68,8 +80,8 @@ Point.init(
     sequelize,
     timestamps: true,
     underscored: false,
-    modelName: 'Point',
-    tableName: 'Point',
+    modelName: 'PointRefund',
+    tableName: 'PointRefund',
     paranoid: true,
     // mb4 -> 이모티콘도 사용 가능
     charset: 'utf8',
@@ -78,18 +90,18 @@ Point.init(
 );
 
 export const associate = (db: dbType) => {
-  db.Point.belongsTo(db.User, {
+  db.PointRefund.belongsTo(db.User, {
     foreignKey: 'userId',
     targetKey: 'id',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });
-  db.Point.hasMany(db.PointRefund, {
+  db.PointRefund.belongsTo(db.Point, {
     foreignKey: 'pointId',
-    sourceKey: 'id',
+    targetKey: 'id',
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   });
 };
 
-export default Point;
+export default PointRefund;

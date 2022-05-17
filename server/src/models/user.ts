@@ -1,10 +1,4 @@
-import {
-  BelongsToManyAddAssociationMixin,
-  BelongsToManyGetAssociationsMixin,
-  BelongsToManyRemoveAssociationMixin,
-  DataTypes,
-  Model,
-} from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { dbType } from './index';
 
@@ -17,7 +11,9 @@ class User extends Model {
     phone: string;
     grade: string;
     point: number;
+    img: string;
   };
+
   public readonly id!: number;
   public email!: string;
   public password!: string;
@@ -25,6 +21,7 @@ class User extends Model {
   public phone!: string;
   public grade!: string;
   public point!: number;
+  public img?: string;
   public readonly createdAt!: Date; //굳이 안넣어줘도 될 것 같지만 공식문서에 있으니깐 일단 넣어줌.
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date;
@@ -63,6 +60,11 @@ User.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0,
+    },
+    img: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: '',
     },
   },
   {
@@ -104,6 +106,12 @@ export const associate = (db: dbType) => {
     onUpdate: 'CASCADE',
   });
   db.User.hasMany(db.Point, {
+    foreignKey: 'userId',
+    sourceKey: 'id',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  });
+  db.User.hasMany(db.PointRefund, {
     foreignKey: 'userId',
     sourceKey: 'id',
     onDelete: 'CASCADE',
