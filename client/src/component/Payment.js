@@ -49,7 +49,7 @@ const Payment = (effect, deps) => {
     const data = {
       pg: 'kakaopay', // PG사 (필수항목)
       pay_method: 'card', // 결제수단 (필수항목)
-      merchant_uid: `mid_${new Date().getTime()}` + v4(), // 결제금액 (필수항목)
+      merchant_uid: `mid_${new Date().getTime()}`, // 결제금액 (필수항목)
       name: '인포마켓 포인트 ', // 주문명 (필수항목)
       amount, // 금액 (필수항목)
       buyer_tel, // 구매자 전화번호 (필수항목)
