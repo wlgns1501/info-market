@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { selectUserInfo } from '../store/slices/userInfo';
 
 const EntireContainer = styled.div`
   display: flex;
@@ -12,6 +14,7 @@ const EntireContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
+  /* 모달 뒷배경 */
   background: rgba(0, 0, 0, 0.3);
   > div.content {
     width: 50vw;
@@ -25,15 +28,23 @@ const EntireContainer = styled.div`
       top: 5%;
       right: 3%;
       cursor: pointer;
+
+      &.x-btn.loading {
+        display: none;
+      }
     }
   }
 `;
 
-export default function Modal({ content, handleBtnClick }) {
+export default function Modal({ content, handleBtnClick, role }) {
+  const { showAlert } = useSelector(selectUserInfo);
   return (
-    <EntireContainer>
-      <div className="content">
-        <span className="x-btn" onClick={handleBtnClick}>
+    <EntireContainer className="modal">
+      <div className={`content ${role}`}>
+        <span
+          className={showAlert ? 'x-btn loading' : 'x-btn'}
+          onClick={handleBtnClick}
+        >
           &times;
         </span>
         {content}

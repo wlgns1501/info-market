@@ -1,12 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
 import './App.css';
+import Outline from './pages/Outline';
 import Login from './pages/Login';
 import Tos from './pages/Tos';
 import Signup from './pages/Signup';
-import Header from './component/Header';
-import Footer from './component/Footer';
 import Home from './pages/user/Home';
 import SideBar from './component/MypageCompo/SideBar';
 import FreeWriting from './component/MypageCompo/FreeWriting';
@@ -21,68 +18,28 @@ import Mypage from './pages/user/Mypage';
 import Mainpage from './pages/user/Mainpage';
 import FreeBoard from './pages/content/contentBoard/FreeBoard';
 import PaidBoard from './pages/content/contentBoard/PaidBoard';
-import WriteContentFree from './pages/content/write/WriteContentFree';
-import ContentFree from './pages/content/ContentFree';
-import WriteContentPaid from './pages/content/write/WriteContentPaid';
-import ContentPaid from './pages/content/ContentPaid';
+import PostList from './pages/user/PostList';
+import Post from './pages/user/Post';
 
 function App() {
-  // const [isLogin, setIsLogin] = useState(false);
-  // const [userInfo, setUserInfo] = useState({});
-
-  // /* 로그인상태 변경, 메인페이지 불러옴 */
-  // const isAuthenticated = () => {
-  //   axios
-  //     .get(`http://localhost:3000/auth/login`)
-  //     .then((res) => {
-  //       setUserInfo(res.data.userInfo);
-  //     })
-  //     .catch((err) => err);
-  // };
-
-  // /* 로그인 요청 성공 */
-  // const handleResponseSuccess = () => {
-  //   isAuthenticated();
-  //   setIsLogin(true);
-  // };
-
-  // /* 로그아웃. 로그인 이후 메인페이지에서 체크 예정*/
-  // const handleLogout = () => {
-  //   axios.post(`http://localhost:3000/auth/logout`).then((res) => {
-  //     setUserInfo(null);
-  //     console.log(userInfo);
-  //     setIsLogin(false);
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   console.log('before', userInfo);
-  //   // isAuthenticated();
-  //   console.log('after', userInfo);
-  // }, []);
-
   return (
     <BrowserRouter>
-      <Header />
       <Routes>
-        <Route path="/">
+        <Route path="/" element={<Outline />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="tos" element={<Tos />} />
           <Route path="signup" element={<Signup />} />
-          <Route path="main" element={<Mainpage />}>
-            {/* <Route path="searchResult">
+          <Route path="main">
+            <Route index element={<Mainpage />} />
+            <Route path="search">
               <Route index element={<PostList />} />
               <Route path=":postId" element={<Post />} />
-            </Route> */}
+            </Route>
           </Route>
-          {/* 유료컨텐츠, 무료컨텐츠 */}
-          <Route path="freeboard" element={<FreeBoard />}>
-            <Route path=":postId" element={<ContentFree />} />
-          </Route>
-          <Route path="paidboard" element={<PaidBoard />}>
-            <Route path=":postId" element={<ContentPaid />} />
-          </Route>
+          {/* 유료게시글, 무료게시글 */}
+          <Route path="freeboard" element={<FreeBoard />} />
+          <Route path="paidboard" element={<PaidBoard />} />
           <Route path="mypage" element={<SideBar />}>
             <Route index element={<Mypage />} />
             <Route path="info" element={<UserInfo />}>
@@ -99,7 +56,6 @@ function App() {
           <Route path="*" element={<NotFoundPage />} /> */}
         </Route>
       </Routes>
-      {/* <Footer /> */}
     </BrowserRouter>
   );
 }

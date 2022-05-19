@@ -9,13 +9,16 @@ import {
   selectUserInfo,
 } from '../../store/slices/userInfo';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EntireContainer = styled.div`
-  border: 5px solid red;
+  /* border: 5px solid red; */
   height: 57%;
   display: flex;
   > div.first {
-    border: 1px solid black;
+    border-left: 5px solid orange;
+    border-right: 1px solid lightgray;
+    background-color: white;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -33,19 +36,22 @@ const EntireContainer = styled.div`
     }
   }
   > form.second {
-    border: 1px solid gold;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    background-color: white;
+    border-right: 5px solid orange;
     flex: 2;
     display: flex;
     flex-direction: column;
     > div.modifying-box {
-      border: 3px solid green;
+      /* border: 3px solid green; */
       flex: 9;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       > div.input-box {
-        border: 1px solid red;
+        /* border: 1px solid red; */
         margin-bottom: 10px;
         > input {
           font-size: 1rem;
@@ -70,8 +76,9 @@ const EntireContainer = styled.div`
       }
     }
     > div.confirm {
-      padding: 2%;
-      border: 3px solid black;
+      /* border: 3px solid black; */
+      border-top: 1px solid lightgray;
+      padding-top: 15px;
       flex: 1;
       display: flex;
       justify-content: flex-end;
@@ -85,20 +92,18 @@ const EntireContainer = styled.div`
 `;
 
 function UserInfoChange() {
-  const {
-    userId,
-    email,
-    password,
-    nickname,
-    profileImg,
-    point,
-    accToken,
-    grade,
-    chargedPoint,
-    earnings,
-    phone,
-  } = useSelector(selectUserInfo);
+  const { isLogin, id, email, password, nickname, accToken, phone } =
+    useSelector(selectUserInfo);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
   const [locked, setLocked] = useState(true);
   const [pwdCheckInput, setPwdCheckInput] = useState('');
@@ -135,6 +140,10 @@ function UserInfoChange() {
     if (e.target.name === 'password') pwdCheck(e.target.value);
     if (e.target.name === 'rePwd') rePwdCheck(e.target.value);
   };
+
+  useEffect(() => {
+    if (!isLogin) navigate('/main');
+  }, [isLogin]);
 
   useEffect(() => {
     console.log('inputVal: ', inputVal);
@@ -254,27 +263,26 @@ function UserInfoChange() {
     if (inputVal.nickname === nickname) {
       setErrorMsg({
         ...errorMsg,
-        nickname: '사용 중인 닉네임입니다.',
+        nickname: '현재 사용 중인 닉네임입니다.',
       });
     } else {
       axios
-        .get(`http://localhost:8080/check/${inputVal.nickname}`, {
-          Authorization: `Bearer ${accToken}`,
-        })
+        .post(
+          `${process.env.REACT_APP_SERVER_DEV_URL}/users/nickname`,
+          {
+            nickname: inputVal.nickname,
+          },
+          postConfig,
+        )
         .then((res) => {
-          const { message } = res.data;
-          if (message && message === 'ok') {
-            setInputVal({ ...inputVal, nickNameAuthentication: true });
-            setErrorMsg({ ...errorMsg, nickname: '' }); //서버테스트후 삭제여부 결정
-          } else {
-            setErrorMsg({
-              ...errorMsg,
-              nickname: '중복된 닉네임이 있습니다.',
-            });
-          }
+          setInputVal({ ...inputVal, nickNameAuthentication: true });
+          setErrorMsg({ ...errorMsg, nickname: '' });
         })
         .catch((err) => {
-          alert('서버 에러 발생! 다시 시도해주세요.');
+          setErrorMsg({
+            ...errorMsg,
+            nickname: err.response?.message || '닉네임 변경 불가',
+          });
           setInputVal({ ...inputVal, nickname: '' });
         });
     }
@@ -298,7 +306,7 @@ function UserInfoChange() {
   //이메일 인증 버튼 클릭 이벤트
   const emailAuthentication = (e) => {
     e.preventDefault();
-    if (inputVal.email === email) {
+    if (inputVal.email === email || inputVal.emailAuthentication) {
       setErrorMsg({
         ...errorMsg,
         email: '이미 인증된 이메일입니다.',
@@ -313,10 +321,11 @@ function UserInfoChange() {
   //회원정보수정 제출
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userInfoObj = { email, nickname, phone, password };
+    // const userInfoObj = { email, nickname, phone, password };
     const { email, nickname, phone, password } = inputVal;
     let tempObj = { email, nickname, phone, password };
     let resultObj = {};
+
     //1. '값'이 있는 속성만 추출해서 보내기
     for (let key in tempObj) {
       if (tempObj[key]) resultObj = { ...resultObj, [key]: tempObj[key] };
@@ -327,16 +336,20 @@ function UserInfoChange() {
     // }
     // resultObj = {...tempObj}
 
-    console.log('resultObj: ', resultObj);
     const config = {
       headers: {
-        'content-type': 'multipart/form-data',
+        'content-type': 'application/json',
         Authorization: `Bearer ${accToken}`,
       },
       withCredentials: true,
     };
+
     axios
-      .post(`http://localhost:8080/users/${userId}`, resultObj, config)
+      .put(
+        `${process.env.REACT_APP_SERVER_DEV_URL}/users/userInfo/${id}`,
+        resultObj,
+        config,
+      )
       .then((res) => {
         dispatch(updateState(resultObj));
         setLocked(true);
@@ -349,8 +362,11 @@ function UserInfoChange() {
   const handleWithdrawal = (e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8080/auth/${userId}`, {
-        Authorization: `Bearer ${accToken}`,
+      .delete(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accToken}`,
+        },
+        withCredentials: true,
       })
       .then((res) => dispatch(clearState()))
       .catch((err) => alert('서버 에러 발생! 다시 시도해주세요.'));

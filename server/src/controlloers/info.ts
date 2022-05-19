@@ -206,6 +206,7 @@ module.exports = {
       like = 'asc';
     }
 
+
     if (Number(req.query.lastId) === 0) {
       if (like_type === 'false') {
         const recentInfo = await infoDb.recentInfo(
@@ -266,11 +267,13 @@ module.exports = {
 
     let like;
 
+
     if (like_type === 'true') {
       like = 'desc';
     } else if (like_type === 'false') {
       like = 'asc';
     }
+
 
     if (Number(req.query.lastId) === 0) {
       if (Number(req.query.lastId) === 0) {

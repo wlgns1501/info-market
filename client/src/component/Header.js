@@ -4,8 +4,12 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import UserMenu from './UserMenu';
+import styled from 'styled-components';
+
+const Li = styled.li`
+  font-size: 1.2rem;
+`;
 
 function Header() {
   // const test = useSelector((state) => state);
@@ -14,7 +18,6 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleBar = () => {
-    console.log('bar눌림');
     setIsOpen(!isOpen);
   };
 
@@ -25,26 +28,33 @@ function Header() {
           <FontAwesomeIcon
             icon={faBars}
             className="header-faBars"
-            onClick={() => handleBar()}
+            onClick={handleBar}
           />
           <NavLink to="/">
-            <img
-              src={logo}
-              alt="logo "
-              className="header-logo"
-              style={{ minWidth: '150px' }}
-            />
+            <img src={logo} alt="logo " className="header-logo" />
           </NavLink>
         </div>
-        <ul className="header-menu">
-          <NavLink to="/main">
-            <li>메인페이지</li>
+        <ul className={isOpen ? 'header-menu open' : 'header-menu'}>
+          <NavLink
+            to="/main"
+            className={({ isActive }) => isActive && 'activated'}
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
+            <Li>메인페이지</Li>
           </NavLink>
-          <NavLink to="/freeboard">
-            <li>무료 정보 게시판</li>
+          <NavLink
+            to="/freeboard"
+            className={({ isActive }) => isActive && 'activated'}
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
+            <Li>무료 정보 게시판</Li>
           </NavLink>
-          <NavLink to="/paidboard">
-            <li>유료 정보 게시판</li>
+          <NavLink
+            to="/paidboard"
+            className={({ isActive }) => isActive && 'activated'}
+            style={{ color: 'inherit', textDecoration: 'inherit' }}
+          >
+            <Li>유료 정보 게시판</Li>
           </NavLink>
         </ul>
         <ul className="header-info">

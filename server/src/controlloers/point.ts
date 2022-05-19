@@ -15,7 +15,6 @@ module.exports = {
   },
   approve: async (req: Request, res: Response) => {
     const imp_key = config.imp.imp_key;
-
     const imp_secret = config.imp.imp_secret;
     const url: string = 'https://api.iamport.kr/users/getToken';
     const { userId } = req;
@@ -77,7 +76,7 @@ module.exports = {
       console.log(err);
     });
 
-    const paymentData = getPaymentData.data.response;
+    const paymentData = getPaymentData.req.body;
 
     const order = await pointDb.findUserChargePoint(
       Number(userId),
@@ -94,7 +93,9 @@ module.exports = {
         case 'ready':
           break;
         case 'paid':
+
           userPoint += pointCharge.point;
+
           await userDb.editUserPoint(Number(userId), userPoint);
           return res
             .status(200)

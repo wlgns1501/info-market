@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +22,7 @@ const EntireContainer = styled.li`
     }
   }
   > ul.popup {
+    z-index: 1000;
     background-color: #fff;
     position: absolute;
     top: calc(100% + 25px);
@@ -32,6 +34,7 @@ const EntireContainer = styled.li`
     > li {
       padding: 15px 19px;
       font-family: var(--noto-sans);
+      white-space: nowrap;
       &:hover {
         background-color: #f4f4f4;
         cursor: pointer;
@@ -41,9 +44,16 @@ const EntireContainer = styled.li`
 `;
 
 function UserMenu() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { isLogin } = useSelector(selectUserInfo);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+  const { isLogin, accToken, grade } = useSelector(selectUserInfo);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
   const handleButtonClick = useCallback((e) => {
     e.stopPropagation();
@@ -62,13 +72,13 @@ function UserMenu() {
   }, [isOpen]);
 
   const handleLogOut = () => {
-    // axios
-    //   .get(
-    //     'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com/auth/logout',
-    //   )
-    //   .then((res) => dispatch(logout()))
-    //   .catch((err) => console.log(err));
-    dispatch(clearState());
+    axios
+      .post(`${process.env.REACT_APP_SERVER_DEV_URL}/auth/logout`, null, config)
+      .then((res) => {
+        dispatch(clearState());
+        navigate('/main');
+      })
+      .catch((err) => alert(err.response.message));
   };
 
   return (
@@ -85,15 +95,23 @@ function UserMenu() {
           <li className="login-btn">
             <Link
               to="/login"
-              style={{ textDecoration: 'none', color: 'black' }}
+              style={{
+                textDecoration: 'none',
+                color: 'black',
+                fontSize: '1rem',
+              }}
             >
               로그인
             </Link>
           </li>
           <li className="signup-btn">
             <Link
-              to="/signup"
-              style={{ textDecoration: 'none', color: 'black' }}
+              to="/tos"
+              style={{
+                textDecoration: 'none',
+                color: 'black',
+                fontSize: '1rem',
+              }}
             >
               회원가입
             </Link>
@@ -114,6 +132,8 @@ function UserMenu() {
               마이페이지
             </Link>
           </li>
+          <li onClick={() => navigate(`/mypage/freeWriting`)}>무료글 작성</li>
+          <li onClick={() => navigate(`/mypage/salesWriting`)}>유료글 작성</li>
         </ul>
       )}
     </EntireContainer>

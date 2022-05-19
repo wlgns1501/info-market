@@ -11,7 +11,7 @@
 }
 
 .header-logo {
-  width: 8em;
+  width: 13em;
   height: auto;
 }
 
@@ -28,11 +28,12 @@
 }
 
 .header-menu li {
-  padding: 3px 12px;
+  padding: 5px 12px;
 }
 
 .header-menu li:hover {
   background-color: gray;
+  color: white;
   border-radius: 4px;
 }
 
@@ -52,16 +53,30 @@
   right: 30px;
   font-size: 24px;
 }
-@media screen and (max-width: 777px) {
+
+/* a.activated {
+  background-color: gray;
+
+  border-radius: 4px;
+}
+
+a.activated li {
+  color: white;
+} */
+
+@media screen and (max-width: 900px) {
   .header-navbar {
     flex-direction: column;
     align-items: flex-start;
   }
   .header-menu {
-    /* display: none; */
+    display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
+  }
+  .header-menu.open {
+    display: block;
   }
   .header-menu li {
     width: 100%;

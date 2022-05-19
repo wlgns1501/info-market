@@ -1,68 +1,102 @@
 import React from 'react';
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
-import freeBoardData from '../../../mockdata/freeBoardData';
-const { posts, total } = freeBoardData;
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserInfo } from '../../../store/slices/userInfo';
+import { clearPostState } from '../../../store/slices/selectedPost';
+import { useNavigate } from 'react-router-dom';
 
-const EntireContainer = styled.div`
+const OrderContainer = styled.div`
+  background-color: #ccc7a9;
+  opacity: 0.9;
+  width: 100%;
+  padding: 5px;
   display: flex;
-  background-color: #faf9f5;
-  flex-direction: column;
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
-  min-height: 75vh;
-  /* border: 5px solid blue; */
-  overflow-y: scroll;
-  > div#order {
-    /* border: 1px solid red; */
+  /* box-shadow: 3px 5px 4px #75746d; */
+  > div {
+    /* border: 3px solid red; */
     width: 50%;
-    margin-top: 10px;
-    /* border: 1px solid black; */
-    > ul#paging {
-      list-style: none;
-      display: flex;
-      /* width: 30px; */
-      justify-content: center;
-      align-items: center;
-      /* border: 1px solid black; */
-      padding: 0;
-      margin: 0;
-      > li {
-        width: 1.5rem;
-        height: 1.5rem;
-        text-align: center;
-        line-height: 1.5rem;
-        border: 1px solid gray;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    > span {
+      /* border: 2px solid blue; */
+      font-family: '순천B';
+      &.latest_best {
+        /* width: 250px; */
+        /* padding: 3% 2%; */
+        /* margin-left: -5px; */
+        min-width: 30%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > input {
+          display: none;
+        }
+      }
+
+      &.count {
+        display: flex;
+        align-items: center;
+      }
+
+      > label {
+        font-family: '순천B';
+        font-size: 1rem;
+        /* border: 1px solid red; */
+        height: 100%;
+        /* padding: 0 3%; */
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: center;
         border-radius: 5px;
-        box-shadow: 2px;
+      }
+      > label.clicked {
+        background-color: #69675c;
+        box-shadow: 3px 5px 4px #3b3a37;
+        color: white;
+        font-size: 1rem;
       }
     }
   }
+`;
+
+const EntireContainer = styled.div`
+  display: flex;
+  /* background-color: #faf9f5; */
+  flex-direction: column;
+  align-items: center;
+  height: 800px;
+  overflow-y: scroll;
   > ul.postList {
     /* border: 3px solid red; */
+    margin: 0;
     list-style: none;
     padding: 0;
-    max-width: 50%;
-    height: 600px;
+    width: 50%;
+    height: 1200px;
     padding: 1%;
     > li.post {
       border: 1px solid black;
       background-color: white;
+      width: 100%;
       &:not(:last-child) {
         margin-bottom: 15px;
       }
       > div.writer_createdAt {
-        border: 1px dotted black;
+        /* border: 1px dotted black; */
         padding: 5px;
         display: flex;
         justify-content: space-between;
         > span {
-          border: 2px dotted purple;
+          /* border: 2px dotted purple; */
           &.writer {
             > span.icon {
               margin-right: 10px;
@@ -72,29 +106,26 @@ const EntireContainer = styled.div`
           }
         }
       }
-      > p {
-        border: 1px dotted black;
+      > p.title {
+        border: 1px solid lightgray;
+        box-shadow: 2px 2px 2px lightgray;
         margin: 0;
-        overflow: hidden;
         padding: 5px;
-        &.title {
-          margin-top: 3px;
-          margin-bottom: 2px;
-        }
-        &.content {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          margin-bottom: 3px;
-        }
+        margin-top: 3px;
+        margin-bottom: 2px;
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 100%;
       }
       > div.total_Likes_Views {
-        border: 1px dotted black;
+        /* border: 1px dotted black; */
         padding: 5px;
         display: flex;
         justify-content: space-between;
         > span {
-          border: 1px dotted orange;
+          /* border: 1px dotted orange; */
           &.totalLikes {
           }
         }
@@ -105,18 +136,20 @@ const EntireContainer = styled.div`
 
 function Post({ post }) {
   const {
-    id,
+    id: postId,
     title,
-    writer,
+    nickname,
     content,
     totalLikes,
-    reviews,
     totalViews,
     createdAt,
     updatedAt,
+    userId,
   } = post;
 
-  const day = createdAt.split(' ')[0];
+  const navigate = useNavigate();
+  const day = createdAt.split('T')[0];
+
   return (
     <li className="post">
       <div className="writer_createdAt">
@@ -124,12 +157,17 @@ function Post({ post }) {
           <span className="icon">
             <FontAwesomeIcon icon={faUser} />
           </span>
-          {writer}
+          {nickname}
         </span>
         <span className="createdAt">{day}</span>
       </div>
-      <p className="title">{title}</p>
-      <p className="content">{content}</p>
+      <p
+        className="title"
+        style={{ cursor: 'pointer' }}
+        onClick={() => navigate(`/main/search/${postId}`)}
+      >
+        {title}
+      </p>
       <div className="total_Likes_Views">
         <span className="totalLikes">
           <FontAwesomeIcon icon={faThumbsUp} /> {totalLikes}
@@ -143,56 +181,113 @@ function Post({ post }) {
 }
 
 function FreeBoard() {
-  const range = (total) => Array.from({ length: total }, (_, i) => i + 1);
-  // const [list, setList] = useState([]);
-  const [list, setList] = useState([...posts.slice(0, 8)]);
+  const dispatch = useDispatch();
+  const { accToken } = useSelector(selectUserInfo);
+  const [list, setList] = useState([]);
   const [page, setPage] = useState(1);
-  const LIMIT = 6;
-  const [totalPage, setTotalPage] = useState(null);
+  const [totalCnt, setTotalCnt] = useState(0);
+  const [order, setOrder] = useState('최신순');
+  const LIMIT = 10;
+  const elm = useRef(null);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       `${process.env.REACT_APP_SERVER_URL}/test/freeBoard?pages=${page}&limit=${LIMIT}`,
-  //     )
-  //     .then((res) => {
-  //       const { rows, total } = res.data;
-  //       if (!rows) return;
-  //       setTotalPage(Math.ceil(Number(total) / LIMIT));
-  //       setList([...rows]);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [page]);
+  //서버 통신 헤더: post용, get용
+  const postConfig = {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
+  const getConfig = {
+    headers: {
+      Authorization: `Bearer ${accToken}`,
+    },
+    withCredentials: true,
+  };
 
-  // const pagingArr = range(totalPage);
-  const pagingArr = range(10);
+  useEffect(() => {
+    dispatch(clearPostState());
+    if (totalCnt && list.length >= totalCnt) return;
+    const params = {
+      info_type: 'Free',
+      pages: page,
+      limit: LIMIT,
+      like_type: order === '인기순',
+      lastId: list[list.length - 1]?.id || 0,
+    };
+    // /info/free/list
+    const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info/free/list`;
+
+    axios
+      .get(infoURL, {
+        params,
+        ...getConfig,
+      })
+      .then((res) => {
+        const { rows, count } = res.data.info;
+        if (rows) setList([...list, ...rows]);
+        if (count && page === 1) {
+          setTotalCnt(count);
+        }
+      })
+      .catch((err) => {
+        if (err.response?.message) alert(err.response.message);
+      });
+  }, [page, order]);
+
+  const handleScroll = (e) => {
+    if (e.target.clientHeight + e.target.scrollTop === e.target.scrollHeight)
+      setPage((prevState) => prevState + 1);
+  };
+
+  const handleChange = (e) => {
+    setOrder(e.target.value);
+    setList([]);
+    setPage(1);
+  };
+
   return (
-    <EntireContainer>
-      <div id="order">
-        <input type="radio" name="info_order" value="최신순" checked />
-        최신순
-        <input
-          type="radio"
-          name="info_order"
-          value="인기순"
-          style={{ marginLeft: '10px' }}
-        />
-        인기순
-        {/* <ul id="paging">
-          {pagingArr.map((el) => (
-            <li key={el} name={el}>
-              {el}
-            </li>
+    <>
+      <OrderContainer>
+        <div>
+          <span className="latest_best">
+            <input
+              id="latest"
+              className="latest"
+              type="radio"
+              name="info_order"
+              value="최신순"
+              checked={order === '최신순'}
+              onChange={handleChange}
+            />
+            <label for="latest" className={order === '최신순' && 'clicked'}>
+              최신순
+            </label>
+            <input
+              id="best"
+              className="best"
+              type="radio"
+              name="info_order"
+              value="인기순"
+              checked={order === '인기순'}
+              onChange={handleChange}
+            />
+            <label for="best" className={order === '인기순' && 'clicked'}>
+              인기순
+            </label>
+          </span>
+          <span className="count">총 게시물 수 : {totalCnt || 0}</span>
+        </div>
+      </OrderContainer>
+      <EntireContainer id="box" ref={elm} onScroll={handleScroll}>
+        <ul className="postList">
+          {list.map((post) => (
+            <Post key={post.id} post={post} />
           ))}
-        </ul> */}
-      </div>
-      <ul className="postList">
-        {list.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-        {/* <>{isLoading && <Loading/>}</> */}
-      </ul>
-    </EntireContainer>
+          {/*{isLoading && <Loading/>}*/}
+        </ul>
+      </EntireContainer>
+    </>
   );
 }
 
