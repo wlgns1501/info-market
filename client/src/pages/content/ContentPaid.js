@@ -202,6 +202,7 @@ function RemoveInfoConfirm() {
 
 function ContentPaid() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     id: infoId,
     userId, //userId: writer,
@@ -310,6 +311,7 @@ function ContentPaid() {
 
   //텍스트 수정 처리
   useEffect(() => {
+    console.log('@@@', localTitle, localContent);
     if (!modifyTextStep) return;
     axios
       .put(
@@ -399,7 +401,6 @@ function ContentPaid() {
           {/* title 편집 모드 */}
           {infoEditMode ? (
             <textarea
-              // cols="50"
               rows="1"
               style={{
                 height: '2rem',
@@ -415,7 +416,7 @@ function ContentPaid() {
               value={localTitle}
             />
           ) : (
-            <div className="title">{localTitle}</div>
+            <div className="title">{title}</div>
           )}
           <div className="info">
             <dl>
@@ -443,7 +444,13 @@ function ContentPaid() {
                 {/* 설정 버튼 */}
                 <FontAwesomeIcon
                   icon={isOpen ? faCircleMinus : faGear}
-                  onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+                  onClick={() => {
+                    if (!localTitle || !localContent) {
+                      setLocalTitle(title);
+                      setLocalContent(content);
+                    }
+                    dispatch(updatePostState({ isOpen: !isOpen }));
+                  }}
                 />
                 {/* 설정버튼 클릭--> 메뉴나옴  */}
                 {isOpen && <Setting />}
@@ -467,7 +474,7 @@ function ContentPaid() {
               value={localContent}
             />
           ) : (
-            <ContentBox readOnly className="body" value={localContent} />
+            <ContentBox readOnly className="body" value={content} />
           )}
 
           {/* 좋아요, 구매이력 설명, 다운로드, 결제하기 묶기 */}

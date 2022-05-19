@@ -32,7 +32,7 @@ const PopUpBox = styled.ul`
   }
 `;
 
-function Setting() {
+function Setting({ setAgain }) {
   const dispatch = useDispatch();
 
   const { grade, isLogin, id: userId, accToken } = useSelector(selectUserInfo);

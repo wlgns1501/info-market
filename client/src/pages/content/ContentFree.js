@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Comment from '../../component/content/Comment';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import {
   updatePostState,
@@ -12,7 +13,6 @@ import {
   cancelModify,
   deleteFile,
 } from '../../store/slices/selectedPost';
-import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFileArrowDown,
@@ -182,6 +182,7 @@ function RemoveInfoConfirm() {
 }
 
 function ContentFree() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
     id: infoId,
@@ -259,7 +260,7 @@ function ContentFree() {
     }
   };
 
-  //텍스트 수정 처리
+  //텍스트 수정 처리,
   useEffect(() => {
     if (!modifyTextStep) return;
     axios
@@ -327,7 +328,6 @@ function ContentFree() {
         <Container>
           {infoEditMode ? (
             <textarea
-              // cols="50"
               rows="1"
               style={{
                 height: '2rem',
@@ -343,7 +343,7 @@ function ContentFree() {
               value={localTitle}
             />
           ) : (
-            <div className="title">{localTitle}</div>
+            <div className="title">{title}</div>
           )}
           <div className="info">
             <dl>
@@ -366,7 +366,13 @@ function ContentFree() {
               <SettingBox className={`setting ${isLogin || 'logined'}`}>
                 <FontAwesomeIcon
                   icon={isOpen ? faCircleMinus : faGear}
-                  onClick={() => dispatch(updatePostState({ isOpen: !isOpen }))}
+                  onClick={() => {
+                    if (!localTitle || !localContent) {
+                      setLocalTitle(title);
+                      setLocalContent(content);
+                    }
+                    dispatch(updatePostState({ isOpen: !isOpen }));
+                  }}
                 />
                 {isOpen && <Setting />}
               </SettingBox>
@@ -374,7 +380,6 @@ function ContentFree() {
           </div>
           {infoEditMode ? (
             <textarea
-              // cols="30"
               rows="20"
               style={{
                 width: '100%',
@@ -388,7 +393,7 @@ function ContentFree() {
               value={localContent}
             />
           ) : (
-            <ContentBox readOnly className="body" value={localContent} />
+            <ContentBox readOnly className="body" value={content} />
           )}
 
           <LikeDownload>
@@ -401,7 +406,6 @@ function ContentFree() {
             {infoEditMode ? (
               <FileChange />
             ) : (
-              //css 끝나면 !fileURL --> fileURL로 바꾸기
               fileURL && (
                 <a
                   href={
@@ -410,13 +414,13 @@ function ContentFree() {
                       : '#'
                   }
                 >
-                  {/* <FontAwesomeIcon
+                  <FontAwesomeIcon
                     icon={File}
                     style={{ fontSize: '1.5rem' }}
                     onClick={() =>
                       !isLogin && alert('회원만 가능한 서비스입니다.')
                     }
-                  /> */}
+                  />
                   <img
                     style={{ width: '2rem', cursor: 'pointer' }}
                     src={File}

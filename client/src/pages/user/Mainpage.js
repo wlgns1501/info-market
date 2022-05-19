@@ -3,6 +3,7 @@ import Search from '../../component/Search';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState, selectUserInfo } from '../../store/slices/userInfo';
+import { clearPostState } from '../../store/slices/selectedPost';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import gold from '../../images/gold.png';
@@ -168,6 +169,7 @@ function List({ posts, className }) {
 }
 
 function Mainpage() {
+  const dispatch = useDispatch();
   const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
 
@@ -179,6 +181,7 @@ function Mainpage() {
   };
 
   useEffect(() => {
+    dispatch(clearPostState());
     //인기 top 10개
     const infoURL = `${process.env.REACT_APP_SERVER_DEV_URL}/info`;
     axios

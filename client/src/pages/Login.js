@@ -197,7 +197,8 @@ function Login() {
     dispatch(updateState({ [key]: e.target.value }));
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     if (!email || !password) {
       return setErrorMessage('이메일과 비밀번호를 입력하세요');
     } else {
@@ -311,12 +312,14 @@ function Login() {
                   placeholder="email을 입력하세요"
                   onChange={handleInputValue('email')}
                   onKeyPress={handleKeyPress}
+                  value={email}
                 />
                 <input
                   type="password"
                   placeholder="password을 입력하세요"
                   onChange={handleInputValue('password')}
                   onKeyPress={handleKeyPress}
+                  value={password}
                 />
                 <LoginBtnWrap>
                   <button

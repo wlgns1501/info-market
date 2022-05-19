@@ -7,6 +7,7 @@ import { faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo } from '../../../store/slices/userInfo';
+import { clearPostState } from '../../../store/slices/selectedPost';
 import { useNavigate } from 'react-router-dom';
 
 const OrderContainer = styled.div`
@@ -180,6 +181,7 @@ function Post({ post }) {
 }
 
 function FreeBoard() {
+  const dispatch = useDispatch();
   const { accToken } = useSelector(selectUserInfo);
   const [list, setList] = useState([]);
   const [page, setPage] = useState(1);
@@ -204,6 +206,7 @@ function FreeBoard() {
   };
 
   useEffect(() => {
+    dispatch(clearPostState());
     if (totalCnt && list.length >= totalCnt) return;
     const params = {
       info_type: 'Free',

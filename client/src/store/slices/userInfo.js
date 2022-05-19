@@ -18,22 +18,6 @@ const initialState = {
   previewImg: null,
 };
 
-// const mockData = {
-//   isLogin: true,
-//   id: 1,
-//   email: 'choji95@naver.com',
-//   password: 'pass1010!',
-//   nickname: '김코딩',
-//   accToken: '1111111111',
-//   point: 0,
-//   chargedPoint: 0,
-//   earnings: 0,
-//   grade: '실버',
-//   profileImg: '',
-//   phone: '010-1234-1377',
-//   accout: '',
-// };
-
 const stateKeys = Object.keys(initialState);
 export const userInfoSlice = createSlice({
   name: 'userInfo',

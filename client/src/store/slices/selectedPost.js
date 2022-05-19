@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import AWS from 'aws-sdk';
-import { v1, v3, v4, v5 } from 'uuid';
 
 const ACCESS_KEY = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
@@ -29,7 +28,7 @@ const initialState = {
   userId: null,
   createdAt: null,
   updatedAt: null,
-  reviews: [], //[{id, nickname, content, createdAt}, {}, {}, {}...]
+  reviews: [],
   like: false,
   isPurchased: false,
   fileURL: null,
@@ -103,6 +102,17 @@ export const selectedPostSlice = createSlice({
         if (err) console.log('기존 파일 삭제 실패');
       });
     },
+    init: (state) => {
+      state.isOpen = false;
+      state.removeInfo = false;
+      state.infoEditMode = false;
+      state.titleChange = false;
+      state.contentChange = false;
+      state.fileChange = false;
+      state.modifyTextStep = false;
+      state.modyfiedFileName = null;
+      state.modifyFileStep = false;
+    },
   },
 });
 
@@ -116,6 +126,7 @@ export const {
   modifyComment,
   cancelModify,
   deleteFile,
+  init,
 } = selectedPostSlice.actions;
 export default selectedPostSlice.reducer;
 export const selectSelectedPost = (state) => state.selectedPost;

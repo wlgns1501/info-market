@@ -5,6 +5,7 @@ import Pagination from '../../component/Pagination';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUserInfo } from '../../store/slices/userInfo';
 import { updateSearch, selectSearch } from '../../store/slices/search';
+import { clearPostState } from '../../store/slices/selectedPost';
 import { useNavigate, useLocation } from 'react-router-dom';
 import QueryString from 'qs';
 import axios from 'axios';
@@ -192,6 +193,7 @@ function PostList() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
+    dispatch(clearPostState());
     setMsg('');
     const select1 = search_type || 'title';
     const select2 = info_type || 'All';
