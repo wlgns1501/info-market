@@ -34,15 +34,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const searchDb = __importStar(require("../db/search"));
 module.exports = {
+    // 무한 스크롤
     get: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { search_type, info_type, pages, limit } = req.query;
-        if (search_type === 'titles') {
-            const { titles } = req.query;
-            if (!titles) {
+        if (search_type === 'title') {
+            const { title } = req.query;
+            if (!title) {
                 return res.status(400).json({ message: '제목을 입력해 주세요.' });
             }
             if (info_type === 'All') {
-                const findInfoBy = yield searchDb.searchAllTitle(String(titles), Number(pages), Number(limit));
+                const findInfoBy = yield searchDb.searchAllTitle(String(title), Number(pages), Number(limit));
                 if (findInfoBy.count === 0) {
                     return res.status(406).json({ message: '해당 게시물이 없습니다.' });
                 }
@@ -51,7 +52,7 @@ module.exports = {
                     .json({ info: findInfoBy, message: '해당 게시물을 불러왔습니다.' });
             }
             else {
-                const findInfoBy = yield searchDb.searchByTitle(String(titles), Number(pages), Number(limit), String(info_type));
+                const findInfoBy = yield searchDb.searchByTitle(String(title), Number(pages), Number(limit), String(info_type));
                 if (findInfoBy.count === 0) {
                     return res.status(406).json({ message: '해당 게시물이 없습니다.' });
                 }
@@ -85,6 +86,7 @@ module.exports = {
             }
         }
         else if (search_type === 'nickname') {
+            // 닉네임 검색 수정 필요. 몇개 있는지는 검색이 되지만 내용이 검색 안됨
             const { nickname } = req.query;
             if (!nickname) {
                 return res.status(400).json({ message: '내용을 입력해 주세요.' });

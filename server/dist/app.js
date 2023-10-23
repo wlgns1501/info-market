@@ -1,17 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// import 'dotenv/config';
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
@@ -20,6 +12,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const indexRouter = require('./routes/index');
 const models_1 = require("./models");
+// import passport from 'passport';
+// const passportConfig = require('./passport/index');
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // 데이터베이스 연결
@@ -33,7 +27,10 @@ models_1.sequelize
 });
 const corsOption = {
     // origin: 'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com',
-    origin: '*',
+    origin: [
+        'http://info-market-client.s3-website.ap-northeast-2.amazonaws.com',
+        'http://localhost:3000',
+    ],
     // optionsSuccessStatus: 200,
     credentials: true, // allow the Access-Control-Allow-Credentials
     // withcredentials: true, // allow the Access-Control-Allow-Credentials
@@ -47,18 +44,22 @@ app.use(express_1.default.urlencoded({
 app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
 app.use((0, morgan_1.default)('dev'));
+// passport 초기화 및 세션 연결
+// app.use(passport.initialize());
+// app.use(passport.session());
+// passportConfig();
 app.use('/', indexRouter);
 // http://15.164.104.171/
-app.get('/api', (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+// app.get('/api', async (req: Request, res: Response) => {});
 // // 지원하지 않는 api
 app.use((req, res, next) => {
     res.sendStatus(404);
 });
 // 서버 에러
-// app.use((error, req, res, next) => {
-//   console.error(error);
-//   res.sendStatus(500);
-// });
+app.use((error, req, res, next) => {
+    console.error(error);
+    res.sendStatus(500);
+});
 app.get('/', (req, res) => {
     console.log('get');
     res.send('Hello!!');

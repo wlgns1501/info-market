@@ -39,9 +39,9 @@ module.exports = {
               .json({ message: '유저가 존재하지 않습니다.' });
           }
 
-          req.userId = admin.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
-          req.token = token;
-          req.grade = admin.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
+          req.user = decoded; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
+          // req.token = token;
+          // req.grade = decoded.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
           next();
         } else {
           const user = await userDb.findPkUser(decoded.id);
@@ -53,9 +53,9 @@ module.exports = {
           }
           // console.log(user);
 
-          req.userId = user.id; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
-          req.token = token;
-          req.grade = user.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
+          req.user = decoded; // 다른 유저가 내 게시물 삭제하는 것을 방지하기 위해 검증하기 위해
+          // req.token = token;
+          // req.grade = decoded.grade; // 등급이 안되는데 상업적 게시물 올릴려고 할 때 검증하기 위해
 
           next();
         }
@@ -74,7 +74,7 @@ module.exports = {
     }
 
     const getToken = refreshToken.split('=')[1].split(';')[0];
-    console.log(getToken);
+    // console.log(getToken);
     jwt.verify(
       getToken,
       config.jwt.secret_key,

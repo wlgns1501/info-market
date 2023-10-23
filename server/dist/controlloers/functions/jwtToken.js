@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 const config_1 = require("../../config");
 module.exports = {
     // token으로 sign
-    generateAccessToken: (id, grade) => {
-        return jwt.sign({ id, grade }, config_1.config.jwt.secret_key, {
+    generateAccessToken: (user) => {
+        return jwt.sign({ user }, config_1.config.jwt.secret_key, {
             expiresIn: config_1.config.jwt.expiresIn,
         });
     },
-    generateRefreshToken: (id, grade) => {
-        return jwt.sign({ id, grade }, config_1.config.jwt.secret_key, {
+    generateRefreshToken: (user) => {
+        return jwt.sign({ user }, config_1.config.jwt.secret_key, {
             expiresIn: config_1.config.jwt.expiresIn,
         });
     },

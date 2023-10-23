@@ -7,7 +7,8 @@ import {
   selectCount,
 } from '../../store/slices/counter.js';
 import Modal from '../../modals/Modal-1';
-import Payment from '../../component/Payment.js';
+// import Payment from '../../component/Payment.js';
+import PointCharge from '../../component/PointCharge.js';
 
 function Home() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,13 +36,8 @@ function Home() {
 
   return (
     <div>
-      {isOpen ? (
-        <Modal handleBtnClick={modalToggle} content={'모달 테스트'} />
-      ) : (
-        ''
-      )}
       Home 입니다.
-      <button onClick={modalToggle}>모달 열기</button>
+      {/* <button onClick={modalToggle}>모달 열기</button> */}
       <div>
         <button onClick={() => dispatch(increment())}>increment</button>
         <div>count is {count}</div>
@@ -50,7 +46,12 @@ function Home() {
           5 increment
         </button>
       </div>
-      <Payment />
+      <button onClick={modalToggle}>결제하기</button>
+      {isOpen ? (
+        <Modal handleBtnClick={modalToggle} content={<PointCharge />} />
+      ) : (
+        ''
+      )}
     </div>
   );
 }

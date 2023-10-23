@@ -51,7 +51,7 @@ module.exports = {
   },
   writeInfo: async (req: Request, res: Response) => {
     const { title, content, targetPoint, type } = req.body;
-    const { userId, grade } = req;
+    const { user } = req;
     let activate: boolean;
 
     if (!title) {
@@ -64,7 +64,7 @@ module.exports = {
         .status(400)
         .json({ message: '게시물의 본문이 입력되지 않았습니다.' });
     }
-    if (type !== 'Free' && grade === 'Bronze') {
+    if (type !== 'Free' && user?.grade === 'Bronze') {
       return res.status(403).json({ message: '회원 등급에 맞지 않습니다.' });
     }
     if (type === 'Free' && Number(targetPoint) !== 0) {
@@ -84,7 +84,7 @@ module.exports = {
       content,
       targetPoint,
       type,
-      userId,
+      user.id,
       activate,
       req.body.file,
     );
@@ -95,7 +95,7 @@ module.exports = {
   },
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    const { userId } = req;
+    const { user } = req;
 
     const info = await infoDb.getInfo(Number(infoId));
 
@@ -103,7 +103,7 @@ module.exports = {
       return res.status(406).json({ message: '해당 게시물이 없습니다.' });
     }
 
-    if (userId !== info.userId) {
+    if (user?.id !== info.userId) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
     }
 
@@ -176,7 +176,7 @@ module.exports = {
   },
   editFile: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    const { userId } = req;
+    const { user } = req;
 
     const info = await infoDb.getInfo(Number(infoId));
 
@@ -186,7 +186,7 @@ module.exports = {
         .json({ message: '해당 게시물이 존재하지 않습니다.' });
     }
 
-    if (info.userId != userId) {
+    if (info.userId != user?.id) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
     }
 
@@ -198,7 +198,7 @@ module.exports = {
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
-    let like;
+    let like: any;
 
     if (like_type === 'true') {
       like = 'desc';
@@ -264,7 +264,7 @@ module.exports = {
     const activate = true;
     let cursor: number;
 
-    let like;
+    let like: any;
 
     if (like_type === 'true') {
       like = 'desc';

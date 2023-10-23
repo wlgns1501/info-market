@@ -13,7 +13,7 @@ module.exports = {
     );
     // console.log(tid);
 
-    if (userId !== Number(req.userId)) {
+    if (userId !== Number(req.user?.id)) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
     }
 
@@ -65,7 +65,7 @@ module.exports = {
 
     const payment = await paymentDb.getPayment(Number(infoId));
 
-    if (Number(req.userId) !== payment?.userId) {
+    if (req.user?.id !== payment?.userId) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다.' });
     }
 

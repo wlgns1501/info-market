@@ -38,7 +38,7 @@ function Login() {
     } else {
       axios
         .post(
-          `http://localhost:3000/auth/login`,
+          `http://localhost:8080/auth/login`,
           { email, password },
           {
             headers: { 'Content-Type': 'application/json' },

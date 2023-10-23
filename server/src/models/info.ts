@@ -96,6 +96,13 @@ Info.init(
     // mb4 -> 이모티콘도 사용 가능
     charset: 'utf8',
     collate: 'utf8_general_ci',
+    //   indexes: [
+    //     {
+    //       name: 'index_type',
+    //       unique: false,
+    //       fields: ['type'],
+    //     },
+    //   ],
   },
 );
 

@@ -1,15 +1,16 @@
 const jwt = require('jsonwebtoken');
 import { config } from '../../config';
+import User from '../../models/user';
 
 module.exports = {
   // token으로 sign
-  generateAccessToken: (id: number, grade: string): Promise<void> => {
-    return jwt.sign({ id, grade }, config.jwt.secret_key, {
+  generateAccessToken: (user: User): Promise<void> => {
+    return jwt.sign({ user }, config.jwt.secret_key, {
       expiresIn: config.jwt.expiresIn,
     });
   },
-  generateRefreshToken: (id: number, grade: string): Promise<void> => {
-    return jwt.sign({ id, grade }, config.jwt.secret_key, {
+  generateRefreshToken: (user: User): Promise<void> => {
+    return jwt.sign({ user }, config.jwt.secret_key, {
       expiresIn: config.jwt.expiresIn,
     });
   },

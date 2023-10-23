@@ -74,7 +74,7 @@ module.exports = {
 
   getUsers: async (req: Request, res: Response) => {
     const { pages, limit } = req.query;
-    const { grade } = req;
+    const { s } = req;
     // console.log(grade);
 
     if (grade !== 'admin') {

@@ -6,9 +6,9 @@ import * as infoDb from '../db/info';
 module.exports = {
   getInfo: async (req: Request, res: Response) => {
     const { pages, limit } = req.query;
-    const { grade } = req;
+    const { user } = req;
     const activate: boolean = true;
-    if (grade !== 'admin') {
+    if (user?.grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
@@ -28,9 +28,9 @@ module.exports = {
   },
   editInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    const { grade } = req;
+    const { user } = req;
 
-    if (grade !== 'admin') {
+    if (user?.grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
@@ -55,10 +55,10 @@ module.exports = {
   },
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
-    const { grade } = req;
+    const { user } = req;
     console.log(infoId);
 
-    if (grade !== 'admin') {
+    if (user?.grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 
@@ -77,9 +77,9 @@ module.exports = {
   activateInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
 
-    const { grade } = req;
+    const { user } = req;
 
-    if (grade !== 'admin') {
+    if (user?.grade !== 'admin') {
       return res.status(403).json({ message: '해당 권한이 없습니다.' });
     }
 

@@ -61,8 +61,8 @@ module.exports = {
       return res.status(400).json({ message: '비밀번호가 일치하지 않음' });
     }
     // 토큰 [id(PK), grade)]생성하고 전달.
-    const accToken: string = generateAccessToken(id, grade);
-    const refreshToken: string = generateRefreshToken(id, grade);
+    const accToken: string = generateAccessToken(userInfo);
+    const refreshToken: string = generateRefreshToken(userInfo);
     const cookieOptions = {
       httpOnly: true,
     };
@@ -88,19 +88,20 @@ module.exports = {
       .json({ message: '로그아웃에 성공했습니다.' });
   },
   remove: async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const tokenUserId: number | undefined = req.user?.id;
 
-    if (req.userId !== Number(userId)) {
+    if (tokenUserId !== Number(req.params.userId)) {
       return res.status(403).json({ message: '유저가 일치하지 않습니다' });
     }
 
-    const user = await userDb.findPkUser(Number(userId));
+    const user = await userDb.findPkUser(Number(req.params.userId));
 
     if (!user) {
       return res.status(401).json({ message: '해당 유저가 없습니다.' });
     }
 
-    await userDb.removeUser(Number(userId)).catch(() => {
+    await userDb.removeUser(Number(req.params.userId)).catch(() => {
       return res.status(400).json({ message: '회원탈퇴에 실패 하였습니다.' });
     });
 

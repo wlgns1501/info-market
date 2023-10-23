@@ -44,7 +44,7 @@ function Signup() {
     } else {
       axios
         .post(
-          `http://localhost:3000/auth/signup`,
+          `http://localhost:8080/auth/signup`,
           { email, password, phone, nickname },
           {
             headers: { 'Content-Type': 'application/json' },

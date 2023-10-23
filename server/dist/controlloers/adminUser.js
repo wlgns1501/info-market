@@ -91,7 +91,7 @@ module.exports = {
     },
     getUsers: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { pages, limit } = req.query;
-        const { grade } = req;
+        const { s } = req;
         // console.log(grade);
         if (grade !== 'admin') {
             return res.status(403).json({ message: '해당 권한이 없습니다.' });
