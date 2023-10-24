@@ -25,9 +25,10 @@ function searchByTitle(titles, pages, limit, info_type) {
                     [sequelize_1.Op.like]: '%' + titles + '%',
                 },
                 type: info_type,
+                activate: true,
             },
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -35,10 +36,11 @@ function searchByTitle(titles, pages, limit, info_type) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {
@@ -59,9 +61,10 @@ function searchByContent(content, pages, limit, info_type) {
                     [sequelize_1.Op.like]: '%' + content + '%',
                 },
                 type: info_type,
+                activate: true,
             },
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -69,10 +72,11 @@ function searchByContent(content, pages, limit, info_type) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {
@@ -92,9 +96,10 @@ function searchAllTitle(titles, pages, limit) {
                 title: {
                     [sequelize_1.Op.like]: '%' + titles + '%',
                 },
+                activate: true,
             },
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -102,10 +107,11 @@ function searchAllTitle(titles, pages, limit) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {
@@ -125,9 +131,10 @@ function searchAllContent(content, pages, limit) {
                 content: {
                     [sequelize_1.Op.like]: '%' + content + '%',
                 },
+                activate: true,
             },
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -135,10 +142,11 @@ function searchAllContent(content, pages, limit) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {
@@ -156,9 +164,10 @@ function searchByNick(Nickname, pages, limit, info_type) {
             order: [['createdAt', 'desc']],
             where: {
                 type: info_type,
+                activate: true,
             },
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -166,10 +175,11 @@ function searchByNick(Nickname, pages, limit, info_type) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {
@@ -191,7 +201,10 @@ function searchAllNick(nickname, pages, limit) {
         return yield info_1.default.findAndCountAll({
             order: [['createdAt', 'desc']],
             limit,
-            offset: (pages - 1) * 10,
+            offset: (pages - 1) * limit,
+            where: {
+                activate: true,
+            },
             attributes: [
                 'id',
                 [sequelize_1.Sequelize.col('User.nickname'), 'nickname'],
@@ -199,10 +212,11 @@ function searchAllNick(nickname, pages, limit) {
                 'content',
                 'userId',
                 'createdAt',
-                'updateTimestamp',
+                'updatedAt',
                 'targetPoint',
                 'type',
                 'totalViews',
+                'totalLikes',
             ],
             include: [
                 {

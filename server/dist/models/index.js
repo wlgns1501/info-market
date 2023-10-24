@@ -1,5 +1,4 @@
 "use strict";
-// 'use strict';
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -30,52 +29,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// const fs = require('fs');
-// const path = require('path');
-// const Sequelize = require('sequelize');
-// const basename = path.basename(__filename);
-// const env = process.env.NODE_ENV?.trim() || 'development';
-// const config = require(__dirname + '/../config/config.js')[env];
-// const db: any = {};
-// let sequelize: any;
-// if (config.use_env_variable) {
-//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
-// } else {
-//   sequelize = new Sequelize(
-//     config.database,
-//     config.username,
-//     config.password,
-//     config,
-//   );
-// }
-// fs.readdirSync(__dirname)
-//   .filter((file: string) => {
-//     return (
-//       file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.ts'
-//     );
-//   })
-//   .forEach((file: any) => {
-//     const model = require(path.join(__dirname, file))(
-//       sequelize,
-//       Sequelize.DataTypes,
-//     );
-//     db[model.name] = model;
-//   });
-// Object.keys(db).forEach((modelName) => {
-//   if (db[modelName].associate) {
-//     db[modelName].associate(db);
-//   }
-// });
-// db.sequelize = sequelize;
-// db.Sequelize = Sequelize;
-// export default db;
-// import
 const user_1 = __importStar(require("./user"));
 const info_1 = __importStar(require("./info"));
 const admin_1 = __importDefault(require("./admin"));
 const payment_1 = __importStar(require("./payment"));
 const reply_1 = __importStar(require("./reply"));
-const reply_2 = __importStar(require("./reply"));
+const like_1 = __importStar(require("./like"));
+const point_1 = __importStar(require("./point"));
+const pointRefund_1 = __importStar(require("./pointRefund"));
 __exportStar(require("./sequelize"), exports);
 const db = {
     User: user_1.default,
@@ -83,10 +44,14 @@ const db = {
     Admin: admin_1.default,
     Payment: payment_1.default,
     Reply: reply_1.default,
-    Like: reply_2.default,
+    Like: like_1.default,
+    Point: point_1.default,
+    PointRefund: pointRefund_1.default,
 };
 (0, user_1.associate)(db);
 (0, info_1.associate)(db);
 (0, payment_1.associate)(db);
 (0, reply_1.associate)(db);
-(0, reply_2.associate)(db);
+(0, like_1.associate)(db);
+(0, point_1.associate)(db);
+(0, pointRefund_1.associate)(db);

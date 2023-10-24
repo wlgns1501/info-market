@@ -278,9 +278,9 @@ function Signup() {
     e.preventDefault();
     const { email, password, phone, nickname } = userInfo;
     const { emailCk, passwordCk, phoneCk, nicknameCk } = checked;
-
-    const normalURL = `${process.env.REACT_APP_SERVER_DEV_URL}/auth/signup`;
-    const adminURL = `${process.env.REACT_APP_SERVER_DEV_URL}/admin/signup`;
+    // console.log(process.env.REACT_APP_SERVER_DEV_URL);
+    const normalURL = `http://localhost:8000/auth/signup`;
+    const adminURL = `http://localhost:8000/admin/signup`;
 
     if (role === '관리자') {
       if (!email || !password || !emailCk || !passwordCk) {
@@ -311,7 +311,7 @@ function Signup() {
         })
         .catch((err) => {
           console.log('에러: ', err);
-          alert(err.response.message);
+          alert(err.response?.message);
         });
     } else {
       if (!email || !password || !phone || !nickname) {

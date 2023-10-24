@@ -51,7 +51,7 @@ let migrationAllTable = () => __awaiter(void 0, void 0, void 0, function* () {
         if (files) {
             files.forEach((el) => {
                 // console.log(el.substr(el.indexOf('.')+1,12));
-                if (el.slice(-3) === '.js' || el.slice(-3) === '.ts') {
+                if (el.slice(-3) === '.ts') {
                     migrationFiles.push(el);
                 }
             });

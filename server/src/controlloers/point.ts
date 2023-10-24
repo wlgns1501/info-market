@@ -76,7 +76,9 @@ module.exports = {
       console.log(err);
     });
 
-    const paymentData = getPaymentData.req.body;
+    console.log(getPaymentData);
+
+    const paymentData = getPaymentData.data.response;
 
     const order = await pointDb.findUserChargePoint(
       Number(userId),
@@ -93,7 +95,6 @@ module.exports = {
         case 'ready':
           break;
         case 'paid':
-
           userPoint += pointCharge.point;
 
           await userDb.editUserPoint(Number(userId), userPoint);

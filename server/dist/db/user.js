@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findPkUser = exports.removeUser = exports.AdminEditUserInfo = exports.editUserInfo = exports.findUser = exports.findUsers = exports.createUser = void 0;
+exports.postImg = exports.checkNickname = exports.editUserPoint = exports.findPkUser = exports.removeUser = exports.AdminEditUserInfo = exports.editUserInfo = exports.editUserPassword = exports.editUserPhone = exports.editUserNickname = exports.editUserEmail = exports.findUser = exports.findUsers = exports.createUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 function createUser(email, hashPw, nickname, phone) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -45,6 +45,54 @@ function findUser(email) {
     });
 }
 exports.findUser = findUser;
+function editUserEmail(userId, email) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({
+            email,
+        }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.editUserEmail = editUserEmail;
+function editUserNickname(userId, nickname) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({
+            nickname,
+        }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.editUserNickname = editUserNickname;
+function editUserPhone(userId, phone) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({
+            phone,
+        }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.editUserPhone = editUserPhone;
+function editUserPassword(userId, hashPw) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({
+            password: hashPw,
+        }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.editUserPassword = editUserPassword;
 function editUserInfo(userId, email, hashPw, nickname, phone) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield user_1.default.update({
@@ -93,3 +141,33 @@ function findPkUser(userId) {
     });
 }
 exports.findPkUser = findPkUser;
+function editUserPoint(userId, point) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({ point }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.editUserPoint = editUserPoint;
+function checkNickname(nickname) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.findOne({
+            where: {
+                nickname,
+            },
+        });
+    });
+}
+exports.checkNickname = checkNickname;
+function postImg(img, userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield user_1.default.update({ img }, {
+            where: {
+                id: userId,
+            },
+        });
+    });
+}
+exports.postImg = postImg;

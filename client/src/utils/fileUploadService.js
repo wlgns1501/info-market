@@ -10,7 +10,7 @@ const upload = (file, config, inputValues) => {
   formData.append('title', title);
   formData.append('content', content);
   formData.append('targetPoint', targetPoint);
-  return axios.post('http://localhost:8080/서버_api', formData, config);
+  return axios.post('http://localhost:8000/서버_api', formData, config);
 };
 
 export default { upload };

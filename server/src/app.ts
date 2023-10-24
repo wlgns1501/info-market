@@ -24,17 +24,16 @@ sequelize
   });
 
 const corsOption = {
-  // origin: 'http://debugnote-client.s3-website.ap-northeast-2.amazonaws.com',
-  origin: [
-    'http://info-market-client.s3-website.ap-northeast-2.amazonaws.com',
-    'http://localhost:3000',
-  ],
+  origin: 'http://127.0.0.1:3000',
   // optionsSuccessStatus: 200,
   credentials: true, // allow the Access-Control-Allow-Credentials
   // withcredentials: true, // allow the Access-Control-Allow-Credentials
 };
 
 app.use(cors(corsOption));
+
+// app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+
 // app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json({}));
 app.use(
@@ -55,7 +54,7 @@ app.use(morgan('dev'));
 app.use('/', indexRouter);
 
 // http://15.164.104.171/
-// app.get('/api', async (req: Request, res: Response) => {});
+app.get('/api', async (req: Request, res: Response) => {});
 
 // // 지원하지 않는 api
 app.use((req, res, next) => {
@@ -73,6 +72,6 @@ app.get('/', (req, res) => {
   res.send('Hello!!');
 });
 
-app.listen(8080, () => {
-  console.log(`8080번 포트에서 대기중`);
+app.listen(8000, () => {
+  console.log(`8000번 포트에서 대기중`);
 });

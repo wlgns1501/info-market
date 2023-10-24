@@ -49,6 +49,7 @@ module.exports = {
 
     return res.status(200).json({ info, message: '게시물을 가져왔습니다.' });
   },
+
   writeInfo: async (req: Request, res: Response) => {
     const { title, content, targetPoint, type } = req.body;
     const { userId, grade } = req;
@@ -93,6 +94,7 @@ module.exports = {
       .status(203)
       .json({ infoId: info, message: '게시물이 생성 되었습니다.' });
   },
+
   removeInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
     const { userId } = req;
@@ -111,6 +113,7 @@ module.exports = {
 
     return res.status(200).json({ message: '게시물이 삭제 되었습니다.' });
   },
+
   putInfo: async (req: Request, res: Response) => {
     const { infoId } = req.params;
     const { userId, grade } = req;
@@ -198,14 +201,11 @@ module.exports = {
     let { pages, limit, like_type } = req.query;
     let cursor: number;
 
-    let like;
+    let like: string = 'desc';
 
-    if (like_type === 'true') {
-      like = 'desc';
-    } else if (like_type === 'false') {
+    if (like_type === 'false') {
       like = 'asc';
     }
-
 
     if (Number(req.query.lastId) === 0) {
       if (like_type === 'false') {
@@ -265,15 +265,11 @@ module.exports = {
     const activate = true;
     let cursor: number;
 
-    let like;
+    let like = 'desc';
 
-
-    if (like_type === 'true') {
-      like = 'desc';
-    } else if (like_type === 'false') {
+    if (like_type === 'false') {
       like = 'asc';
     }
-
 
     if (Number(req.query.lastId) === 0) {
       if (Number(req.query.lastId) === 0) {

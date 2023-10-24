@@ -38,9 +38,14 @@ const { generateAccessToken, generateRefreshToken, } = require('./functions/jwtT
 module.exports = {
     signup: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password, nickname, phone } = req.body;
+        console.log(req.body);
         const exUser = yield userDb.findUser(email);
         if (exUser) {
             return res.status(409).json({ message: '중복된 유저 입니다.' });
+        }
+        const findNickname = yield userDb.checkNickname(nickname);
+        if (findNickname) {
+            return res.status(400).json({ message: '중복된 닉네임 입니다.' });
         }
         const hashPw = yield bcrypt.hash(password).catch((err) => {
             console.log(err);
@@ -61,7 +66,7 @@ module.exports = {
             // console.log('해당 유저 X');
             return res.status(401).json({ message: '해당 유저가 없습니다.' });
         }
-        const { id, point, grade } = userInfo;
+        const { id, point, grade, phone, nickname } = userInfo;
         // npm문서에서 bcrypt 관련 내용 찾아보기
         const verification = yield bcrypt
             .comparePw(password, userInfo.password)
@@ -88,6 +93,8 @@ module.exports = {
             id,
             point,
             grade,
+            nickname,
+            phone,
             accToken: accToken,
             message: '로그인에 성공 했습니다.',
         });
